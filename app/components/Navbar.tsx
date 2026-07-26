@@ -622,8 +622,6 @@ export const Navbar = () => {
           ))}
         </div>
       </nav>
-
-Mobiledrawer · TSX
  
       {/* ══════════════════ MOBILE DRAWER ══════════════════ */}
       {mobileOpen && (
