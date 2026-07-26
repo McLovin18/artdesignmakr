@@ -46,14 +46,14 @@ function MobileCategoriesAccordion({ basePath }: { basePath: string }) {
   return (
     <div className="flex flex-col gap-1 my-3">
       <p className="text-xs font-semibold uppercase tracking-wider px-2 mb-1"
-        style={{ color: BRAND.textMuted }}>
+        style={{ color: "rgba(255,255,255,0.55)" }}>
         Categorías
       </p>
       {categorias.map((cat) => (
         <div key={cat.id}>
           <button
             className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-colors"
-            style={{ color: BRAND.white }}
+            style={{ color: "#ffffff" }}
             onClick={() =>
               setOpenCat(openCat === cat.id ? null : cat.id)
             }
@@ -71,7 +71,7 @@ function MobileCategoriesAccordion({ basePath }: { basePath: string }) {
               <span
                 className="material-icons-round text-sm transition-transform duration-200"
                 style={{
-                  color: BRAND.white,
+                  color: "#ffffff",
                   transform: openCat === cat.id ? "rotate(180deg)" : "rotate(0deg)",
                 }}
               >
@@ -89,7 +89,7 @@ function MobileCategoriesAccordion({ basePath }: { basePath: string }) {
                     <>
                       <button
                         className="w-full flex items-center justify-between px-3 py-2 text-sm transition-shadow hover:shadow-sm rounded-md"
-                        style={{ color: BRAND.white }}
+                        style={{ color: "#ffffff" }}
                         onClick={() =>
                           setOpenSub(openSub === sub.id ? null : sub.id)
                         }
@@ -98,7 +98,7 @@ function MobileCategoriesAccordion({ basePath }: { basePath: string }) {
                         <span
                           className="material-icons-round text-sm transition-transform duration-200"
                           style={{
-                            color: BRAND.white,
+                            color: "#ffffff",
                             transform:
                               openSub === sub.id
                                 ? "rotate(180deg)"
@@ -116,7 +116,7 @@ function MobileCategoriesAccordion({ basePath }: { basePath: string }) {
                               key={subsub.id}
                               href={`${basePath}?cat=${cat.id}&sub=${sub.id}&subsub=${subsub.id}`}
                               className="block px-4 py-2 text-xs transition-colors"
-                              style={{ color: BRAND.textMuted }}
+                              style={{ color: "rgba(255,255,255,0.6)" }}
                             >
                               {subsub.nombre}
                             </a>
@@ -128,7 +128,7 @@ function MobileCategoriesAccordion({ basePath }: { basePath: string }) {
                     <a
                       href={`${basePath}?cat=${cat.id}&sub=${sub.id}`}
                       className="block px-3 py-2 text-sm transition-shadow hover:shadow-sm rounded-md"
-                      style={{ color: BRAND.white }}
+                      style={{ color: "#ffffff" }}
                     >
                       {sub.nombre}
                     </a>
@@ -142,7 +142,7 @@ function MobileCategoriesAccordion({ basePath }: { basePath: string }) {
             <a
               href={`${basePath}?cat=${cat.id}`}
               className="block px-3 py-2 text-sm"
-              style={{ color: BRAND.white }}
+              style={{ color: "#ffffff" }}
             >
               {cat.nombre}
             </a>
@@ -623,6 +623,8 @@ export const Navbar = () => {
         </div>
       </nav>
 
+Mobiledrawer · TSX
+ 
       {/* ══════════════════ MOBILE DRAWER ══════════════════ */}
       {mobileOpen && (
         <div
@@ -631,7 +633,7 @@ export const Navbar = () => {
         >
           <div
             className="absolute left-0 top-0 w-[85vw] max-w-xs max-h-[calc(100vh-80px)] overflow-y-auto shadow-2xl flex flex-col"
-            style={{ background: BRAND.bg, color: BRAND.white }}
+            style={{ background: "#000000", color: "#ffffff" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header drawer */}
@@ -641,19 +643,19 @@ export const Navbar = () => {
             >
               <span
                 className="font-bold text-base"
-                style={{ color: BRAND.white, letterSpacing: "0.08em" }}
+                style={{ color: "#ffffff", letterSpacing: "0.08em" }}
               >
                 Central de <span style={{ color: BRAND.gold }}>Florerias</span>
               </span>
               <button
                 onClick={() => setMobileOpen(false)}
                 className="p-1.5 rounded-xl transition-colors"
-                style={{ color: BRAND.white }}
+                style={{ color: "#ffffff" }}
               >
                 <span className="material-icons-round text-xl">close</span>
               </button>
             </div>
-
+ 
             <div className="flex-1 px-4 py-4 flex flex-col gap-1">
               {/* Búsqueda móvil */}
               <form
@@ -667,7 +669,7 @@ export const Navbar = () => {
                   }
                 }}
               >
-                <span className="material-icons-round text-lg" style={{ color: BRAND.white }}>
+                <span className="material-icons-round text-lg" style={{ color: "#ffffff" }}>
                   search
                 </span>
                 <input
@@ -675,24 +677,24 @@ export const Navbar = () => {
                   type="text"
                   placeholder="Buscar productos..."
                   className="bg-transparent outline-none text-sm flex-1"
-                  style={{ color: BRAND.white }}
+                  style={{ color: "#ffffff" }}
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   autoComplete="off"
                 />
-
+ 
                 {searchValue.trim() && (
                   <div
                     className="absolute left-0 top-full mt-1 w-full rounded-xl border shadow-xl z-50 overflow-hidden"
                     style={{
-                      background: BRAND.bg,
+                      background: "#000000",
                       borderColor: BRAND.border,
                       maxHeight: 300,
                       overflowY: "auto",
                     }}
                   >
                     {searchLoading ? (
-                      <div className="p-4 text-center text-sm" style={{ color: BRAND.white }}>
+                      <div className="p-4 text-center text-sm" style={{ color: "#ffffff" }}>
                         Buscando...
                       </div>
                     ) : suggestions.length > 0 ? (
@@ -704,7 +706,7 @@ export const Navbar = () => {
                             key={prod.id}
                             href={href}
                             className="flex items-center gap-3 px-4 py-2.5 transition-colors text-sm"
-                            style={{ color: BRAND.white }}
+                            style={{ color: "#ffffff" }}
                             onMouseDown={(e) => e.preventDefault()}
                             onClick={() => {
                               setMobileOpen(false);
@@ -720,7 +722,7 @@ export const Navbar = () => {
                             )}
                             <span className="truncate flex-1">{prod.nombre}</span>
                             {prod.marca && (
-                              <span className="text-xs shrink-0" style={{ color: BRAND.textMuted }}>
+                              <span className="text-xs shrink-0" style={{ color: "rgba(255,255,255,0.5)" }}>
                                 {prod.marca}
                               </span>
                             )}
@@ -728,37 +730,37 @@ export const Navbar = () => {
                         );
                       })
                     ) : (
-                      <div className="p-4 text-center text-sm" style={{ color: BRAND.white }}>
+                      <div className="p-4 text-center text-sm" style={{ color: "#ffffff" }}>
                         Sin resultados
                       </div>
                     )}
                   </div>
                 )}
               </form>
-
+ 
               {/* Links */}
               {links.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors"
-                  style={{ color: BRAND.white }}
+                  style={{ color: "#ffffff" }}
                 >
                   {link.label}
                 </a>
               ))}
-
+ 
               {/* Categorías en acordeón */}
               <MobileCategoriesAccordion basePath={basePath} />
-
+ 
               <div className="border-t my-2" style={{ borderColor: BRAND.border }} />
-
+ 
               {user && (
                 <>
                   <a
                     href="/admin/perfil"
                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors"
-                    style={{ color: BRAND.white }}
+                    style={{ color: "#ffffff" }}
                   >
                     <span className="material-icons-round text-base">person</span>
                     Perfil
@@ -766,7 +768,7 @@ export const Navbar = () => {
                   <a
                     href="/admin/config"
                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors"
-                    style={{ color: BRAND.white }}
+                    style={{ color: "#ffffff" }}
                   >
                     <span className="material-icons-round text-base">settings</span>
                     Configuración
