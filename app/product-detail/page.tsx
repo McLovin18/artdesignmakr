@@ -579,14 +579,24 @@ export default function ProductDetailPage({ params }) {
                         {campo.nombre}
                       </label>
                       {campo.tipo === "texto" ? (
-                        <input
-                          type="text"
-                          value={personalizacionValues[campo.id] || ""}
-                          onChange={(e) => setPersonalizacionValues(prev => ({ ...prev, [campo.id]: e.target.value }))}
-                          placeholder={`Ingresa ${campo.nombre.toLowerCase()}`}
-                          className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
-                          style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--text)" }}
-                        />
+                      <input
+                        type="text"
+                        maxLength={40}
+                        value={personalizacionValues[campo.id] || ""}
+                        onChange={(e) =>
+                          setPersonalizacionValues((prev) => ({
+                            ...prev,
+                            [campo.id]: e.target.value,
+                          }))
+                        }
+                        placeholder={`Ingresa ${campo.nombre.toLowerCase()}`}
+                        className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
+                        style={{
+                          borderColor: "var(--border)",
+                          background: "var(--background)",
+                          color: "var(--text)",
+                        }}
+                      />
                       ) : campo.tipo === "numero" ? (
                         <input
                           type="number"
@@ -605,7 +615,16 @@ export default function ProductDetailPage({ params }) {
                           style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--text)" }}
                         />
                       ) : null}
+                      <div className="flex justify-end mt-1">
+                        <span
+                          className="text-xs"
+                          style={{ color: "var(--textSecondary)" }}
+                        >
+                          {(personalizacionValues[campo.id] || "").length}/40
+                        </span>
+                      </div>
                     </div>
+                    
                   ))}
                 </div>
               </div>

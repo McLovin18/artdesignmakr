@@ -44,6 +44,21 @@ function resolveAvailableStock(item: any) {
   return Number(item.variantStock ?? item.stock ?? 0);
 }
 
+// Arma la lista [{ nombre, valor }] de los campos de personalización
+// que el usuario llenó para un producto personalizado del carrito.
+function resolvePersonalizacionFields(item: any): { nombre: string; valor: string }[] {
+  if (!item?.personalizado || !Array.isArray(item?.camposPersonalizacion)) return [];
+  if (!item?.personalizacionValues) return [];
+
+  return item.camposPersonalizacion
+    .map((campo: any) => {
+      const valor = item.personalizacionValues?.[campo.id];
+      if (!valor || String(valor).trim() === "") return null;
+      return { nombre: campo.nombre, valor: String(valor) };
+    })
+    .filter(Boolean) as { nombre: string; valor: string }[];
+}
+
 // --- Pagina principal del carrito
 export default function CartPage() {
   const { carrito: carritoRaw, removeCarrito, addCarrito } = useUser();
@@ -94,6 +109,14 @@ export default function CartPage() {
     return "";
   };
 
+  // Arma el texto de personalización para el mensaje de WhatsApp
+  const getPersonalizacionText = (p: any): string => {
+    const campos = resolvePersonalizacionFields(p);
+    if (campos.length === 0) return "";
+    const parts = campos.map((c) => `${c.nombre}: ${c.valor}`);
+    return ` [Personalización - ${parts.join(", ")}]`;
+  };
+
   const generateWhatsAppMessage = async (): Promise<string> => {
     const bodegas = await obtenerBodegas();
     const bodegasMap = new Map(bodegas.map((b) => [b.id, b.tiempoEntrega]));
@@ -103,7 +126,8 @@ export default function CartPage() {
         const tiempoEntrega = bodegasMap.get(p.bodegaId || "technothings") || 72;
         const cantidad = p.cantidad || 1;
         const variationText = getVariationText(p);
-        return `• ${cantidad}x ${p.nombre}${variationText} (Entrega Aproximada en: ${tiempoEntrega}h)`;
+        const personalizacionText = getPersonalizacionText(p);
+        return `• ${cantidad}x ${p.nombre}${variationText}${personalizacionText} (Entrega Aproximada en: ${tiempoEntrega}h)`;
       })
       .join("\n");
 
@@ -212,6 +236,7 @@ export default function CartPage() {
                   const { hasDiscount, fakeOldPrice, finalPrice, discount } = calcularPrecioData(p);
                   const lineTotal = finalPrice * (p.cantidad || 1);
                   const availableStock = resolveAvailableStock(p);
+                  const personalizacionFields = resolvePersonalizacionFields(p);
 
                   return (
                     <div
@@ -247,6 +272,23 @@ export default function CartPage() {
                               .filter(Boolean)
                               .join(" · ")}
                           </p>
+                        )}
+
+                        {/* Personalización */}
+                        {personalizacionFields.length > 0 && (
+                          <div className="mt-1.5 rounded-lg border p-2 flex flex-col gap-0.5"
+                            style={{ borderColor: "var(--border)", background: "var(--bgSecondary)" }}>
+                            <span className="text-[10px] font-semibold uppercase tracking-wide flex items-center gap-1"
+                              style={{ color: "var(--textSecondary)" }}>
+                              <span className="material-icons-round text-xs">auto_awesome</span>
+                              Personalización
+                            </span>
+                            {personalizacionFields.map((campo, idx) => (
+                              <span key={idx} className="text-xs text-[var(--text)]">
+                                <span className="text-[var(--textSecondary)]">{campo.nombre}:</span> {campo.valor}
+                              </span>
+                            ))}
+                          </div>
                         )}
 
                         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
