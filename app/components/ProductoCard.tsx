@@ -163,20 +163,9 @@ const cardStyles = `
 
   /* nombre — cursiva serif como en la imagen */
   .pc-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 600;
-    font-size: 13px;
-    line-height: 1.25;
+
     color: #ffffff;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    text-decoration-thickness: 1px;
-    text-decoration-color: rgba(255,255,255,0.35);
+
   }
 
   @media (min-width: 640px) {
