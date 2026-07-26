@@ -128,6 +128,8 @@ export const Navbar = () => {
   const links = [
     { href: "/", label: "Inicio" },
     { href: "/productos", label: "Promociones" },
+    { href: "/adicionales", label: "Complementos" },
+
 
   ];
 

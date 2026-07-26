@@ -16,7 +16,7 @@ import { collection, query, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
 
 // Esta página solo muestra productos de la categoría "Ramos"
-const RAMOS_CATEGORY_ID = "1784988607164";
+const RAMOS_CATEGORY_ID = "1785075185964";
 
 export default function ProductosPage() {
   const searchParams = useSearchParams();
