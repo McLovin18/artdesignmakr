@@ -34,7 +34,7 @@ export default function Home() {
         const recentProducts = (products || [])
           .filter((p: any) => p?.id)
           .sort((a: any, b: any) => (b.createdAt || 0) - (a.createdAt || 0))
-          .slice(0, 10);
+          .slice(0, 40);
 
         if (mounted) {
           setLanding(data);
