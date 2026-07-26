@@ -85,7 +85,7 @@ const Footer: React.FC = () => {
                 href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 text-xs text-[var(--textSecondary)] hover:text-white transition-colors"
+                className="flex items-center gap-2 text-xl text-[var(--textSecondary)] hover:text-white transition-colors"
                 onClick={() => trackLinkClick().catch(console.error)}
               >
                 <IconWhatsApp />
