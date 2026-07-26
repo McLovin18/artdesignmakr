@@ -7,6 +7,14 @@ import type {
   LandingFieldStyle,
 } from "../../lib/landing-types";
 import ProductoCard from "../../components/ProductoCard";
+import {
+  mapCategorySnapshot,
+  sortCategoriasByOrder,
+  sameCategoryId,
+  productMatchesCategoria,
+} from "../../lib/categorias-db";
+import { collection, query, onSnapshot } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 
 export type FeaturedProductsSectionProps = {
   title?: string;
@@ -49,12 +57,32 @@ export default function FeaturedProductsSection({
   const paddingTop = styles?.paddingTop || (typeof window !== "undefined" && window.innerWidth < 768 ? "0.5rem" : "2rem");
   const paddingBottom = styles?.paddingBottom || (typeof window !== "undefined" && window.innerWidth < 768 ? "0.5rem" : "0.5rem");
 
+  // Necesitamos el árbol de categorías para poder resolver correctamente
+  // a qué categoría pertenece cada producto (igual que en /productos)
+  const [categorias, setCategorias] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    const categoriasRef = collection(db, "categorias");
+    const unsubscribe = onSnapshot(query(categoriasRef), (snapshot) => {
+      setCategorias(sortCategoriasByOrder(mapCategorySnapshot(snapshot.docs)));
+    });
+    return () => unsubscribe();
+  }, []);
+
   // Filtra productos válidos de la categoría Ramos, ordena por fecha de creación (más nuevo primero) y limita a 6
-  const recentProducts = products
-    .filter((prod: any) => prod && prod.id)
-    .filter((prod: any) => String(prod?.categoria || "").trim() === RAMOS_CATEGORY_ID)
-    .sort((a: any, b: any) => getCreatedAtMillis(b) - getCreatedAtMillis(a))
-    .slice(0, MAX_PRODUCTS);
+  const recentProducts = React.useMemo(() => {
+    return products
+      .filter((prod: any) => prod && prod.id)
+      .filter((prod: any) => {
+        if (categorias.length > 0) {
+          return productMatchesCategoria(prod, RAMOS_CATEGORY_ID, categorias);
+        }
+        // Fallback mientras cargan las categorías: comparación directa por id
+        return sameCategoryId(prod?.categoria, RAMOS_CATEGORY_ID);
+      })
+      .sort((a: any, b: any) => getCreatedAtMillis(b) - getCreatedAtMillis(a))
+      .slice(0, MAX_PRODUCTS);
+  }, [products, categorias]);
 
   // ── Return condicional DESPUÉS de todos los hooks ──
   if (!recentProducts.length) return null;

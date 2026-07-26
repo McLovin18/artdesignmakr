@@ -4,6 +4,7 @@ import ProductoCard from "../components/ProductoCard";
 import { useEffect, useState, useMemo } from "react";
 import type { Producto } from "../lib/productos-db";
 import { obtenerProductos } from "../lib/productos-db";
+import BottomBarPublic from "../components/BottomBarPublic";
 import {
   mapCategorySnapshot,
   sortCategoriasByOrder,
@@ -265,6 +266,8 @@ export default function ProductosPage() {
           </>
         )}
       </main>
+        {<BottomBarPublic />}
+      
     </div>
   );
 }
