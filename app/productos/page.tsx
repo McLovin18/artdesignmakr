@@ -283,66 +283,9 @@ export default function ProductosPage() {
   return (
     <div className="min-h-screen flex flex-col transition-colors" style={{ background: "var(--bg)", color: "var(--text)" }}>
       <main className="max-w-7xl mx-auto w-full px-3 sm:px-5 py-6 sm:py-15 flex-1">
-        <div className="rounded-2xl px-4 py-3.5 mb-5 space-y-3" style={{ background: "var(--bgSecondary)", borderColor: "var(--border)" }}>
-          <div className="flex flex-wrap gap-2 items-center">
-            <div className="relative flex-1 min-w-40 max-w-[min(75vw,300px)] sm:max-w-sm">
-              <span className="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/30 text-[17px] pointer-events-none">
-                search
-              </span>
-              <input
-                type="text"
-                placeholder="Buscar productos..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className={`${inputCls} w-full pl-9 pr-8`}
-              />
-              {search && (
-                <button
-                  onClick={() => setSearch("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white/80"
-                >
-                  <span className="material-icons-round text-[15px]">close</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {categorias.length > 0 && (
-          <div className="mb-6 overflow-x-auto pb-2" ref={categoriesScrollRef}>
-            <div className="flex gap-2 min-w-max">
-              <button
-                type="button"
-                onClick={selectTodas}
-                className={`px-4 py-2 rounded-full whitespace-nowrap font-medium text-sm transition-all ${
-                  !categoria
-                    ? "shadow-sm scale-105 bg-black text-white border border-black"
-                    : "bg-white text-slate-900 border border-slate-300 hover:border-black/60 hover:shadow-sm"
-                }`}
-              >
-                Todas
-              </button>
-              {categorias.map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => selectCategoria(cat.id)}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap font-medium text-sm transition-all ${
-                    sameCategoryId(categoria, cat.id)
-                      ? "shadow-sm scale-105 bg-black text-white border border-black"
-                      : "bg-white text-slate-900 border border-slate-300 hover:border-black/60 hover:shadow-sm"
-                  }`}
-                >
-                  {cat.icono && <span className="mr-1">🏷️</span>}
-                  {cat.nombre}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {loading ? (
-  <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+  <div className="grid grid-cols-1 gap-2 lg:grid-cols-4">
     {Array.from({ length: 10 }).map((_, i) => (
       <div key={i} className="rounded-xl overflow-hidden bg-white dark:bg-white/4 border border-slate-100 dark:border-white/10 shadow-sm animate-pulse">
         {/* Imagen placeholder */}
@@ -382,7 +325,7 @@ export default function ProductosPage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 animate-in fade-in duration-700">
+            <div className="grid grid-cols-1 gap-2 lg:grid-cols-4 animate-in fade-in duration-700">
               {paginatedProducts.map((p: any, index: number) => (
                 <ProductoCard
                   key={p.id}
