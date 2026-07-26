@@ -342,7 +342,7 @@ export default function ProductosPage() {
         )}
 
         {loading ? (
-  <div className="grid grid-cols-2 gap-2 lg:grid-cols-5">
+  <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
     {Array.from({ length: 10 }).map((_, i) => (
       <div key={i} className="rounded-xl overflow-hidden bg-white dark:bg-white/4 border border-slate-100 dark:border-white/10 shadow-sm animate-pulse">
         {/* Imagen placeholder */}
@@ -382,7 +382,7 @@ export default function ProductosPage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-2 lg:grid-cols-5 animate-in fade-in duration-700">
+            <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 animate-in fade-in duration-700">
               {paginatedProducts.map((p: any, index: number) => (
                 <ProductoCard
                   key={p.id}
@@ -390,11 +390,7 @@ export default function ProductosPage() {
                   index={index}
                   showCart
                   showEye
-              
                   showFav={isAuthenticated}
-                  onClick={() => {}}
-                  onAddCart={() => {}}
-                  onEye={() => {}}
                   isCompact={false}
                 />
               ))}
