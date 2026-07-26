@@ -18,6 +18,9 @@ export type FeaturedProductsSectionProps = {
 
 const MAX_PRODUCTS = 6;
 
+// Esta sección solo muestra productos de la categoría "Ramos"
+const RAMOS_CATEGORY_ID = "1784988607164";
+
 // Extrae la fecha de creación de un producto en milisegundos,
 // soportando Firestore Timestamp, Date, string ISO o number.
 function getCreatedAtMillis(prod: any): number {
@@ -46,9 +49,10 @@ export default function FeaturedProductsSection({
   const paddingTop = styles?.paddingTop || (typeof window !== "undefined" && window.innerWidth < 768 ? "0.5rem" : "2rem");
   const paddingBottom = styles?.paddingBottom || (typeof window !== "undefined" && window.innerWidth < 768 ? "0.5rem" : "0.5rem");
 
-  // Filtra productos válidos, ordena por fecha de creación (más nuevo primero) y limita a 6
+  // Filtra productos válidos de la categoría Ramos, ordena por fecha de creación (más nuevo primero) y limita a 6
   const recentProducts = products
     .filter((prod: any) => prod && prod.id)
+    .filter((prod: any) => String(prod?.categoria || "").trim() === RAMOS_CATEGORY_ID)
     .sort((a: any, b: any) => getCreatedAtMillis(b) - getCreatedAtMillis(a))
     .slice(0, MAX_PRODUCTS);
 
