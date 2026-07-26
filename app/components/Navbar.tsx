@@ -28,130 +28,6 @@ const BRAND = {
   textMuted: "color-mix(in srgb, var(--primaryForeground) 80%, transparent)",
 };
 
-// ─────────────────────────────────────────────
-// Acordeón de categorías para el drawer móvil
-// ─────────────────────────────────────────────
-function MobileCategoriesAccordion({ basePath }: { basePath: string }) {
-  const [categorias, setCategorias] = React.useState<any[]>([]);
-  const [openCat, setOpenCat] = React.useState<string | null>(null);
-  const [openSub, setOpenSub] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    const unsub = onSnapshot(collection(db, "categorias"), (snap) => {
-      setCategorias(sortCategoriasByOrder(mapCategorySnapshot(snap.docs)));
-    });
-    return () => unsub();
-  }, []);
-
-  return (
-    <div className="flex flex-col gap-1 my-3">
-      <p className="text-xs font-semibold uppercase tracking-wider px-2 mb-1"
-        style={{ color: "rgba(255,255,255,0.55)" }}>
-        Categorías
-      </p>
-      {categorias.map((cat) => (
-        <div key={cat.id}>
-          <button
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-colors"
-            style={{ color: "#ffffff" }}
-            onClick={() =>
-              setOpenCat(openCat === cat.id ? null : cat.id)
-            }
-          >
-            <span className="flex items-center gap-2">
-              {cat.icono && (
-                <span className="material-icons-round text-base"
-                  style={{ color: BRAND.gold }}>
-                  {cat.icono}
-                </span>
-              )}
-              {cat.nombre}
-            </span>
-            {cat.subcategorias?.length > 0 && (
-              <span
-                className="material-icons-round text-sm transition-transform duration-200"
-                style={{
-                  color: "#ffffff",
-                  transform: openCat === cat.id ? "rotate(180deg)" : "rotate(0deg)",
-                }}
-              >
-                arrow_drop_down
-              </span>
-            )}
-          </button>
-
-          {cat.subcategorias?.length > 0 && openCat === cat.id && (
-            <div className="ml-4 mb-1 rounded-xl overflow-hidden border"
-              style={{ borderColor: BRAND.border }}>
-              {cat.subcategorias.map((sub: any) => (
-                <div key={sub.id}>
-                  {sub.subcategorias?.length > 0 ? (
-                    <>
-                      <button
-                        className="w-full flex items-center justify-between px-3 py-2 text-sm transition-shadow hover:shadow-sm rounded-md"
-                        style={{ color: "#ffffff" }}
-                        onClick={() =>
-                          setOpenSub(openSub === sub.id ? null : sub.id)
-                        }
-                      >
-                        <span>{sub.nombre}</span>
-                        <span
-                          className="material-icons-round text-sm transition-transform duration-200"
-                          style={{
-                            color: "#ffffff",
-                            transform:
-                              openSub === sub.id
-                                ? "rotate(180deg)"
-                                : "rotate(0deg)",
-                          }}
-                        >
-                          arrow_drop_down
-                        </span>
-                      </button>
-                      {openSub === sub.id && (
-                        <div className="ml-3 border-l"
-                          style={{ borderColor: BRAND.border }}>
-                          {sub.subcategorias.map((subsub: any) => (
-                            <a
-                              key={subsub.id}
-                              href={`${basePath}?cat=${cat.id}&sub=${sub.id}&subsub=${subsub.id}`}
-                              className="block px-4 py-2 text-xs transition-colors"
-                              style={{ color: "rgba(255,255,255,0.6)" }}
-                            >
-                              {subsub.nombre}
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <a
-                      href={`${basePath}?cat=${cat.id}&sub=${sub.id}`}
-                      className="block px-3 py-2 text-sm transition-shadow hover:shadow-sm rounded-md"
-                      style={{ color: "#ffffff" }}
-                    >
-                      {sub.nombre}
-                    </a>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {!cat.subcategorias?.length && openCat === cat.id && (
-            <a
-              href={`${basePath}?cat=${cat.id}`}
-              className="block px-3 py-2 text-sm"
-              style={{ color: "#ffffff" }}
-            >
-              {cat.nombre}
-            </a>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 // ─────────────────────────────────────────────
 // Navbar principal
@@ -749,7 +625,6 @@ export const Navbar = () => {
               ))}
  
               {/* Categorías en acordeón */}
-              <MobileCategoriesAccordion basePath={basePath} />
  
               <div className="border-t my-2" style={{ borderColor: BRAND.border }} />
  
