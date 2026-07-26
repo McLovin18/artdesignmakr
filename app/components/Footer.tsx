@@ -50,9 +50,13 @@ const Footer: React.FC = () => {
               <span className="text-xs text-[var(--textSecondary)]">
                 Guayaquil, Ecuador
               </span>
-              <p className="text-xs text-[var(--textSecondary)] mt-1 max-w-[220px]">
-                Ramos y arreglos florales para cada ocasión, entregados con cuidado en toda la ciudad.
-              </p>
+              <div className="text-xs text-[var(--textSecondary)] mt-1 max-w-[220px]">
+                <p className="font-semibold text-[var(--text)]">Somos:</p>
+                <p>Flor Imán</p>
+                <p>Girasoles Guayaquil</p>
+                <p>Rosas Guayaquil</p>
+                <p>Girasoles Guayaquil Dicentro</p>
+              </div>
             </div>
 
             {/* Columna 2: Redes sociales */}
