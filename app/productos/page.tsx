@@ -1,7 +1,7 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import ProductoCard from "../components/ProductoCard";
-import { useEffect, useState, useMemo, useCallback, useRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { Producto } from "../lib/productos-db";
 import { obtenerProductos } from "../lib/productos-db";
 import {
@@ -14,54 +14,34 @@ import {
 } from "../lib/categorias-db";
 import { collection, query, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
-
+ 
 export default function ProductosPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-
-  const categoriaFromUrl = (
+ 
+  const categoria = (
     searchParams?.get("cat") ||
     searchParams?.get("category") ||
     ""
   ).trim();
-  const subcategoriaFromUrl = (
+  const subcategoria = (
     searchParams?.get("subcat") ||
     searchParams?.get("subcategory") ||
     searchParams?.get("sub") ||
     ""
   ).trim();
-  const subsubcategoriaFromUrl = (
+  const subsubcategoria = (
     searchParams?.get("subsubcat") ||
     searchParams?.get("subsubcategory") ||
     searchParams?.get("subsub") ||
     ""
   ).trim();
-
-  const [filterCat, setFilterCat] = useState(categoriaFromUrl);
-  const [filterSub, setFilterSub] = useState(subcategoriaFromUrl);
-  const [filterSubsub, setFilterSubsub] = useState(subsubcategoriaFromUrl);
-
-  useEffect(() => {
-    setFilterCat(categoriaFromUrl);
-    setFilterSub(subcategoriaFromUrl);
-    setFilterSubsub(subsubcategoriaFromUrl);
-  }, [categoriaFromUrl, subcategoriaFromUrl, subsubcategoriaFromUrl]);
-
-  const categoria = filterCat;
-  const subcategoria = filterSub;
-  const subsubcategoria = filterSubsub;
-
+ 
   const [currentPage, setCurrentPage] = useState(1);
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [precioMin, setPrecioMin] = useState("");
-  const [precioMax, setPrecioMax] = useState("");
-  const [orden, setOrden] = useState("price-high");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [categorias, setCategorias] = useState<any[]>([]);
-  const categoriesScrollRef = useRef<HTMLDivElement>(null);
-
+ 
   useEffect(() => {
     const categoriasRef = collection(db, "categorias");
     const unsubscribe = onSnapshot(query(categoriasRef), (snapshot) => {
@@ -69,34 +49,14 @@ export default function ProductosPage() {
     });
     return () => unsubscribe();
   }, []);
-
-  const selectCategoria = useCallback(
-    (catId: string) => {
-      setFilterCat(catId);
-      setFilterSub("");
-      setFilterSubsub("");
-      const url = catId
-        ? `/productos?cat=${encodeURIComponent(catId)}`
-        : "/productos";
-      router.replace(url, { scroll: false });
-    },
-    [router]
-  );
-
-  const selectTodas = useCallback(() => {
-    setFilterCat("");
-    setFilterSub("");
-    setFilterSubsub("");
-    router.replace("/productos", { scroll: false });
-  }, [router]);
-
+ 
   useEffect(() => {
     async function fetchProductos() {
       setLoading(true);
       try {
         const all = await obtenerProductos();
         let prods = all;
-
+ 
         if (categoria && categorias.length > 0) {
           prods = prods.filter((p) =>
             productMatchesCategoria(p, categoria, categorias)
@@ -129,7 +89,7 @@ export default function ProductosPage() {
               String(p.categoria || "").trim().toLowerCase() === needle
           );
         }
-
+ 
         setProductos(prods);
       } catch (error) {
         console.error("Error cargando productos:", error);
@@ -138,15 +98,15 @@ export default function ProductosPage() {
         setLoading(false);
       }
     }
-
+ 
     fetchProductos();
   }, [categoria, subcategoria, subsubcategoria, categorias]);
-
+ 
   useEffect(() => {
     const loggedIn = Boolean(localStorage.getItem("token"));
     setIsAuthenticated(loggedIn);
   }, []);
-
+ 
   const productosFiltrados = useMemo(() => {
     return productos
       .filter((p: any) => {
@@ -155,7 +115,7 @@ export default function ProductosPage() {
         } else if (categoria && !sameCategoryId(p.categoria, categoria)) {
           return false;
         }
-
+ 
         if (subcategoria && categorias.length > 0) {
           if (
             !productMatchesSubcategoria(
@@ -170,7 +130,7 @@ export default function ProductosPage() {
         } else if (subcategoria && !sameCategoryId(p.subcategoria, subcategoria)) {
           return false;
         }
-
+ 
         if (subsubcategoria && categorias.length > 0) {
           if (
             !productMatchesSubsubcategoria(
@@ -189,49 +149,15 @@ export default function ProductosPage() {
         ) {
           return false;
         }
-
-        const texto = search.toLowerCase().trim();
-        const matchTexto =
-          !texto ||
-          (p.nombre?.toLowerCase() || "").includes(texto) ||
-          (p.descripcion?.toLowerCase() || "").includes(texto);
-
-        const base = Number(p.precio || 0);
-        const disc = Number(p.descuento || 0);
-        const finalPrice =
-          disc > 0 && disc < 100 ? base * (1 - disc / 100) : base;
-
-        const min = precioMin ? parseFloat(precioMin) : null;
-        const max = precioMax ? parseFloat(precioMax) : null;
-        const matchMin = min === null || finalPrice >= min;
-        const matchMax = max === null || finalPrice <= max;
-
-        return matchTexto && matchMin && matchMax;
+ 
+        return true;
       })
       .sort((a: any, b: any) => {
-        const fp = (p: any) => {
-          const base = Number(p.precio || 0);
-          const d = Number(p.descuento || 0);
-          return d > 0 && d < 100 ? base * (1 - d / 100) : base;
-        };
-
-        if (orden === "price-low") return fp(a) - fp(b);
-        if (orden === "price-high") return fp(b) - fp(a);
         if (a.createdAt && b.createdAt) return b.createdAt - a.createdAt;
         return 0;
       });
-  }, [
-    productos,
-    categoria,
-    subcategoria,
-    subsubcategoria,
-    categorias,
-    search,
-    precioMin,
-    precioMax,
-    orden,
-  ]);
-
+  }, [productos, categoria, subcategoria, subsubcategoria, categorias]);
+ 
   const getProductsPerPage = () => {
     if (typeof window !== "undefined") {
       if (window.innerWidth < 640) return 10;
@@ -242,7 +168,7 @@ export default function ProductosPage() {
     return 10;
   };
   const [productsPerPage, setProductsPerPage] = useState(getProductsPerPage());
-
+ 
   useEffect(() => {
     function handleResize() {
       setProductsPerPage(getProductsPerPage());
@@ -251,39 +177,21 @@ export default function ProductosPage() {
     handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
+ 
   const totalPages = Math.ceil(productosFiltrados.length / productsPerPage);
   const paginatedProducts = productosFiltrados.slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
   );
-
+ 
   useEffect(() => {
     setCurrentPage(1);
-  }, [productosFiltrados.length, categoria, subcategoria, subsubcategoria, search, precioMin, precioMax]);
-
-  const hasFilters = !!(search || precioMin || precioMax || orden !== "newest");
-
-  const clearFilters = useCallback(() => {
-    setSearch("");
-    setPrecioMin("");
-    setPrecioMax("");
-    setOrden("newest");
-  }, []);
-
-  const inputCls =
-    "px-3 py-2 rounded-xl border text-sm transition-all";
-  const inputStyle = {
-    borderColor: "var(--border)",
-    background: "var(--card)",
-    color: "var(--text)",
-    boxShadow: "none",
-  };
-
+  }, [productosFiltrados.length, categoria, subcategoria, subsubcategoria]);
+ 
   return (
     <div className="min-h-screen flex flex-col transition-colors" style={{ background: "var(--bg)", color: "var(--text)" }}>
       <main className="max-w-7xl mx-auto w-full px-3 sm:px-5 py-6 sm:py-15 flex-1">
-
+ 
         {loading ? (
   <div className="grid grid-cols-1 gap-2 lg:grid-cols-4">
     {Array.from({ length: 10 }).map((_, i) => (
@@ -303,7 +211,7 @@ export default function ProductosPage() {
           <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center">
               <span className="material-icons-round text-3xl text-slate-300 dark:text-white/20">
-                search_off
+                local_florist
               </span>
             </div>
             <div>
@@ -311,17 +219,9 @@ export default function ProductosPage() {
               <p className="text-sm text-slate-400 dark:text-white/30 mt-1 max-w-60">
                 {categoria
                   ? `No hay productos en "${categorias.find((c) => sameCategoryId(c.id, categoria))?.nombre || "esta categoría"}".`
-                  : "Prueba otros términos o ajusta los filtros de precio"}
+                  : "Por el momento no hay productos disponibles."}
               </p>
             </div>
-            {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="text-sm text-purple-500 dark:text-#e8c862 underline underline-offset-2"
-              >
-                Limpiar filtros
-              </button>
-            )}
           </div>
         ) : (
           <>
