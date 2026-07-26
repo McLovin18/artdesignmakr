@@ -171,7 +171,7 @@ export default function RootLayout({
         <StructuredData />
       </head>
 
-      <body className="relative">
+      <body className="relative overflow-x-hidden max-w-full">
         <ToastProvider>
           <OnboardingProvider>
             <LayoutContentClient>
