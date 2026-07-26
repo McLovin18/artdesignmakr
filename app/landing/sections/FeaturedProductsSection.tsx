@@ -23,7 +23,7 @@ export type FeaturedProductsSectionProps = {
   device?: "mobile" | "desktop";
 };
 
-const MAX_PRODUCTS = 6;
+const MAX_PRODUCTS = 40;
 
 // Esta sección solo muestra productos de la categoría "Ramos"
 const RAMOS_CATEGORY_ID = "1784988607164";
