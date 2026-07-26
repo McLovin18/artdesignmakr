@@ -14,7 +14,7 @@ export default function HomeLayout({ children }) {
   }, []);
   return (
     
-    <div className="flex">
+    <div className="flex overflow-x-auto">
 
       <Sidebar role={role} />
       <main className="flex-1">

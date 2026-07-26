@@ -171,14 +171,15 @@ export default function RootLayout({
         <StructuredData />
       </head>
 
-      <body className="relative overflow-x-hidden max-w-full">
-        <ToastProvider>
-          <OnboardingProvider>
-            <LayoutContentClient>
-              {children}
-            </LayoutContentClient>
-          </OnboardingProvider>
-        </ToastProvider>
+      <body className="relative">
+          <ToastProvider>
+            <OnboardingProvider>
+              <LayoutContentClient>
+                {children}
+              </LayoutContentClient>
+            </OnboardingProvider>
+          </ToastProvider>
+
       </body>
     </html>
   );

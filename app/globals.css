@@ -205,3 +205,14 @@ nav h6 {
   animation: loadingSteps 0.9s steps(4) infinite;
 }
 
+
+
+/* Evitar desbordamiento horizontal en móviles */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+
