@@ -10,7 +10,6 @@ import ProductoCard from "../../components/ProductoCard";
 import {
   mapCategorySnapshot,
   sortCategoriasByOrder,
-  sameCategoryId,
   productMatchesCategoria,
 } from "../../lib/categorias-db";
 import { collection, query, onSnapshot } from "firebase/firestore";
@@ -60,32 +59,31 @@ export default function FeaturedProductsSection({
   // Necesitamos el árbol de categorías para poder resolver correctamente
   // a qué categoría pertenece cada producto (igual que en /productos)
   const [categorias, setCategorias] = React.useState<any[]>([]);
+  const [categoriasLoaded, setCategoriasLoaded] = React.useState(false);
 
   React.useEffect(() => {
     const categoriasRef = collection(db, "categorias");
     const unsubscribe = onSnapshot(query(categoriasRef), (snapshot) => {
       setCategorias(sortCategoriasByOrder(mapCategorySnapshot(snapshot.docs)));
+      setCategoriasLoaded(true);
     });
     return () => unsubscribe();
   }, []);
 
   // Filtra productos válidos de la categoría Ramos, ordena por fecha de creación (más nuevo primero) y limita a 6
   const recentProducts = React.useMemo(() => {
+    if (!categoriasLoaded) return [];
     return products
       .filter((prod: any) => prod && prod.id)
-      .filter((prod: any) => {
-        if (categorias.length > 0) {
-          return productMatchesCategoria(prod, RAMOS_CATEGORY_ID, categorias);
-        }
-        // Fallback mientras cargan las categorías: comparación directa por id
-        return sameCategoryId(prod?.categoria, RAMOS_CATEGORY_ID);
-      })
+      .filter((prod: any) => productMatchesCategoria(prod, RAMOS_CATEGORY_ID, categorias))
       .sort((a: any, b: any) => getCreatedAtMillis(b) - getCreatedAtMillis(a))
       .slice(0, MAX_PRODUCTS);
-  }, [products, categorias]);
+  }, [products, categorias, categoriasLoaded]);
 
   // ── Return condicional DESPUÉS de todos los hooks ──
-  if (!recentProducts.length) return null;
+  // No renderizamos nada hasta tener las categorías cargadas,
+  // para no mostrar productos de otras categorías por un instante.
+  if (!categoriasLoaded || !recentProducts.length) return null;
 
   return (
     <section
