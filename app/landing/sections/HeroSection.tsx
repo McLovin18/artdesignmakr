@@ -367,10 +367,10 @@ React.useEffect(() => {
 const innerStyle: React.CSSProperties = {
   aspectRatio:
     screenType === "mobile"
-      ? "6 / 5"
+      ? "6 / 3"
       : screenType === "tablet"
-      ? "11 / 9"
-      : "2400 / 1000",
+      ? "11 / 4"
+      : "2400 / 550",
   overflow: "hidden",
 };
 

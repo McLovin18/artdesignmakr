@@ -5,7 +5,13 @@
  * Uso: node scripts/set-admin.js hectorcobea03@gmail.com
  */
 
-import 'dotenv/config';
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: "../.env.local",
+});
+
+
 import admin from 'firebase-admin';
 
 // Verificar que las variables de entorno existan

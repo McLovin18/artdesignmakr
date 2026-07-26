@@ -251,8 +251,7 @@ export const Navbar = () => {
 
   const links = [
     { href: "/", label: "Inicio" },
-    { href: "/productos", label: "Catálogo" },
-    { href: "/blogs", label: "Blogs" },
+    { href: "/productos", label: "Promociones" },
 
   ];
 
@@ -270,8 +269,7 @@ export const Navbar = () => {
     <>
 
       <nav
-        className="sticky top-0 z-40 border-b py-3 shadow-sm backdrop-blur-md"
-        style={{ background: BRAND.bg, borderColor: BRAND.border }}
+        className="sticky top-0 z-40 border-b py-3 shadow-sm backdrop-blur-md bg-black text-white"
       >
         {/* ── Header principal ── */}
         <div
@@ -300,17 +298,36 @@ export const Navbar = () => {
             </div>
           </div>
 
-          {/* Brand: absolutely centered horizontally */}
-          <div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 flex items-center pointer-events-none">
+          {/* Logo */}
+          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 flex items-center pointer-events-none">
             <a
               href={user ? "/admin" : "/"}
-              className="flex items-center gap-2 shrink-0 text-white pointer-events-auto"
+              className="pointer-events-auto flex flex-col items-center leading-none"
             >
+              {/* Primera línea */}
               <span
-                className="font-heading whitespace-nowrap text-xl sm:text-2xl"
-                style={{ letterSpacing: "0.12em", color: BRAND.white }}
+                className="whitespace-nowrap"
+                style={{
+                  fontFamily: "'Hagrid Text', serif",
+                  fontSize: "clamp(1.2rem, 2vw, 2rem)",
+                  color: "white",
+                  lineHeight: 1,
+                }}
               >
-                JULIANA <span style={{ color: BRAND.gold }}>BASICS</span>
+                central de florerías
+              </span>
+
+              {/* Segunda línea */}
+              <span
+                className="mt-0.5 tracking-[0.35em] uppercase"
+                style={{
+                  fontFamily: "'Open Sauce One', sans-serif",
+                  fontSize: "0.65rem",
+                  color: "white",
+                  letterSpacing: "0.28em",
+                }}
+              >
+                GUAYAQUIL ECUADOR
               </span>
             </a>
           </div>
@@ -626,7 +643,7 @@ export const Navbar = () => {
                 className="font-bold text-base"
                 style={{ color: BRAND.white, letterSpacing: "0.08em" }}
               >
-                EPYKA <span style={{ color: BRAND.gold }}>DREAMS</span>
+                Central de <span style={{ color: BRAND.gold }}>Florerias</span>
               </span>
               <button
                 onClick={() => setMobileOpen(false)}

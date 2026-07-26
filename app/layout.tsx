@@ -11,12 +11,16 @@ import { StructuredData } from "./components/StructuredData";
 import type { Metadata, Viewport } from "next";
 import { Source_Serif_4 } from "next/font/google";
 
-// ISR Global: Revalidar sitio cada 30 minutos
-// Optimiza regeneración de página principal y otros contenidos estáticos
+// ISR Global
 export const revalidate = 1800;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://julianabasics.com";
-const SITE_NAME = "Juliana Basics";
+// Cambiar cuando tengas el dominio
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://centraldeflorerias.com";
+
+const SITE_NAME = "Central de Florerías Guayaquil Ecuador";
+
 const sourceSerif4 = Source_Serif_4({
   subsets: ["latin"],
   weight: ["400"],
@@ -26,69 +30,80 @@ const sourceSerif4 = Source_Serif_4({
 
 export const metadata: Metadata = {
   title: {
-    default: "Juliana Basics - Moda & Outfits",
-    template: "%s | Juliana Basics",
+    default: "Central de Florerías Guayaquil Ecuador | Flores a domicilio",
+    template: "%s | Central de Florerías Guayaquil Ecuador",
   },
+
   description:
-    "Tienda de moda y outfits. Descubre las últimas tendencias en ropa y accesorios, con piezas pensadas para cada estilo. Envíos a todo Ecuador.",
+    "Compra flores y arreglos florales con entrega a domicilio en Guayaquil. Ramos de rosas, girasoles, flores para cumpleaños, aniversarios, nacimientos, condolencias y toda ocasión.",
+
   keywords: [
-    "moda",
-    "outfits",
-    "ropa",
-    "tienda de ropa Ecuador",
-    "tendencias moda",
-    "accesorios",
-    "estilo",
-    "Juliana Basics",
+    "florería Guayaquil",
+    "florerías en Guayaquil",
+    "flores a domicilio Guayaquil",
+    "envío de flores Guayaquil",
+    "arreglos florales Guayaquil",
+    "ramos de rosas",
+    "girasoles",
+    "coronas fúnebres Guayaquil",
+    "flores Ecuador",
+    "Central de Florerías Guayaquil Ecuador",
   ],
-  creator: "Juliana Basics",
+
+  creator: SITE_NAME,
+
+  publisher: SITE_NAME,
+
   metadataBase: new URL(SITE_URL),
+
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon-16x16.png",
     apple: "/apple-touch-icon.png",
   },
+
   manifest: "/site.webmanifest",
 
-  // Open Graph - Redes Sociales
   openGraph: {
     type: "website",
-    locale: "es_ES",
+    locale: "es_EC",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: "Juliana Basics - Moda & Outfits",
+
+    title: "Central de Florerías Guayaquil Ecuador",
+
     description:
-      "Descubre las últimas tendencias en ropa y accesorios. Piezas pensadas para cada estilo, con envíos a todo Ecuador.",
+      "Encuentra flores frescas y arreglos florales con entrega a domicilio en Guayaquil para toda ocasión.",
+
     images: [
       {
         url: `${SITE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: "Juliana Basics - Moda & Outfits",
-        type: "image/jpeg",
+        alt: "Central de Florerías Guayaquil Ecuador",
       },
     ],
   },
 
-  // Twitter Card
   twitter: {
     card: "summary_large_image",
-    title: "Juliana Basics - Moda & Outfits",
+
+    title: "Central de Florerías Guayaquil Ecuador",
+
     description:
-      "Descubre las últimas tendencias en ropa y accesorios. Envíos a todo Ecuador.",
+      "Flores frescas y arreglos florales con entrega a domicilio en Guayaquil.",
+
     images: [`${SITE_URL}/twitter-image.jpg`],
   },
 
-  // Canonícal URL
   alternates: {
     canonical: SITE_URL,
   },
 
-  // Robots
   robots: {
     index: true,
     follow: true,
-    nocache: false,
+
     googleBot: {
       index: true,
       follow: true,
@@ -98,20 +113,19 @@ export const metadata: Metadata = {
     },
   },
 
-  // Verificación
   verification: {
-    google: "tu-codigo-google-search-console", // Reemplazar con tu código
+    google: "", // colocar Search Console cuando el dominio exista
   },
 
-  // Apple
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: SITE_NAME,
   },
+
+  category: "Floristería",
 };
 
-// Viewport export - separate from metadata in Next.js 16
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -119,12 +133,20 @@ export const viewport: Viewport = {
   userScalable: true,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="es" className={sourceSerif4.variable}>
       <head>
-        {/* Google Analytics gtag.js - insertado justo después de <head> */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-K1Q0MYDSKF"></script>
+        {/* Google Analytics */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-K1Q0MYDSKF"
+        />
+
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -135,15 +157,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `,
           }}
         />
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
-        
+
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+          rel="stylesheet"
+        />
+
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+          rel="stylesheet"
+        />
+
         <StructuredData />
       </head>
+
       <body className="relative">
         <ToastProvider>
           <OnboardingProvider>
-            <LayoutContentClient>{children}</LayoutContentClient>
+            <LayoutContentClient>
+              {children}
+            </LayoutContentClient>
           </OnboardingProvider>
         </ToastProvider>
       </body>

@@ -148,7 +148,6 @@ const lastHeroIndex = useMemo(() => {
 
   return (
     <>
-      <WhatsAppFloatingButton />
       <main className="min-h-screen w-full" style={{ background: "var(--bg)", color: "var(--text)" }}>
         {loading ? (
         <div

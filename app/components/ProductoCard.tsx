@@ -144,9 +144,9 @@ const cardStyles = `
     transform: scale(1);
   }
 
-  /* ── barra info inferior — estilo imagen: negro total ── */
+  /* ── barra info inferior — tono oscuro degradado tipo carbón ── */
   .pc-info {
-    background: var(--primary);
+    background: radial-gradient(circle at 32% 38%, #262626 0%, #161616 45%, #0a0a0a 100%);
     color: var(--primaryForeground);
     padding: 10px 12px 12px;
     display: flex;
