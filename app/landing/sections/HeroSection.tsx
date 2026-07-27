@@ -370,7 +370,7 @@ const innerStyle: React.CSSProperties = {
       ? "6 / 3"
       : screenType === "tablet"
       ? "11 / 4"
-      : "2400 / 800",
+      : "2400 / 650",
   overflow: "hidden",
 };
 
