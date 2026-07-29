@@ -31,16 +31,17 @@
   --color-gold-muted-hover: #5c4c22; /* variante un poco más clara para hover/active sobre el navbar */
 
   /* --- Semántica --- */
-  --background: var(--color-black);
-  --foreground: var(--color-bone);
+/* --- Semántica --- */
+  --background: #ffffff;
+  --foreground: #000000;
 
-  --bg: var(--color-black);
-  --bgSecondary: var(--color-charcoal);
+  --bg: #ffffff;
+  --bgSecondary: #ffffff;
 
-  --text: var(--color-bone);
-  --textSecondary: var(--color-stone);
+  --text: #000000;
+  --textSecondary: #333333;
 
-  --border: var(--color-charcoal);
+  --border: #d1d5db;
 
   /* --- Colores de marca / acción --- */
   --primary: var(--color-gold);

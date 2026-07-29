@@ -18,14 +18,14 @@ import { productMatches } from "../lib/search-utils";
 // Paleta de marca — Tienda Virtual
 // ─────────────────────────────────────────────
 const BRAND = {
-  bg: "var(--primary)",
-  bgSoft: "var(--bgSecondary)",
-  gold: "var(--secondary)",
-  goldBright: "var(--secondaryHover)",
-  border: "var(--border)",
-  borderSoft: "color-mix(in srgb, var(--border) 70%, transparent)",
-  white: "var(--primaryForeground)",
-  textMuted: "color-mix(in srgb, var(--primaryForeground) 80%, transparent)",
+  bg: "#ffffff",
+  bgSoft: "#ffffff",
+  gold: "#000000",
+  goldBright: "#000000",
+  border: "#e5e7eb",
+  borderSoft: "#e5e7eb",
+  white: "#000000",
+  textMuted: "#555555",
 };
 
 
@@ -127,8 +127,7 @@ export const Navbar = () => {
 
   const links = [
     { href: "/", label: "Inicio" },
-    { href: "/productos", label: "Promociones" },
-    { href: "/adicionales", label: "Complementos" },
+    { href: "/productos", label: "Productos" },
 
 
   ];
@@ -147,75 +146,192 @@ export const Navbar = () => {
     <>
 
       <nav
-        className="sticky top-0 z-40 border-b py-3 shadow-sm backdrop-blur-md bg-black text-white"
+        className="sticky top-0 z-40 border-b py-3 shadow-sm backdrop-blur-md bg-white text-black"
       >
         {/* ── Header principal ── */}
         <div
           className="relative flex items-center justify-between gap-4 px-4 py-2 lg:px-6 lg:py-2"
           style={{ color: BRAND.white }}
         >
+          {/* ── Izquierda: menú móvil + logo (desktop) ── */}
           <div className="flex items-center gap-3 shrink-0">
             <button
-              className="lg:hidden p-2 rounded-xl transition-colors text-white hover:bg-white/10"
+              className="lg:hidden p-2 rounded-xl transition-colors "
               onClick={() => setMobileOpen(true)}
               aria-label="Abrir menú"
             >
               <span className="material-icons-round text-2xl">menu</span>
             </button>
 
-            <div className="hidden lg:flex items-center">
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="px-3 py-2 rounded-xl text-sm font-medium text-white transition-colors hover:bg-white/10 whitespace-nowrap text-body"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Logo */}
-          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 flex items-center pointer-events-none">
             <a
               href={user ? "/admin" : "/"}
-              className="pointer-events-auto flex flex-col items-center leading-none"
+              className="hidden lg:flex items-center leading-none"
             >
-              {/* Primera línea */}
               <span
                 className="whitespace-nowrap"
                 style={{
                   fontFamily: "'Hagrid Text', serif",
                   fontSize: "clamp(1.2rem, 2vw, 2rem)",
-                  color: "white",
+                  color: "black",
                   lineHeight: 1,
                 }}
               >
-                central de florerías
-              </span>
-
-              {/* Segunda línea */}
-              <span
-                className="mt-0.5 tracking-[0.35em] uppercase"
-                style={{
-                  fontFamily: "'Open Sauce One', sans-serif",
-                  fontSize: "0.65rem",
-                  color: "white",
-                  letterSpacing: "0.28em",
-                }}
-              >
-                GUAYAQUIL ECUADOR
+                Urban Concept
               </span>
             </a>
           </div>
 
+          {/* Logo centrado — solo en móvil/tablet */}
+          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 flex items-center pointer-events-none lg:hidden">
+            <a
+              href={user ? "/admin" : "/"}
+              className="pointer-events-auto flex flex-col items-center leading-none"
+            >
+              <span
+                className="whitespace-nowrap"
+                style={{
+                  fontFamily: "'Hagrid Text', serif",
+                  fontSize: "clamp(1.2rem, 2vw, 2rem)",
+                  color: "black",
+                  lineHeight: 1,
+                }}
+              >
+                Urban Concept
+              </span>
+            </a>
+          </div>
+
+          {/* ── Centro: Inicio + Categorías — solo desktop ── */}
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-1">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="px-3 py-2 rounded-xl text-sm font-medium text-black transition-colors hover:bg-gray-100 whitespace-nowrap text-body"
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {/* Categorías dinámicas */}
+            {categorias.map((cat) => (
+              <div
+                key={cat.id}
+                className="relative group shrink-0"
+                onMouseEnter={() => windowWidth !== null && windowWidth >= 1024 && setOpenCatId(cat.id)}
+                onMouseLeave={() => windowWidth !== null && windowWidth >= 1024 && setOpenCatId(null)}
+              >
+                {cat.subcategorias?.length > 0 ? (
+                  <button
+                    onClick={() => setOpenCatId(openCatId === cat.id ? null : cat.id)}
+                    className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-shadow rounded-xl hover:shadow-sm text-black"
+                  >
+                    {cat.icono && (
+                      <span className="material-icons-round" style={{ fontSize: 15, color: BRAND.gold }}>{cat.icono}</span>
+                    )}
+                    <span className="text-black">{cat.nombre}</span>
+                    <span
+                      className="material-icons-round text-black transition-transform duration-200"
+                      style={{ fontSize: 14, transform: openCatId === cat.id ? "rotate(180deg)" : "rotate(0deg)" }}
+                    >
+                      arrow_drop_down
+                    </span>
+                  </button>
+                ) : (
+                  <Link
+                    href={`${basePath}?cat=${cat.id}`}
+                    className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-shadow rounded-xl hover:shadow-sm text-black"
+                  >
+                    {cat.icono && (
+                      <span className="material-icons-round" style={{ fontSize: 15, color: BRAND.gold }}>{cat.icono}</span>
+                    )}
+                    <span className="text-black">{cat.nombre}</span>
+                  </Link>
+                )}
+
+                {/* Dropdown nivel 1 */}
+                {cat.subcategorias?.length > 0 && (
+                  <div
+                    className="absolute left-0 top-full min-w-52 rounded-2xl border hover:text-black shadow-xl py-1.5 z-50"
+                    style={{
+                      background: BRAND.bgSoft,
+                      borderColor: BRAND.border,
+                      opacity: openCatId === cat.id ? "1" : "0",
+                      pointerEvents: openCatId === cat.id ? "auto" : "none",
+                      transform: openCatId === cat.id ? "translateY(0)" : "translateY(-10px)",
+                      transition: "all 150ms",
+                    }}
+                  >
+                    {cat.subcategorias.map((sub: any) => (
+                      <div
+                        key={sub.id}
+                        className="relative group/sub"
+                        onMouseEnter={() => windowWidth !== null && windowWidth >= 1024 && setOpenSubId(sub.id)}
+                        onMouseLeave={() => windowWidth !== null && windowWidth >= 1024 && setOpenSubId(null)}
+                      >
+                        {sub.subcategorias?.length > 0 ? (
+                          <>
+                            <button
+                              onClick={() => setOpenSubId(openSubId === sub.id ? null : sub.id)}
+                              className="w-full flex items-center justify-between px-4 py-2.5 text-sm transition-shadow hover:shadow-sm rounded-md"
+                            >
+                              <span style={{ color: BRAND.white }} className="group-hover/sub:opacity-80 transition-opacity">{sub.nombre}</span>
+                              <span
+                                className="material-icons-round text-sm transition-transform duration-200"
+                                style={{ color: BRAND.gold, transform: openSubId === sub.id ? "rotate(90deg)" : "rotate(0deg)" }}
+                              >
+                                chevron_right
+                              </span>
+                            </button>
+
+                            {/* Dropdown nivel 2 — sibling del botón, no anidado dentro (evita <a> dentro de <button>) */}
+                            <div
+                              className="absolute left-full top-0 ml-1 min-w-44 rounded-2xl border shadow-xl py-1.5 z-60"
+                              style={{
+                                background: BRAND.bgSoft,
+                                borderColor: BRAND.border,
+                                opacity: openSubId === sub.id ? "1" : "0",
+                                pointerEvents: openSubId === sub.id ? "auto" : "none",
+                                transform: openSubId === sub.id ? "translateX(0)" : "translateX(-10px)",
+                                transition: "all 150ms",
+                              }}
+                            >
+                              {sub.subcategorias.map((subsub: any) => (
+                                <Link
+                                  key={subsub.id}
+                                  href={`${basePath}?cat=${cat.id}&sub=${sub.id}&subsub=${subsub.id}`}
+                                  className="block px-4 py-2.5 text-sm transition-colors"
+                                  style={{ color: BRAND.white }}
+                                >
+                                  <span className="hover:opacity-80">{subsub.nombre}</span>
+                                </Link>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <Link
+                            href={`${basePath}?cat=${cat.id}&sub=${sub.id}`}
+                            className="block px-4 py-2.5 text-sm transition-shadow hover:shadow-sm rounded-md"
+                            style={{ color: BRAND.white }}
+                          >
+                            <span className="group-hover/sub:opacity-80 transition-opacity">{sub.nombre}</span>
+                          </Link>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* ── Derecha: búsqueda, carrito, usuario (sin cambios) ── */}
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
             <div className="relative" ref={searchContainerRef}>
               {!searchOpen ? (
                 <button
                   type="button"
-                  className="flex items-center justify-center w-10 h-10 rounded-xl text-white transition-colors hover:bg-white/10"
+                  className="flex items-center justify-center w-10 h-10 rounded-xl transition-colors text-black hover:bg-gray-100"
                   onClick={() => setSearchOpen(true)}
                   aria-label="Buscar"
                 >
@@ -310,7 +426,7 @@ export const Navbar = () => {
             <div className="relative flex flex-col items-center">
               <a
                 href={user ? "/admin/cart" : "/cart"}
-                className="flex items-center justify-center px-1 rounded-xl transition-colors text-white hover:bg-white/10"
+                className="flex items-center justify-center px-1 rounded-xl transition-colors text-black hover:bg-gray-100"
                 aria-label="Carrito"
                 data-onboarding="carrito"
               >
@@ -342,7 +458,7 @@ export const Navbar = () => {
                       style={{ borderColor: BRAND.gold }}
                     />
                   ) : (
-                    <span className="material-icons-round text-3xl text-white">
+                    <span className="material-icons-round text-3xl text-black">
                       account_circle
                     </span>
                   )}
@@ -385,119 +501,6 @@ export const Navbar = () => {
               </div>
             ) : null}
           </div>
-        </div>
-
-        <div className="hidden items-center justify-center gap-1 px-6 border-t flex-wrap" style={{ borderColor: BRAND.border }}>
-          {/* Categorías dinámicas */}
-          {categorias.map((cat) => (
-            <div
-              key={cat.id}
-              className="relative group shrink-0"
-              onMouseEnter={() => windowWidth !== null && windowWidth >= 1024 && setOpenCatId(cat.id)}
-              onMouseLeave={() => windowWidth !== null && windowWidth >= 1024 && setOpenCatId(null)}
-            >
-              {cat.subcategorias?.length > 0 ? (
-                <button
-                  onClick={() => setOpenCatId(openCatId === cat.id ? null : cat.id)}
-                  className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-shadow rounded-xl hover:shadow-sm text-white"
-                >
-                  {cat.icono && (
-                    <span className="material-icons-round" style={{ fontSize: 15, color: BRAND.gold }}>{cat.icono}</span>
-                  )}
-                  <span className="text-white">{cat.nombre}</span>
-                  <span
-                    className="material-icons-round text-white transition-transform duration-200"
-                    style={{ fontSize: 14, transform: openCatId === cat.id ? "rotate(180deg)" : "rotate(0deg)" }}
-                  >
-                    arrow_drop_down
-                  </span>
-                </button>
-              ) : (
-                <Link
-                  href={`${basePath}?cat=${cat.id}`}
-                  className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-shadow rounded-xl hover:shadow-sm text-white"
-                >
-                  {cat.icono && (
-                    <span className="material-icons-round" style={{ fontSize: 15, color: BRAND.gold }}>{cat.icono}</span>
-                  )}
-                  <span className="text-white">{cat.nombre}</span>
-                </Link>
-              )}
-
-              {/* Dropdown nivel 1 */}
-              {cat.subcategorias?.length > 0 && (
-                <div
-                  className="absolute left-0 top-full min-w-52 rounded-2xl border hover:text-black shadow-xl py-1.5 z-50"
-                  style={{
-                    background: BRAND.bgSoft,
-                    borderColor: BRAND.border,
-                    opacity: openCatId === cat.id ? "1" : "0",
-                    pointerEvents: openCatId === cat.id ? "auto" : "none",
-                    transform: openCatId === cat.id ? "translateY(0)" : "translateY(-10px)",
-                    transition: "all 150ms",
-                  }}
-                >
-                  {cat.subcategorias.map((sub: any) => (
-                    <div
-                      key={sub.id}
-                      className="relative group/sub"
-                      onMouseEnter={() => windowWidth !== null && windowWidth >= 1024 && setOpenSubId(sub.id)}
-                      onMouseLeave={() => windowWidth !== null && windowWidth >= 1024 && setOpenSubId(null)}
-                    >
-                      {sub.subcategorias?.length > 0 ? (
-                        <>
-                          <button
-                            onClick={() => setOpenSubId(openSubId === sub.id ? null : sub.id)}
-                            className="w-full flex items-center justify-between px-4 py-2.5 text-sm transition-shadow hover:shadow-sm rounded-md"
-                          >
-                            <span style={{ color: BRAND.white }} className="group-hover/sub:opacity-80 transition-opacity">{sub.nombre}</span>
-                            <span
-                              className="material-icons-round text-sm transition-transform duration-200"
-                              style={{ color: BRAND.gold, transform: openSubId === sub.id ? "rotate(90deg)" : "rotate(0deg)" }}
-                            >
-                              chevron_right
-                            </span>
-                          </button>
-
-                          {/* Dropdown nivel 2 — sibling del botón, no anidado dentro (evita <a> dentro de <button>) */}
-                          <div
-                            className="absolute left-full top-0 ml-1 min-w-44 rounded-2xl border shadow-xl py-1.5 z-60"
-                            style={{
-                              background: BRAND.bgSoft,
-                              borderColor: BRAND.border,
-                              opacity: openSubId === sub.id ? "1" : "0",
-                              pointerEvents: openSubId === sub.id ? "auto" : "none",
-                              transform: openSubId === sub.id ? "translateX(0)" : "translateX(-10px)",
-                              transition: "all 150ms",
-                            }}
-                          >
-                            {sub.subcategorias.map((subsub: any) => (
-                              <Link
-                                key={subsub.id}
-                                href={`${basePath}?cat=${cat.id}&sub=${sub.id}&subsub=${subsub.id}`}
-                                className="block px-4 py-2.5 text-sm transition-colors"
-                                style={{ color: BRAND.white }}
-                              >
-                                <span className="hover:opacity-80">{subsub.nombre}</span>
-                              </Link>
-                            ))}
-                          </div>
-                        </>
-                      ) : (
-                        <Link
-                          href={`${basePath}?cat=${cat.id}&sub=${sub.id}`}
-                          className="block px-4 py-2.5 text-sm transition-shadow hover:shadow-sm rounded-md"
-                          style={{ color: BRAND.white }}
-                        >
-                          <span className="group-hover/sub:opacity-80 transition-opacity">{sub.nombre}</span>
-                        </Link>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
         </div>
       </nav>
  

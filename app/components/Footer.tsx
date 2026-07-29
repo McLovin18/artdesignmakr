@@ -26,12 +26,12 @@ const IconWhatsApp = () => (
 );
 
 const socialLinks = [
-  { href: "https://www.instagram.com/girasolesguayaquil", label: "Instagram", Icon: IconInstagram },
+  { href: "https://www.instagram.com/urbanconcept.ec/", label: "Instagram", Icon: IconInstagram },
 ];
 
 // 👉 Información del negocio
-const WHATSAPP_NUMBER = "593990912235"; // solo números, con código de país, sin '+' ni espacios
-const WHATSAPP_DISPLAY = "+593 99 091 2235"; // como se muestra al usuario
+const WHATSAPP_NUMBER = "593980502460"; // solo números, con código de país, sin '+' ni espacios
+const WHATSAPP_DISPLAY = "+593 98 050 2460"; // como se muestra al usuario
 
 const Footer: React.FC = () => {
   const pathname = usePathname();
@@ -41,7 +41,8 @@ const Footer: React.FC = () => {
 
   return (
     <>
-      <footer className="bg-black text-[var(--footerText)]">
+      <footer className="bg-white border-t border-gray-200 text-[var(--footerText)]">        <div className={styles.ftGlowLeft} />
+
         <div className={styles.ftGlowLeft} />
         <div className={styles.ftGlowRight} />
 
@@ -52,17 +53,12 @@ const Footer: React.FC = () => {
             {/* Columna 1: Información de la tienda */}
             <div className="flex flex-col items-center md:items-start text-center md:text-left gap-1">
               <span className="text-base font-bold tracking-wide text-[var(--text)]">
-                Central de Florerías
+                Urban Concept
               </span>
-              <span className="text-xs text-[var(--textSecondary)]">
-                Guayaquil, Ecuador
-              </span>
+
               <div className="text-xs text-[var(--textSecondary)] mt-1 max-w-[220px]">
-                <p className="font-semibold text-[var(--text)]">Somos:</p>
-                <p>Flor Imán</p>
-                <p>Girasoles Guayaquil</p>
-                <p>Rosas Guayaquil</p>
-                <p>Girasoles Guayaquil Dicentro</p>
+                <p>Decoración, mobiliario, artículos únicos y personalizados</p>
+                <p>Ubicados en Ibarra</p>
               </div>
             </div>
 
@@ -91,7 +87,7 @@ const Footer: React.FC = () => {
                 href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 text-xl text-[var(--textSecondary)] hover:text-white transition-colors"
+                className="flex items-center gap-2 text-xl text-[var(--textSecondary)] hover:text-black transition-colors"
                 onClick={() => trackLinkClick().catch(console.error)}
               >
                 <IconWhatsApp />
@@ -102,7 +98,7 @@ const Footer: React.FC = () => {
                 href="https://maps.app.goo.gl/pM31aNbc7gEhok5cA"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-start gap-2 text-xs text-[var(--textSecondary)] hover:text-white transition-colors text-center md:text-left leading-snug"
+                className="flex items-start gap-2 text-xs text-[var(--textSecondary)] hover:text-black transition-colors text-center md:text-left leading-snug"
                 onClick={() => trackLinkClick().catch(console.error)}
               >
                 <span className="mt-0.5 shrink-0">
@@ -145,6 +141,7 @@ const Footer: React.FC = () => {
         </div>
 
       </footer>
+      {showWhatsAppFloating && <WhatsAppFloatingButton />}
     </>
   );
 };

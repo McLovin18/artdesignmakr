@@ -14,12 +14,12 @@ import { Source_Serif_4 } from "next/font/google";
 // ISR Global
 export const revalidate = 1800;
 
-// Cambiar cuando tengas el dominio
+// Cambiar cuando tengas el dominio definitivo
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
-  "https://centraldeflorerias.com";
+  "https://urbanconcept.ec";
 
-const SITE_NAME = "Central de Florerías Guayaquil Ecuador";
+const SITE_NAME = "Urban Concept Gallery Ibarra Ecuador";
 
 const sourceSerif4 = Source_Serif_4({
   subsets: ["latin"],
@@ -30,24 +30,24 @@ const sourceSerif4 = Source_Serif_4({
 
 export const metadata: Metadata = {
   title: {
-    default: "Central de Florerías Guayaquil Ecuador | Flores a domicilio",
-    template: "%s | Central de Florerías Guayaquil Ecuador",
+    default: "Urban Concept Gallery | Mobiliario y Decoración en Ibarra",
+    template: "%s | Urban Concept Gallery",
   },
 
   description:
-    "Compra flores y arreglos florales con entrega a domicilio en Guayaquil. Ramos de rosas, girasoles, flores para cumpleaños, aniversarios, nacimientos, condolencias y toda ocasión.",
+    "Mobiliario, decoración y artículos únicos personalizados en Ibarra, Ecuador. Piezas exclusivas para transformar tu espacio con estilo urbano y contemporáneo.",
 
   keywords: [
-    "florería Guayaquil",
-    "florerías en Guayaquil",
-    "flores a domicilio Guayaquil",
-    "envío de flores Guayaquil",
-    "arreglos florales Guayaquil",
-    "ramos de rosas",
-    "girasoles",
-    "coronas fúnebres Guayaquil",
-    "flores Ecuador",
-    "Central de Florerías Guayaquil Ecuador",
+    "mobiliario Ibarra",
+    "decoración Ibarra",
+    "muebles Ibarra Ecuador",
+    "artículos personalizados Ibarra",
+    "decoración de interiores Ecuador",
+    "Urban Concept Gallery",
+    "muebles a medida Ecuador",
+    "decoración urbana",
+    "urban loft",
+    "mobiliario y decoración Ecuador",
   ],
 
   creator: SITE_NAME,
@@ -70,17 +70,17 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: SITE_NAME,
 
-    title: "Central de Florerías Guayaquil Ecuador",
+    title: "Urban Concept Gallery | Mobiliario y Decoración",
 
     description:
-      "Encuentra flores frescas y arreglos florales con entrega a domicilio en Guayaquil para toda ocasión.",
+      "Decoración, mobiliario y artículos únicos y personalizados. Ubicados en Ibarra, Ecuador.",
 
     images: [
       {
         url: `${SITE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: "Central de Florerías Guayaquil Ecuador",
+        alt: "Urban Concept Gallery",
       },
     ],
   },
@@ -88,10 +88,10 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Central de Florerías Guayaquil Ecuador",
+    title: "Urban Concept Gallery",
 
     description:
-      "Flores frescas y arreglos florales con entrega a domicilio en Guayaquil.",
+      "Decoración, mobiliario y artículos únicos y personalizados en Ibarra, Ecuador.",
 
     images: [`${SITE_URL}/twitter-image.jpg`],
   },
@@ -114,7 +114,7 @@ export const metadata: Metadata = {
   },
 
   verification: {
-    google: "", // colocar Search Console cuando el dominio exista
+    google: "", // colocar Search Console cuando el dominio esté activo
   },
 
   appleWebApp: {
@@ -123,7 +123,7 @@ export const metadata: Metadata = {
     title: SITE_NAME,
   },
 
-  category: "Floristería",
+  category: "Mobiliario y Decoración",
 };
 
 export const viewport: Viewport = {
