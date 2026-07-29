@@ -196,9 +196,9 @@ export default function CartPage() {
       </div>
       <a
         href="/products-by-category"
-        className="mt-2 inline-flex items-center gap-2 bg-[var(--card)] border border-[var(--border)] text-[var(--text)] hover:border-[var(--primary)] hover:shadow-md font-semibold px-6 py-2.5 rounded-xl transition-colors shadow"
+        className="mt-2 inline-flex items-center gap-2 text-white bg-[var(--card)] border border-[var(--border)] hover:border-[var(--primary)] hover:shadow-md font-semibold px-6 py-2.5 rounded-xl transition-colors shadow"
       >
-        <span className="material-icons-round text-base">storefront</span>
+        <span className="material-icons-round text-white text-base">storefront</span>
         Ver productos
       </a>
     </div>

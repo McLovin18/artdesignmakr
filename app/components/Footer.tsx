@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
 
   return (
     <>
-      <footer className="bg-white border-t border-gray-200 text-[var(--footerText)]">        <div className={styles.ftGlowLeft} />
+      <footer className="bg-[#c0b9a5] border-t text-[var(--footerText)]">        <div className={styles.ftGlowLeft} />
 
         <div className={styles.ftGlowLeft} />
         <div className={styles.ftGlowRight} />
@@ -94,22 +94,6 @@ const Footer: React.FC = () => {
                 <span>{WHATSAPP_DISPLAY}</span>
               </a>
 
-              <a 
-                href="https://maps.app.goo.gl/pM31aNbc7gEhok5cA"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-start gap-2 text-xs text-[var(--textSecondary)] hover:text-black transition-colors text-center md:text-left leading-snug"
-                onClick={() => trackLinkClick().catch(console.error)}
-              >
-                <span className="mt-0.5 shrink-0">
-                  <IconLocation />
-                </span>
-                <span>
-                  Guayaquil, Av. Juan Tanca Marengo y Av. Francisco de Orellana.
-                  <br />
-                  Centro Comercial DICENTRO Local #48
-                </span>
-              </a>
             </div>
             
           </div>

@@ -17,7 +17,7 @@
   --color-black: #0a0a0a;
   --color-fern: #3a5a40;
   --color-terracota: #8c4a3a;
-  --color-gold: #c9a227;
+  --color-gold: #c0b9a5;
   --color-bone: #ede7da;
   --color-stone: #9c9488;
   --color-charcoal: #1a1a1a;
@@ -58,10 +58,10 @@
   --muted: var(--color-charcoal);
   --mutedForeground: var(--color-stone);
 
-  --card: var(--color-charcoal);
+  --card: var(--color-white);
   --cardForeground: var(--color-bone);
 
-  --galleryImgBg: var(--color-charcoal);
+  --galleryImgBg: var(--color-white);
 
   /* --- Navbar / Footer (dorado oscurecido, no compite con el fondo negro) --- */
   --navbarBg: var(--color-gold-muted);
