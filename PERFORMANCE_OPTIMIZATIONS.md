@@ -1,3 +1,4 @@
+
 # 🚀 Optimizaciones de Rendimiento Implementadas - TecnoThings
 
 ## ✅ Resumen de Cambios Realizados

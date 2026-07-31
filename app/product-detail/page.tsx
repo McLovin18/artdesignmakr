@@ -786,11 +786,6 @@ export default function ProductDetailPage({ params }) {
           )}
         </div>
         {/* ── FIN TABS móvil ───────────────────────────────────── */}
-
-      {/* Productos relacionados */}
-      <div className="max-w-7xl mx-auto w-full px-1 sm:px-3 pb-10">
-        <RelatedProductsCarousel productos={relacionados} title="Productos relacionados" />
-      </div>
     </div>
   );
 }

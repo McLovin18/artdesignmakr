@@ -143,6 +143,21 @@ export default function HeroSection({
   const BASE_IMAGE_WIDTH = 2400;
   const BASE_IMAGE_HEIGHT = 1000;
   const BASE_ASPECT_RATIO = BASE_IMAGE_WIDTH / BASE_IMAGE_HEIGHT; // 2.4
+  const [screenType, setScreenType] = React.useState<"mobile" | "tablet" | "desktop">("desktop");
+
+  React.useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+
+      if (w < 640) setScreenType("mobile");
+      else if (w < 1024) setScreenType("tablet");
+      else setScreenType("desktop");
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   // ── Helper para convertir posiciones de píxeles a porcentajes
   // positionsSource: se puede pasar `current.fieldPositions` para priorizar posiciones por item
@@ -346,31 +361,13 @@ export default function HeroSection({
   };
 
 
-  const [screenType, setScreenType] = React.useState<"mobile" | "tablet" | "desktop">("desktop");
-
-
-
-React.useEffect(() => {
-  const update = () => {
-    const w = window.innerWidth;
-
-    if (w < 640) setScreenType("mobile");
-    else if (w < 1024) setScreenType("tablet");
-    else setScreenType("desktop");
-  };
-
-  update();
-  window.addEventListener("resize", update);
-  return () => window.removeEventListener("resize", update);
-}, []);
-
 const innerStyle: React.CSSProperties = {
   aspectRatio:
     screenType === "mobile"
       ? "6 / 3"
       : screenType === "tablet"
       ? "11 / 4"
-      : "2400 / 650",
+      : "2400 / 1100",
   overflow: "hidden",
 };
 

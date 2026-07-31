@@ -17,9 +17,9 @@ export const revalidate = 1800;
 // Cambiar cuando tengas el dominio definitivo
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
-  "https://urbanconcept.ec";
+  "https://artdesignmakr.com";
 
-const SITE_NAME = "Urban Concept Gallery Ibarra Ecuador";
+const SITE_NAME = "Art Design MAKR | Cuadros Pintados a Mano Quito Ecuador";
 
 const sourceSerif4 = Source_Serif_4({
   subsets: ["latin"],
@@ -30,24 +30,26 @@ const sourceSerif4 = Source_Serif_4({
 
 export const metadata: Metadata = {
   title: {
-    default: "Urban Concept Gallery | Mobiliario y Decoración en Ibarra",
-    template: "%s | Urban Concept Gallery",
+    default: "Art Design MAKR | Cuadros Pintados a Mano en Quito",
+    template: "%s | Art Design MAKR",
   },
 
   description:
-    "Mobiliario, decoración y artículos únicos personalizados en Ibarra, Ecuador. Piezas exclusivas para transformar tu espacio con estilo urbano y contemporáneo.",
+    "Cuadros 100% pintados a mano, personalizados en medida y diseño. Más de 15 años de trayectoria y experiencia en arte decorativo. Trabajamos bajo pedido con envío a todo el Ecuador desde Quito.",
 
   keywords: [
-    "mobiliario Ibarra",
-    "decoración Ibarra",
-    "muebles Ibarra Ecuador",
-    "artículos personalizados Ibarra",
-    "decoración de interiores Ecuador",
-    "Urban Concept Gallery",
-    "muebles a medida Ecuador",
-    "decoración urbana",
-    "urban loft",
-    "mobiliario y decoración Ecuador",
+    "cuadros pintados a mano",
+    "cuadros personalizados Ecuador",
+    "cuadros a medida Quito",
+    "arte decorativo Ecuador",
+    "pinturas al óleo Ecuador",
+    "cuadros grandes para sala",
+    "decoración con cuadros",
+    "arte para el hogar Quito",
+    "Art Design MAKR",
+    "cuadros abstractos Ecuador",
+    "murales pintados a mano",
+    "regalos de arte personalizados",
   ],
 
   creator: SITE_NAME,
@@ -70,17 +72,17 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: SITE_NAME,
 
-    title: "Urban Concept Gallery | Mobiliario y Decoración",
+    title: "Art Design MAKR | Cuadros Pintados a Mano",
 
     description:
-      "Decoración, mobiliario y artículos únicos y personalizados. Ubicados en Ibarra, Ecuador.",
+      "Cuadros 100% pintados a mano, con medidas y diseños personalizados. Trabajamos bajo pedido y hacemos envíos a todo el país desde Quito, Ecuador.",
 
     images: [
       {
         url: `${SITE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: "Urban Concept Gallery",
+        alt: "Art Design MAKR - Cuadros pintados a mano",
       },
     ],
   },
@@ -88,10 +90,10 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Urban Concept Gallery",
+    title: "Art Design MAKR",
 
     description:
-      "Decoración, mobiliario y artículos únicos y personalizados en Ibarra, Ecuador.",
+      "Cuadros 100% pintados a mano, personalizados en medida y diseño. Envíos a todo el Ecuador desde Quito.",
 
     images: [`${SITE_URL}/twitter-image.jpg`],
   },
@@ -123,7 +125,7 @@ export const metadata: Metadata = {
     title: SITE_NAME,
   },
 
-  category: "Mobiliario y Decoración",
+  category: "Arte y Decoración",
 };
 
 export const viewport: Viewport = {

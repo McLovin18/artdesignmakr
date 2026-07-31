@@ -26,12 +26,12 @@ const IconWhatsApp = () => (
 );
 
 const socialLinks = [
-  { href: "https://www.instagram.com/urbanconcept.ec/", label: "Instagram", Icon: IconInstagram },
+  { href: "https://www.instagram.com/art.design.makr/", label: "Instagram", Icon: IconInstagram },
 ];
 
 // 👉 Información del negocio
-const WHATSAPP_NUMBER = "593980502460"; // solo números, con código de país, sin '+' ni espacios
-const WHATSAPP_DISPLAY = "+593 98 050 2460"; // como se muestra al usuario
+const WHATSAPP_NUMBER = "593978803423"; // solo números, con código de país, sin '+' ni espacios
+const WHATSAPP_DISPLAY = "+593 97 880 3423"; // como se muestra al usuario
 
 const Footer: React.FC = () => {
   const pathname = usePathname();
@@ -53,12 +53,12 @@ const Footer: React.FC = () => {
             {/* Columna 1: Información de la tienda */}
             <div className="flex flex-col items-center md:items-start text-center md:text-left gap-1">
               <span className="text-base font-bold tracking-wide text-[var(--text)]">
-                Urban Concept
+                Art Design MAKR
               </span>
 
               <div className="text-xs text-[var(--textSecondary)] mt-1 max-w-[220px]">
-                <p>Decoración, mobiliario, artículos únicos y personalizados</p>
-                <p>Ubicados en Ibarra</p>
+                <p>Cuadros 100% pintados a mano, medida y diseño personalizados</p>
+                <p>Ubicados en Quito</p>
               </div>
             </div>
 
@@ -105,13 +105,14 @@ const Footer: React.FC = () => {
         {/* Copyright row */}
         <div className={styles.ftCopyRow}>
           <p className={styles.ftCopyText}>
-            © {new Date().getFullYear()} Central de Florerías. Todos los derechos reservados.
+            © {new Date().getFullYear()} Art Design MAKR. Todos los derechos reservados.
           </p>
           <div className={styles.ftCopyRight}>
             <div className={styles.ftBadge}>
               <div className={styles.ftBadgeDot} />
               Hecho en Ecuador
             </div>
+            
             <a
               href="https://www.instagram.com/hector.cobena/"
               target="_blank"

@@ -176,7 +176,7 @@ export const Navbar = () => {
                   lineHeight: 1,
                 }}
               >
-                Urban Concept
+                ART DESIGN MAKR
               </span>
             </a>
           </div>
@@ -196,7 +196,7 @@ export const Navbar = () => {
                   lineHeight: 1,
                 }}
               >
-                Urban Concept
+                Art Design Makr
               </span>
             </a>
           </div>
@@ -434,7 +434,7 @@ export const Navbar = () => {
                 {carrito && carrito.length > 0 && (
                   <span
                     className="absolute -top-2 -right-2 text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 z-10"
-                    style={{ background: BRAND.gold, color: "#0d0d0d", borderColor: BRAND.bg }}
+                    style={{ background: "red", color: "white", borderColor: BRAND.bg }}
                   >
                     {carrito.length}
                   </span>

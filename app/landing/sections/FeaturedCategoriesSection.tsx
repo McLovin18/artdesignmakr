@@ -55,12 +55,11 @@ export default function FeaturedCategoriesSection({
   return (
     <section
       style={{
-        ...(bg ? { backgroundColor: bg } : {}),
         ...(color ? { color } : {}),
         paddingTop,
         paddingBottom,
       }}
-      className="px-4 lg:px-6 m-0"
+      className="px-4 lg:px-6 m-0 bg-black"
     >
       <div className="max-w-6xl mx-auto text-[var(--text)] relative">
         {title && (

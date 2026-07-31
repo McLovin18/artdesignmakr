@@ -7,13 +7,7 @@ import type {
   LandingFieldStyle,
 } from "../../lib/landing-types";
 import ProductoCard from "../../components/ProductoCard";
-import {
-  mapCategorySnapshot,
-  sortCategoriasByOrder,
-  productMatchesCategoria,
-} from "../../lib/categorias-db";
-import { collection, query, onSnapshot } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+
 
 export type FeaturedProductsSectionProps = {
   title?: string;
@@ -23,10 +17,8 @@ export type FeaturedProductsSectionProps = {
   device?: "mobile" | "desktop";
 };
 
-const MAX_PRODUCTS = 40;
+const MAX_PRODUCTS = 8;
 
-// Esta sección solo muestra productos de la categoría "Ramos"
-const RAMOS_CATEGORY_ID = "1784988607164";
 
 // Extrae la fecha de creación de un producto en milisegundos,
 // soportando Firestore Timestamp, Date, string ISO o number.
@@ -57,33 +49,20 @@ export default function FeaturedProductsSection({
   const paddingBottom = styles?.paddingBottom || (typeof window !== "undefined" && window.innerWidth < 768 ? "0.5rem" : "0.5rem");
 
   // Necesitamos el árbol de categorías para poder resolver correctamente
-  // a qué categoría pertenece cada producto (igual que en /productos)
-  const [categorias, setCategorias] = React.useState<any[]>([]);
-  const [categoriasLoaded, setCategoriasLoaded] = React.useState(false);
 
-  React.useEffect(() => {
-    const categoriasRef = collection(db, "categorias");
-    const unsubscribe = onSnapshot(query(categoriasRef), (snapshot) => {
-      setCategorias(sortCategoriasByOrder(mapCategorySnapshot(snapshot.docs)));
-      setCategoriasLoaded(true);
-    });
-    return () => unsubscribe();
-  }, []);
 
   // Filtra productos válidos de la categoría Ramos, ordena por fecha de creación (más nuevo primero) y limita a 6
-  const recentProducts = React.useMemo(() => {
-    if (!categoriasLoaded) return [];
-    return products
-      .filter((prod: any) => prod && prod.id)
-      .filter((prod: any) => productMatchesCategoria(prod, RAMOS_CATEGORY_ID, categorias))
-      .sort((a: any, b: any) => getCreatedAtMillis(b) - getCreatedAtMillis(a))
-      .slice(0, MAX_PRODUCTS);
-  }, [products, categorias, categoriasLoaded]);
+ const recentProducts = React.useMemo(() => {
+  return products
+    .filter((prod: any) => prod && prod.id)
+    .sort((a: any, b: any) => getCreatedAtMillis(b) - getCreatedAtMillis(a))
+    .slice(0, MAX_PRODUCTS);
+}, [products]);
 
   // ── Return condicional DESPUÉS de todos los hooks ──
   // No renderizamos nada hasta tener las categorías cargadas,
   // para no mostrar productos de otras categorías por un instante.
-  if (!categoriasLoaded || !recentProducts.length) return null;
+  if (!recentProducts.length) return null;
 
   return (
     <section

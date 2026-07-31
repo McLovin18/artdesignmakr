@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useUser } from "../context/UserContext";
 import { useRouter } from "next/navigation";
 import { useTracking } from "../lib/useAnalytics";
-import { useToast } from "../context/ToastContext";
 import { getCatalogPricing } from "../lib/pricing";
 
 const cardStyles = `
@@ -32,7 +31,7 @@ const cardStyles = `
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background: var(--card);
+    background: #ffffff;
     overflow: hidden;
     cursor: pointer;
     border: 1px solid var(--border);
@@ -48,8 +47,7 @@ const cardStyles = `
   .pc-img-wrap {
     position: relative;
     width: 100%;
-    /* aspect-ratio cuadrado en mobile, más alto en desktop */
-    aspect-ratio: 1 / 1.05;
+    aspect-ratio: 4 / 3;
     background: var(--galleryImgBg);
     overflow: hidden;
     flex-shrink: 0;
@@ -62,9 +60,8 @@ const cardStyles = `
   }
 
   .pc-img-wrap img {
-    object-fit: contain !important;
-    padding: 8% !important;
-    transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94) !important;
+    object-fit: cover !important;
+    padding: 0 !important;
   }
 
   .pc-card:hover .pc-img-wrap img {
@@ -144,10 +141,8 @@ const cardStyles = `
     transform: scale(1);
   }
 
-  /* ── barra info inferior — tono oscuro degradado tipo carbón ── */
+  /* ── info (ya sin contenedor/fondo, va directo sobre blanco) ── */
   .pc-info {
-    background: radial-gradient(circle at 32% 38%, #262626 0%, #161616 45%, #0a0a0a 100%);
-    color: var(--primaryForeground);
     padding: 10px 12px 12px;
     display: flex;
     flex-direction: column;
@@ -161,16 +156,16 @@ const cardStyles = `
     }
   }
 
-  /* nombre — cursiva serif como en la imagen */
+  /* nombre */
   .pc-name {
-
-    color: #ffffff;
-
+    color: #000000;
+    transition: color 0.25s ease;
+    font-size: 20px;
+    font-weight: 700;
   }
 
   @media (min-width: 640px) {
     .pc-name {
-      font-size: 15px;
     }
   }
 
@@ -187,8 +182,9 @@ const cardStyles = `
     font-family: 'Barlow', sans-serif;
     font-weight: 700;
     font-size: 13px;
-    color: #ffffff;
+    color: #000000;
     letter-spacing: 0.02em;
+    transition: color 0.25s ease;
   }
 
   @media (min-width: 640px) {
@@ -201,8 +197,9 @@ const cardStyles = `
     font-family: 'Barlow', sans-serif;
     font-weight: 400;
     font-size: 11px;
-    color: rgba(255,255,255,0.35);
+    color: rgba(0,0,0,0.4);
     text-decoration: line-through;
+    transition: color 0.25s ease;
   }
 
   .pc-price-currency {
@@ -211,112 +208,37 @@ const cardStyles = `
     opacity: 0.6;
   }
 
-  /* ── botones acción — mini row en fondo negro ── */
-  .pc-actions {
-    display: flex;
-    gap: 6px;
-    margin-top: 8px;
-  }
-
-  .pc-btn-cart {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    height: 30px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: transparent;
-    color: #fff;
-    font-family: 'Barlow', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-  }
-
-  .pc-btn-cart:hover:not(:disabled) {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.5);
-  }
-
-  .pc-btn-cart:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-
-  .pc-btn-cart.in-cart {
-    border-color: var(--secondary);
-    color: var(--secondary);
-  }
-
-  .pc-btn-eye {
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: transparent;
-    color: #fff;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-  }
-
-  .pc-btn-eye:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.5);
+  /* ── hover: todo el texto a rojo ── */
+  .pc-card:hover .pc-name,
+  .pc-card:hover .pc-price-final,
+  .pc-card:hover .pc-price-old {
+    color: #e11d1d;
   }
 `;
 
 function ProductoCard({
   producto,
   onClick,
-  showCart = false,
-  showEye = true,
-  onAddCart,
-  onEye,
   showFav = false,
   isCompact = true,
   index = 0,
 }: {
   producto?: any;
   onClick?: any;
-  showCart?: boolean;
-  showEye?: boolean;
-  onAddCart?: any;
-  onEye?: any;
   showFav?: boolean;
   index?: number;
   isCompact?: boolean;
 } = {}): JSX.Element | null {
   if (!producto || !producto.id) return null;
 
-  const {
-    isLogged,
-    isAdmin,
-    favoritos,
-    addFavorito,
-    removeFavorito,
-    carrito,
-    addCarrito,
-    removeCarrito,
-  } = useUser();
+  const { isLogged, isAdmin, favoritos, addFavorito, removeFavorito } = useUser();
   const router = useRouter();
   const { trackProductClick } = useTracking();
-  const { showToast } = useToast();
 
   const isFav = favoritos?.some((p) => p.id === producto.id);
-  const inCart = carrito?.some((p) => p.id === producto.id);
 
   const hasVariations =
     producto?.hasVariations || producto?.isCamiseta || false;
-  const variationAttributeIds = producto?.variationAttributeIds || [];
   const stockVariants = producto?.stockVariants || [];
 
   const totalStock = hasVariations
@@ -324,7 +246,7 @@ function ProductoCard({
     : producto?.stock || 0;
   const sinStock = totalStock === 0;
 
-  const { basePrice, discount, hasDiscount, fakeOldPrice, finalPrice } =
+  const { discount, hasDiscount, fakeOldPrice, finalPrice } =
     getCatalogPricing(producto);
 
   const getDetailUrl = () => {
@@ -353,43 +275,6 @@ function ProductoCard({
     e.preventDefault();
     e.stopPropagation();
     isFav ? removeFavorito(producto.id) : addFavorito(producto);
-  };
-
-  const handleCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (sinStock) return;
-
-    if (hasVariations && variationAttributeIds.length > 0) {
-      showToast("Selecciona las opciones en el detalle del producto", "info");
-      router.push(detailUrl);
-      return;
-    }
-
-    if (onAddCart) {
-      onAddCart({
-        ...producto,
-        precioBase: basePrice,
-        precioUnitario: finalPrice,
-        descuento: hasDiscount ? discount : 0,
-      });
-      showToast("Añadido al carrito", "success");
-      return;
-    }
-
-    if (inCart) {
-      removeCarrito(producto.id);
-      showToast("Eliminado del carrito", "info");
-    } else {
-      addCarrito({
-        ...producto,
-        cantidad: 1,
-        precioBase: basePrice,
-        precioUnitario: finalPrice,
-        descuento: hasDiscount ? discount : 0,
-      });
-      showToast(`${producto.nombre} añadido al carrito`, "success");
-    }
   };
 
   return (
@@ -437,7 +322,7 @@ function ProductoCard({
             )}
 
             {/* Favorito */}
-            {isLogged && (
+            {isLogged && showFav && (
               <button
                 onClick={handleFav}
                 className={`pc-fav${isFav ? " is-fav" : ""}`}
@@ -450,7 +335,7 @@ function ProductoCard({
             )}
           </div>
 
-          {/* ── INFO BARRA NEGRA ── */}
+          {/* ── INFO (ahora sin contenedor con fondo) ── */}
           <div className="pc-info">
             <p className="pc-name">{producto.nombre}</p>
 
@@ -465,48 +350,14 @@ function ProductoCard({
                 <span className="pc-price-currency">USD</span>
               </span>
             </div>
-
-            {(showCart || showEye) && (
-              <div className="pc-actions">
-                {showCart && (
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (!sinStock) handleCart(e);
-                    }}
-                    disabled={sinStock}
-                    className={`pc-btn-cart${inCart ? " in-cart" : ""}`}
-                  >
-                    <span className="material-icons-round" style={{ fontSize: 13 }}>
-                      {inCart ? "remove_shopping_cart" : "add_shopping_cart"}
-                    </span>
-                    {inCart ? "Quitar" : "Añadir"}
-                  </button>
-                )}
-                {showEye && (
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onEye ? onEye(producto) : goToDetail(e);
-                    }}
-                    className="pc-btn-eye"
-                    title="Ver detalle"
-                  >
-                    <span className="material-icons-round" style={{ fontSize: 15 }}>
-                      visibility
-                    </span>
-                  </button>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </Link>
     </>
   );
 }
+
+
 
 export default React.memo(ProductoCard, (prevProps, nextProps) => {
   return (
