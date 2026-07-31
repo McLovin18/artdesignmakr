@@ -13,21 +13,21 @@
      ============================================================ */
 
   /* --- Colores base de la paleta (para uso directo si se necesita) --- */
-  --color-black: #0a0a0a;
+  --color-black: black;
   --color-fern: #3a5a40;
-  --color-terracota: #8c4a3a;
-  --color-gold: #c0b9a5;
+  --color-terracota: #5e1919;
+  --color-gold: #5e1919;
   --color-bone: #ede7da;
-  --color-stone: #9c9488;
+  --color-stone: #5e1919;
   --color-charcoal: #1a1a1a;
 
   /* --- Variantes derivadas (hover / active) --- */
   --color-fern-dark: #2a4230;       /* fern oscurecido, hover en botones verdes */
-  --color-terracota-dark: #6f392c;  /* terracota oscurecido, hover en acentos florales */
-  --color-gold-dark: #a8871f;       /* gold oscurecido, hover en botones dorados */
+  --color-terracota-dark: #411010;  /* terracota oscurecido, hover en acentos florales */
+  --color-gold-dark: #852323;       /* gold oscurecido, hover en botones dorados */
   --color-bone-dark: #d9d0ba;       /* bone oscurecido, hover sobre superficies claras */
-  --color-gold-muted: #4a3d1a;      /* gold muy oscurecido/desaturado — fondo navbar/footer, no compite con el negro */
-  --color-gold-muted-hover: #5c4c22; /* variante un poco más clara para hover/active sobre el navbar */
+  --color-gold-muted: #560f0f;      /* gold muy oscurecido/desaturado — fondo navbar/footer, no compite con el negro */
+  --color-gold-muted-hover: #661111; /* variante un poco más clara para hover/active sobre el navbar */
 
   /* --- Semántica --- */
 /* --- Semántica --- */

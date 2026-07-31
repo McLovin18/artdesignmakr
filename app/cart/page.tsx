@@ -308,7 +308,7 @@ export default function CartPage() {
                         </div>
 
                         <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-                          <div className="flex items-center gap-1 bg-[var(--muted)] rounded-lg p-0.5">
+                          <div className="flex items-center gap-1 bg-white rounded-lg p-0.5">
                             <button
                               onClick={() => handleCantidad(itemKey, (p.cantidad || 1) - 1)}
                               className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-[var(--card)] transition-colors text-[var(--text)] font-bold text-base"
@@ -378,7 +378,7 @@ export default function CartPage() {
                   <div>
                     <button
                       onClick={handleGenerarOrden}
-                      className="w-full flex items-center justify-center gap-2 py-3.5 px-6 bg-[var(--primary)] hover:bg-[var(--primaryHover)] text-[var(--primaryForeground)] font-extrabold text-sm rounded-xl transition-colors shadow-md"
+                      className="w-full flex items-center justify-center gap-2 py-3.5 px-6 bg-[var(--primary)] hover:bg-[var(--primaryHover)] text-white font-extrabold text-sm rounded-xl transition-colors shadow-md"
                       title="Enviar pedido por WhatsApp"
                     >
                       <span className="material-icons-round text-base">chat</span>
