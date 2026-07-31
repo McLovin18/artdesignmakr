@@ -18,7 +18,7 @@ export function Loading3DIcon() {
 
       {/* Texto */}
       <p className="mt-5 text-sm text-[var(--textSecondary)] font-medium">
-        Cargando contenido de Urban Concept
+        Cargando contenido de Art Design Makr
       </p>
 
     </div>
