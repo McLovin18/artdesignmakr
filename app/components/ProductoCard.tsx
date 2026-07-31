@@ -74,7 +74,7 @@ const cardStyles = `
     top: 10px;
     left: 10px;
     z-index: 10;
-    background: var(--secondary);
+    background: red;
     color: var(--secondaryForeground);
     font-family: 'Barlow', sans-serif;
     font-size: 10px;
