@@ -443,7 +443,7 @@ export default function ProductsByCategoryPage() {
           </div>
         ) : (
           <>
-            <div className={`grid grid-cols-2 gap-2 lg:grid-cols-5 animate-in fade-in duration-700`}>
+            <div className={`grid grid-cols-3 gap-2 lg:grid-cols-5 animate-in fade-in duration-700`}>
               {paginatedProducts.map((p: any) => (
                 <ProductoCard
                   key={p.id}

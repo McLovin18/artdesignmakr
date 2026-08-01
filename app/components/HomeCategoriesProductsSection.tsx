@@ -47,14 +47,17 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
           Categorías
         </h2>
 
-        <div className="mt-6 flex items-start justify-center gap-6 overflow-x-auto pb-2 no-scrollbar">
+        <div
+          className="mt-6 w-full max-w-full flex items-start justify-start gap-4 overflow-x-auto overflow-y-hidden pb-2 pr-2 no-scrollbar"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
           <button
             type="button"
             onClick={() => setSelectedCatId("")}
-            className="flex flex-col items-center min-w-[88px] select-none"
+            className="flex flex-col items-center min-w-[84px] shrink-0 select-none"
           >
             <div
-              className={`w-20 h-20 rounded-full border-4 shadow-sm flex items-center justify-center ${
+              className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 shadow-sm flex items-center justify-center ${
                 !selectedCatId
                   ? "border-red-600 ring-2 ring-white/20"
                   : "border-white/20"
@@ -80,10 +83,10 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedCatId(cat.id)}
-                className="flex flex-col items-center min-w-[88px] select-none"
+                className="flex flex-col items-center min-w-[84px] shrink-0 select-none"
               >
                 <div
-                  className={`w-20 h-20 rounded-full border-4 shadow-sm overflow-hidden ${
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 shadow-sm overflow-hidden ${
                     selected
                       ? "border-red-600 ring-2 ring-white/20"
                       : "border-white/20"
@@ -121,7 +124,7 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
               No hay productos para esta categoría.
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 animate-in fade-in duration-700">
+            <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-2 animate-in fade-in duration-700">
               {shownProducts.map((p: any, index: number) => (
                 <ProductoCard key={p.id} producto={p} index={index} />
               ))}

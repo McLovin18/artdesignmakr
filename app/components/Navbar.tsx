@@ -334,7 +334,7 @@ return (
                 </button>
               ) : (
                 <form
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 w-[min(75vw,300px)] md:w-[min(92vw,420px)] rounded-2xl border shadow-2xl z-50 overflow-hidden text-body"
+                  className="absolute right-0 top-full mt-2 w-[min(75vw,300px)] md:w-[min(92vw,420px)] rounded-2xl border shadow-2xl z-50 overflow-hidden"
                   style={{ background: "#000000", borderColor: "rgba(255,255,255,0.15)" }}
                   onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
                 >
@@ -350,7 +350,7 @@ return (
                       type="text"
                       placeholder="Buscar un producto..."
                       className="bg-transparent outline-none text-sm flex-1 text-body"
-                      style={{ color: "#ffffff", minWidth: 140 }}
+                      style={{ color: "black", minWidth: 140 }}
                       autoComplete="off"
                       value={searchValue}
                       onChange={(e) => setSearchValue(e.target.value)}
@@ -552,7 +552,7 @@ return (
                   type="text"
                   placeholder="Buscar productos..."
                   className="bg-transparent outline-none text-sm flex-1"
-                  style={{ color: "#ffffff" }}
+                  style={{ color: "black" }}
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   autoComplete="off"
