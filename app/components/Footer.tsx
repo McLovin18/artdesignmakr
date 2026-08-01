@@ -41,7 +41,8 @@ const Footer: React.FC = () => {
 
   return (
     <>
-      <footer className="bg-[#c0b9a5] border-t text-[var(--footerText)]">        <div className={styles.ftGlowLeft} />
+      <footer className="bg-black border-t border-white/10 text-white">
+        <div className={styles.ftGlowLeft} />
 
         <div className={styles.ftGlowLeft} />
         <div className={styles.ftGlowRight} />
@@ -52,11 +53,11 @@ const Footer: React.FC = () => {
 
             {/* Columna 1: Información de la tienda */}
             <div className="flex flex-col items-center md:items-start text-center md:text-left gap-1">
-              <span className="text-base font-bold tracking-wide text-[var(--text)]">
+              <span className="text-base font-bold tracking-wide text-white">
                 Art Design MAKR
               </span>
 
-              <div className="text-xs text-[var(--textSecondary)] mt-1 max-w-[220px]">
+              <div className="text-xs text-white/60 mt-1 max-w-[220px]">
                 <p>Cuadros 100% pintados a mano, medida y diseño personalizados</p>
                 <p>Ubicados en Quito</p>
               </div>
@@ -69,7 +70,7 @@ const Footer: React.FC = () => {
                   <li key={label}>
                     <a
                       href={href}
-                      className={styles.ftSocialsLink}
+                      className="flex items-center justify-center w-9 h-9 rounded-full border border-white/15 text-white transition-colors hover:bg-red-600 hover:border-red-600"
                       target="_blank"
                       rel="noreferrer"
                       title={label}
@@ -87,7 +88,7 @@ const Footer: React.FC = () => {
                 href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 text-xl text-[var(--textSecondary)] hover:text-black transition-colors"
+                className="flex items-center gap-2 text-xl text-white/70 hover:text-red-500 transition-colors"
                 onClick={() => trackLinkClick().catch(console.error)}
               >
                 <IconWhatsApp />
@@ -100,16 +101,16 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Divider */}
-        <div className={styles.ftDivider} />
+        <div className="h-px bg-white/10" />
 
         {/* Copyright row */}
         <div className={styles.ftCopyRow}>
-          <p className={styles.ftCopyText}>
+          <p className="text-xs text-white/50">
             © {new Date().getFullYear()} Art Design MAKR. Todos los derechos reservados.
           </p>
           <div className={styles.ftCopyRight}>
-            <div className={styles.ftBadge}>
-              <div className={styles.ftBadgeDot} />
+            <div className="flex items-center gap-1.5 text-xs text-white/60">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-600" />
               Hecho en Ecuador
             </div>
             
@@ -117,7 +118,7 @@ const Footer: React.FC = () => {
               href="https://www.instagram.com/hector.cobena/"
               target="_blank"
               rel="noreferrer"
-              className={styles.ftDevLink}
+              className="text-xs text-white/50 hover:text-red-500 transition-colors"
               onClick={() => trackLinkClick().catch(console.error)}
             >
               Desarrollado por Héctor Cobeña

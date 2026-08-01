@@ -34,10 +34,10 @@
   --background: #ffffff;
   --foreground: #000000;
 
-  --bg: #ffffff;
+  --bg: black;
   --bgSecondary: #ffffff;
 
-  --text: #000000;
+  --text: #ffff;
   --textSecondary: #333333;
 
   --border: #d1d5db;

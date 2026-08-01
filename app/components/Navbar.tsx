@@ -18,14 +18,14 @@ import { productMatches } from "../lib/search-utils";
 // Paleta de marca — Tienda Virtual
 // ─────────────────────────────────────────────
 const BRAND = {
-  bg: "#ffffff",
-  bgSoft: "#ffffff",
-  gold: "#000000",
-  goldBright: "#000000",
-  border: "#e5e7eb",
-  borderSoft: "#e5e7eb",
-  white: "#000000",
-  textMuted: "#555555",
+  bg: "#000000",
+  bgSoft: "#0a0a0a",
+  gold: "#e11d1d",
+  goldBright: "#ff3b3b",
+  border: "rgba(255,255,255,0.1)",
+  borderSoft: "rgba(255,255,255,0.08)",
+  white: "#ffffff",
+  textMuted: "rgba(255,255,255,0.5)",
 };
 
 
@@ -142,11 +142,12 @@ export const Navbar = () => {
     setSuggestions([]);
   };
 
-  return (
+return (
     <>
 
       <nav
-        className="sticky top-0 z-40 border-b py-3 shadow-sm backdrop-blur-md bg-white text-black"
+        className="sticky top-0 z-40 border-b py-3 shadow-sm backdrop-blur-md bg-black text-white"
+        style={{ borderColor: BRAND.border }}
       >
         {/* ── Header principal ── */}
         <div
@@ -156,11 +157,11 @@ export const Navbar = () => {
           {/* ── Izquierda: menú móvil + logo (desktop) ── */}
           <div className="flex items-center gap-3 shrink-0">
             <button
-              className="lg:hidden p-2 rounded-xl transition-colors "
+              className="lg:hidden p-2 rounded-xl transition-colors hover:bg-white/10"
               onClick={() => setMobileOpen(true)}
               aria-label="Abrir menú"
             >
-              <span className="material-icons-round text-2xl">menu</span>
+              <span className="material-icons-round text-2xl text-white">menu</span>
             </button>
 
             <a
@@ -172,7 +173,7 @@ export const Navbar = () => {
                 style={{
                   fontFamily: "'Hagrid Text', serif",
                   fontSize: "clamp(1.2rem, 2vw, 2rem)",
-                  color: "black",
+                  color: "#ffffff",
                   lineHeight: 1,
                 }}
               >
@@ -183,7 +184,7 @@ export const Navbar = () => {
 
           {/* Logo centrado — solo en móvil/tablet */}
           <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 flex items-center pointer-events-none lg:hidden">
-            <a
+          <a
               href={user ? "/admin" : "/"}
               className="pointer-events-auto flex flex-col items-center leading-none"
             >
@@ -192,7 +193,7 @@ export const Navbar = () => {
                 style={{
                   fontFamily: "'Hagrid Text', serif",
                   fontSize: "clamp(1.2rem, 2vw, 2rem)",
-                  color: "black",
+                  color: "#ffffff",
                   lineHeight: 1,
                 }}
               >
@@ -207,7 +208,7 @@ export const Navbar = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-3 py-2 rounded-xl text-sm font-medium text-black transition-colors hover:bg-gray-100 whitespace-nowrap text-body"
+                className="px-3 py-2 rounded-xl text-sm font-medium text-white transition-colors hover:bg-white/10 whitespace-nowrap text-body"
               >
                 {link.label}
               </Link>
@@ -224,14 +225,14 @@ export const Navbar = () => {
                 {cat.subcategorias?.length > 0 ? (
                   <button
                     onClick={() => setOpenCatId(openCatId === cat.id ? null : cat.id)}
-                    className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-shadow rounded-xl hover:shadow-sm text-black"
+                    className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-colors rounded-xl hover:bg-white/10 text-white"
                   >
                     {cat.icono && (
                       <span className="material-icons-round" style={{ fontSize: 15, color: BRAND.gold }}>{cat.icono}</span>
                     )}
-                    <span className="text-black">{cat.nombre}</span>
+                    <span className="text-white">{cat.nombre}</span>
                     <span
-                      className="material-icons-round text-black transition-transform duration-200"
+                      className="material-icons-round text-white transition-transform duration-200"
                       style={{ fontSize: 14, transform: openCatId === cat.id ? "rotate(180deg)" : "rotate(0deg)" }}
                     >
                       arrow_drop_down
@@ -240,19 +241,19 @@ export const Navbar = () => {
                 ) : (
                   <Link
                     href={`${basePath}?cat=${cat.id}`}
-                    className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-shadow rounded-xl hover:shadow-sm text-black"
+                    className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-colors rounded-xl hover:bg-white/10 text-white"
                   >
                     {cat.icono && (
                       <span className="material-icons-round" style={{ fontSize: 15, color: BRAND.gold }}>{cat.icono}</span>
                     )}
-                    <span className="text-black">{cat.nombre}</span>
+                    <span className="text-white">{cat.nombre}</span>
                   </Link>
                 )}
 
                 {/* Dropdown nivel 1 */}
                 {cat.subcategorias?.length > 0 && (
                   <div
-                    className="absolute left-0 top-full min-w-52 rounded-2xl border hover:text-black shadow-xl py-1.5 z-50"
+                    className="absolute left-0 top-full min-w-52 rounded-2xl border shadow-xl py-1.5 z-50"
                     style={{
                       background: BRAND.bgSoft,
                       borderColor: BRAND.border,
@@ -273,7 +274,7 @@ export const Navbar = () => {
                           <>
                             <button
                               onClick={() => setOpenSubId(openSubId === sub.id ? null : sub.id)}
-                              className="w-full flex items-center justify-between px-4 py-2.5 text-sm transition-shadow hover:shadow-sm rounded-md"
+                              className="w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-white/10 rounded-md"
                             >
                               <span style={{ color: BRAND.white }} className="group-hover/sub:opacity-80 transition-opacity">{sub.nombre}</span>
                               <span
@@ -300,7 +301,7 @@ export const Navbar = () => {
                                 <Link
                                   key={subsub.id}
                                   href={`${basePath}?cat=${cat.id}&sub=${sub.id}&subsub=${subsub.id}`}
-                                  className="block px-4 py-2.5 text-sm transition-colors"
+                                  className="block px-4 py-2.5 text-sm transition-colors hover:bg-white/10"
                                   style={{ color: BRAND.white }}
                                 >
                                   <span className="hover:opacity-80">{subsub.nombre}</span>
@@ -311,7 +312,7 @@ export const Navbar = () => {
                         ) : (
                           <Link
                             href={`${basePath}?cat=${cat.id}&sub=${sub.id}`}
-                            className="block px-4 py-2.5 text-sm transition-shadow hover:shadow-sm rounded-md"
+                            className="block px-4 py-2.5 text-sm transition-colors hover:bg-white/10 rounded-md"
                             style={{ color: BRAND.white }}
                           >
                             <span className="group-hover/sub:opacity-80 transition-opacity">{sub.nombre}</span>
@@ -325,13 +326,13 @@ export const Navbar = () => {
             ))}
           </div>
 
-          {/* ── Derecha: búsqueda, carrito, usuario (sin cambios) ── */}
+          {/* ── Derecha: búsqueda, carrito, usuario ── */}
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
             <div className="relative" ref={searchContainerRef}>
               {!searchOpen ? (
                 <button
                   type="button"
-                  className="flex items-center justify-center w-10 h-10 rounded-xl transition-colors text-black hover:bg-gray-100"
+                  className="flex items-center justify-center w-10 h-10 rounded-xl transition-colors text-white hover:bg-white/10"
                   onClick={() => setSearchOpen(true)}
                   aria-label="Buscar"
                 >
@@ -340,14 +341,14 @@ export const Navbar = () => {
               ) : (
                 <form
                   className="absolute right-0 top-1/2 transform -translate-y-1/2 w-[min(75vw,300px)] md:w-[min(92vw,420px)] rounded-2xl border shadow-2xl z-50 overflow-hidden text-body"
-                  style={{ background: "#ffffff", borderColor: "rgba(17,24,39,0.12)" }}
+                  style={{ background: "#000000", borderColor: "rgba(255,255,255,0.15)" }}
                   onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
                 >
                   <div
                     className="flex items-center gap-2 px-3 py-2 border-b"
-                    style={{ background: "#f8fafc", borderColor: "rgba(17,24,39,0.08)" }}
+                    style={{ background: "#0a0a0a", borderColor: "rgba(255,255,255,0.08)" }}
                   >
-                    <span className="material-icons-round text-lg" style={{ color: "#64748b" }}>
+                    <span className="material-icons-round text-lg" style={{ color: "rgba(255,255,255,0.5)" }}>
                       search
                     </span>
                     <input
@@ -355,7 +356,7 @@ export const Navbar = () => {
                       type="text"
                       placeholder="Buscar un producto..."
                       className="bg-transparent outline-none text-sm flex-1 text-body"
-                      style={{ color: "#0f172a", minWidth: 140 }}
+                      style={{ color: "#ffffff", minWidth: 140 }}
                       autoComplete="off"
                       value={searchValue}
                       onChange={(e) => setSearchValue(e.target.value)}
@@ -367,8 +368,8 @@ export const Navbar = () => {
                         setSuggestions([]);
                         setSearchOpen(false);
                       }}
-                      className="rounded-full p-1 transition-colors"
-                      style={{ color: "#64748b" }}
+                      className="rounded-full p-1 transition-colors hover:bg-white/10"
+                      style={{ color: "rgba(255,255,255,0.5)" }}
                       aria-label="Cerrar búsqueda"
                     >
                       <span className="material-icons-round text-base">close</span>
@@ -378,7 +379,7 @@ export const Navbar = () => {
                   {searchValue.trim() && (
                     <div className="max-h-75 overflow-y-auto">
                       {searchLoading ? (
-                        <div className="p-4 text-center text-sm" style={{ color: "#64748b" }}>
+                        <div className="p-4 text-center text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
                           Buscando...
                         </div>
                       ) : suggestions.length > 0 ? (
@@ -389,8 +390,8 @@ export const Navbar = () => {
                             <a
                               key={prod.id}
                               href={href}
-                              className="flex items-center gap-3 px-4 py-2.5 transition-colors text-sm hover:bg-slate-50 text-body"
-                              style={{ color: "#0f172a" }}
+                              className="flex items-center gap-3 px-4 py-2.5 transition-colors text-sm hover:bg-white/5 text-body"
+                              style={{ color: "#ffffff" }}
                               onMouseDown={(e) => e.preventDefault()}
                               onClick={() => {
                                 setSearchOpen(false);
@@ -406,7 +407,7 @@ export const Navbar = () => {
                               )}
                               <span className="truncate flex-1">{prod.nombre}</span>
                               {prod.marca && (
-                                <span className="text-xs shrink-0" style={{ color: "#64748b" }}>
+                                <span className="text-xs shrink-0" style={{ color: "rgba(255,255,255,0.4)" }}>
                                   {prod.marca}
                                 </span>
                               )}
@@ -414,7 +415,7 @@ export const Navbar = () => {
                           );
                         })
                       ) : (
-                        <div className="p-4 text-center text-sm" style={{ color: "#64748b" }}>
+                        <div className="p-4 text-center text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>
                           Sin resultados
                         </div>
                       )}
@@ -424,9 +425,9 @@ export const Navbar = () => {
               )}
             </div>
             <div className="relative flex flex-col items-center">
-              <a
+            <a
                 href={user ? "/admin/cart" : "/cart"}
-                className="flex items-center justify-center px-1 rounded-xl transition-colors text-black hover:bg-gray-100"
+                className="flex items-center justify-center px-1 rounded-xl transition-colors text-white hover:bg-white/10"
                 aria-label="Carrito"
                 data-onboarding="carrito"
               >
@@ -434,7 +435,7 @@ export const Navbar = () => {
                 {carrito && carrito.length > 0 && (
                   <span
                     className="absolute -top-2 -right-2 text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 z-10"
-                    style={{ background: "red", color: "white", borderColor: BRAND.bg }}
+                    style={{ background: BRAND.gold, color: "white", borderColor: BRAND.bg }}
                   >
                     {carrito.length}
                   </span>
@@ -458,7 +459,7 @@ export const Navbar = () => {
                       style={{ borderColor: BRAND.gold }}
                     />
                   ) : (
-                    <span className="material-icons-round text-3xl text-black">
+                    <span className="material-icons-round text-3xl text-white">
                       account_circle
                     </span>
                   )}
@@ -467,25 +468,25 @@ export const Navbar = () => {
                 {userMenu && (
                   <div
                     className="absolute right-0 mt-2 w-48 rounded-2xl border shadow-xl overflow-hidden z-50"
-                    style={{ background: "#ffffff", borderColor: "rgba(17,24,39,0.12)" }}
+                    style={{ background: "#000000", borderColor: "rgba(255,255,255,0.15)" }}
                   >
-                    <a
+                  <a
                       href="/admin/perfil"
-                      className="flex items-center gap-2 px-4 py-3 text-sm transition-colors text-slate-900 hover:bg-slate-50 text-body"
+                      className="flex items-center gap-2 px-4 py-3 text-sm transition-colors text-white hover:bg-white/5 text-body"
                     >
                       <span className="material-icons-round text-base">person_outline</span>
                       Perfil
                     </a>
                     <a
                       href="/admin/config"
-                      className="flex items-center gap-2 px-4 py-3 text-sm transition-colors text-slate-900 hover:bg-slate-50 text-body"
+                      className="flex items-center gap-2 px-4 py-3 text-sm transition-colors text-white hover:bg-white/5 text-body"
                     >
                       <span className="material-icons-round text-base">tune</span>
                       Configuración
                     </a>
-                    <div className="border-t" style={{ borderColor: "rgba(17,24,39,0.12)" }} />
+                    <div className="border-t" style={{ borderColor: "rgba(255,255,255,0.15)" }} />
                     <button
-                      className="w-full flex items-center gap-2 px-4 py-3 text-sm text-left text-red-500 font-medium transition-colors hover:bg-slate-50 text-body"
+                      className="w-full flex items-center gap-2 px-4 py-3 text-sm text-left text-red-500 font-medium transition-colors hover:bg-white/5 text-body"
                       onClick={async () => {
                         const { logoutUser } = await import("../lib/firebase-auth");
                         await logoutUser();
@@ -503,11 +504,12 @@ export const Navbar = () => {
           </div>
         </div>
       </nav>
- 
+
       {/* ══════════════════ MOBILE DRAWER ══════════════════ */}
       {mobileOpen && (
+        <>
         <div
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm mb-12"
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm mb-12"
           onClick={() => setMobileOpen(false)}
         >
           <div
@@ -524,11 +526,11 @@ export const Navbar = () => {
                 className="font-bold text-base"
                 style={{ color: "#ffffff", letterSpacing: "0.08em" }}
               >
-                Central de <span style={{ color: BRAND.gold }}>Florerias</span>
+                Art Design <span style={{ color: BRAND.gold }}>Makr</span>
               </span>
               <button
                 onClick={() => setMobileOpen(false)}
-                className="p-1.5 rounded-xl transition-colors"
+                className="p-1.5 rounded-xl transition-colors hover:bg-white/10"
                 style={{ color: "#ffffff" }}
               >
                 <span className="material-icons-round text-xl">close</span>
@@ -539,7 +541,7 @@ export const Navbar = () => {
               {/* Búsqueda móvil */}
               <form
                 className="relative flex items-center gap-2 px-3 py-2 rounded-xl border mb-3"
-                style={{ background: "rgba(201, 162, 39, 0.08)", borderColor: BRAND.border }}
+                style={{ background: "rgba(225, 29, 29, 0.08)", borderColor: BRAND.border }}
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (searchValue.trim()) {
@@ -584,7 +586,7 @@ export const Navbar = () => {
                           <a
                             key={prod.id}
                             href={href}
-                            className="flex items-center gap-3 px-4 py-2.5 transition-colors text-sm"
+                            className="flex items-center gap-3 px-4 py-2.5 transition-colors text-sm hover:bg-white/5"
                             style={{ color: "#ffffff" }}
                             onMouseDown={(e) => e.preventDefault()}
                             onClick={() => {
@@ -616,20 +618,47 @@ export const Navbar = () => {
                   </div>
                 )}
               </form>
- 
-              {/* Links */}
+
               {links.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors"
-                  style={{ color: "#ffffff" }}
+              <a
+                key={link.href}
+                href={link.href}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors hover:bg-white/10"
+                style={{ color: "#ffffff" }}
+                onClick={() => setMobileOpen(false)}
+              >
+                {link.label}
+              </a>
+            ))}
+
+            {/* Categorías — solo clickeables, sin subcategorías */}
+            {categorias.length > 0 && (
+              <>
+                <div className="border-t my-2" style={{ borderColor: BRAND.border }} />
+                <span
+                  className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider"
+                  style={{ color: "rgba(255,255,255,0.45)" }}
                 >
-                  {link.label}
-                </a>
-              ))}
- 
-              {/* Categorías en acordeón */}
+                  Categorías
+                </span>
+                {categorias.map((cat) => (
+                <a
+                    key={cat.id}
+                    href={`${basePath}?cat=${cat.id}`}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors hover:bg-white/10"
+                    style={{ color: "#ffffff" }}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {cat.icono && (
+                      <span className="material-icons-round" style={{ fontSize: 16, color: BRAND.gold }}>
+                        {cat.icono}
+                      </span>
+                    )}
+                    {cat.nombre}
+                  </a>
+                ))}
+              </>
+            )}
  
               <div className="border-t my-2" style={{ borderColor: BRAND.border }} />
  
@@ -637,7 +666,7 @@ export const Navbar = () => {
                 <>
                   <a
                     href="/admin/perfil"
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors hover:bg-white/10"
                     style={{ color: "#ffffff" }}
                   >
                     <span className="material-icons-round text-base">person</span>
@@ -645,14 +674,14 @@ export const Navbar = () => {
                   </a>
                   <a
                     href="/admin/config"
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors hover:bg-white/10"
                     style={{ color: "#ffffff" }}
                   >
                     <span className="material-icons-round text-base">settings</span>
                     Configuración
                   </a>
                   <button
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-left text-red-500 font-medium transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-left text-red-500 font-medium transition-colors hover:bg-white/10"
                     onClick={async () => {
                       const { logoutUser } = await import("../lib/firebase-auth");
                       await logoutUser();
@@ -668,6 +697,7 @@ export const Navbar = () => {
             </div>
           </div>
         </div>
+        </>
       )}
     </>
   );

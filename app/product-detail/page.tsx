@@ -349,8 +349,8 @@ export default function ProductDetailPage({ params }) {
     setActiveTab((prev) => (prev === tab ? null : tab));
   };
 
-  return (
-    <div className="min-h-screen flex flex-col mt-2 bg-[var(--bg)] text-[var(--text)] transition-colors">
+return (
+    <div className="min-h-screen flex flex-col mt-2 bg-black text-white transition-colors">
       <BottomBarPublic/>
 
       <div className="max-w-5xl mx-auto w-full px-3 sm:px-6 py-6 sm:py-10">
@@ -360,9 +360,9 @@ export default function ProductDetailPage({ params }) {
           <div className={`w-full ${imageContainerWidthClass} flex flex-col gap-3`}>
 
             {/* Imagen principal */}
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-[var(--card)] border border-[var(--border)]">
+            <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#0a0a0a] border border-white/10">
               {hasDiscount && (
-                <span className="absolute top-3 left-3 z-10 bg-[var(--secondary)] text-[var(--secondaryForeground)] text-xs font-bold px-2 py-0.5 rounded-full">
+                <span className="absolute top-3 left-3 z-10 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   -{discount}%
                 </span>
               )}
@@ -374,17 +374,17 @@ export default function ProductDetailPage({ params }) {
               {producto.imagenes.length > 1 && imgIdx > 0 && (
                 <button
                   onClick={() => setImgIdx(imgIdx - 1)}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[var(--card)] border border-[var(--border)] shadow flex items-center justify-center hover:scale-105 transition-transform"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#141313] border border-white/15 shadow flex items-center justify-center hover:scale-105 hover:border-red-600 transition-all"
                 >
-                  <span className="material-icons-round text-slate-600 dark:text-white/70 text-lg">chevron_left</span>
+                  <span className="material-icons-round text-white/70 text-lg">chevron_left</span>
                 </button>
               )}
               {producto.imagenes.length > 1 && imgIdx < producto.imagenes.length - 1 && (
                 <button
                   onClick={() => setImgIdx(imgIdx + 1)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[var(--card)] border border-[var(--border)] shadow flex items-center justify-center hover:scale-105 transition-transform"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#141313] border border-white/15 shadow flex items-center justify-center hover:scale-105 hover:border-red-600 transition-all"
                 >
-                  <span className="material-icons-round text-slate-600 dark:text-white/70 text-lg">chevron_right</span>
+                  <span className="material-icons-round text-white/70 text-lg">chevron_right</span>
                 </button>
               )}
             </div>
@@ -396,9 +396,9 @@ export default function ProductDetailPage({ params }) {
                   <button
                     key={idx}
                     onClick={() => setImgIdx(idx)}
-                    className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all bg-[var(--bgSecondary)] ${
+                    className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all bg-[#0a0a0a] ${
                       imgIdx === idx
-                        ? "border-slate-400 dark:border-white/30 scale-105"
+                        ? "border-red-600 scale-105"
                         : "border-transparent opacity-50 hover:opacity-80"
                     }`}
                   >
@@ -411,14 +411,14 @@ export default function ProductDetailPage({ params }) {
             {/* ── TABS: Características / Reseñas — solo desktop ───── */}
             <div className="hidden md:flex mt-1 flex-col gap-0 py-18">
               {/* Botones tab */}
-              <div className="flex rounded-xl overflow-hidden border border-slate-200 dark:border-white/[0.08]">
+              <div className="flex rounded-xl overflow-hidden border border-white/10">
                 {hasCaracteristicas && (
                   <button
                     onClick={() => handleTabToggle("caracteristicas")}
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold transition-all ${
                       activeTab === "caracteristicas"
-                            ? "bg-[var(--primary)] text-[var(--primaryForeground)]"
-                            : "bg-[var(--card)] text-[var(--text)] hover:bg-[var(--bgSecondary)]"
+                            ? "bg-red-600 text-white"
+                            : "bg-[#0a0a0a] text-white hover:bg-white/5"
                     }`}
                   >
                     <span className="material-icons-round text-[16px]">list_alt</span>
@@ -428,11 +428,11 @@ export default function ProductDetailPage({ params }) {
                 <button
                   onClick={() => handleTabToggle("resenas")}
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold transition-all ${
-                    hasCaracteristicas ? "border-l border-slate-200 dark:border-white/[0.08]" : ""
+                    hasCaracteristicas ? "border-l border-white/10" : ""
                   } ${
                     activeTab === "resenas"
-                            ? "bg-[var(--primary)] text-[var(--primaryForeground)]"
-                            : "bg-[var(--card)] text-[var(--text)] hover:bg-[var(--bgSecondary)]"
+                            ? "bg-red-600 text-white"
+                            : "bg-[#0a0a0a] text-white hover:bg-white/5"
                   }`}
                 >
                   <span className="material-icons-round text-[16px]">star_outline</span>
@@ -441,7 +441,7 @@ export default function ProductDetailPage({ params }) {
                     <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
                       activeTab === "resenas"
                         ? "bg-white text-black"
-                        : "bg-slate-100 text-slate-600"
+                        : "bg-white/10 text-white"
                     }`}>
                       {reviews.length}
                     </span>
@@ -451,14 +451,14 @@ export default function ProductDetailPage({ params }) {
 
               {/* Panel de contenido del tab activo */}
               {activeTab && (
-                <div className="border border-t-0 border-[var(--border)] rounded-b-xl px-4 py-4 bg-[var(--bgSecondary)]">
+                <div className="border border-t-0 border-white/10 rounded-b-xl px-4 py-4 bg-[#0a0a0a]">
 
                   {/* Panel: Características */}
                   {activeTab === "caracteristicas" && hasCaracteristicas && (
                     <ul className="space-y-2">
                       {producto.caracteristicas.map((c, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5 text-sm text-black/80 dark:text-white/80">
-                          <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20 mt-2 flex-shrink-0" />
+                        <li key={idx} className="flex items-start gap-2.5 text-sm text-white/80">
+                          <span className="w-1 h-1 rounded-full bg-red-600 mt-2 flex-shrink-0" />
                           <Markdown>{c}</Markdown>
                         </li>
                       ))}
@@ -483,13 +483,13 @@ export default function ProductDetailPage({ params }) {
             {/* Nombre + SKU */}
             <div>
               <h1
-                className="text-2xl sm:text-3xl font-bold leading-tight text-slate-800 dark:text-white break-words max-w-full whitespace-pre-line"
+                className="text-2xl sm:text-3xl font-bold leading-tight text-white break-words max-w-full whitespace-pre-line"
                 style={{ wordBreak: "break-word", maxWidth: "100%" }}
                 title={producto.nombre}
               >
                 {producto.nombre}
               </h1>
-              <p className="text-xs text-slate-400 dark:text-white/20 mt-1.5">
+              <p className="text-xs text-white/30 mt-1.5">
                 SKU: {producto.sku || producto.id}
               </p>
             </div>
@@ -498,9 +498,9 @@ export default function ProductDetailPage({ params }) {
             {reviews.length > 0 && (
               <div className="flex items-center gap-1.5">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className={`text-base ${i < Math.round(avgRating) ? "text-yellow-400" : "text-slate-200 dark:text-white/10"}`}>★</span>
+                  <span key={i} className={`text-base ${i < Math.round(avgRating) ? "text-yellow-400" : "text-white/10"}`}>★</span>
                 ))}
-                <span className="text-xs text-slate-400 dark:text-white/25 ml-1">
+                <span className="text-xs text-white/40 ml-1">
                   {avgRating.toFixed(1)} ({reviews.length})
                 </span>
               </div>
@@ -508,31 +508,31 @@ export default function ProductDetailPage({ params }) {
 
             <div className="flex items-baseline gap-3 flex-wrap">
               {hasDiscount && (
-                <span className="text-sm text-slate-400 dark:text-white/20 line-through">
+                <span className="text-sm text-white/30 line-through">
                   ${fakeOldPrice?.toFixed(2)}
                 </span>
               )}
-              <span className="text-3xl font-extrabold text-slate-800 dark:text-white">
+              <span className="text-3xl font-extrabold text-white">
                 ${finalPrice.toFixed(2)}
               </span>
               {hasDiscount && (
-                <span className="text-xs font-semibold text-red-500 bg-red-50 dark:bg-red-400/10 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-semibold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full">
                   {discount}% OFF
                 </span>
               )}
             </div>
 
-            <div className="h-px bg-slate-100 dark:bg-white/[0.06]" />
+            <div className="h-px bg-white/10" />
 
             {/* Stock */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-400 dark:text-white/30 font-medium">Disponibilidad:</span>
+              <span className="text-xs text-white/40 font-medium">Disponibilidad:</span>
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                 hasVariations && variationAttributeIds.length > 0 && !variationAttributeIds.every(attrId => selectedVariations[attrId])
-                  ? "bg-blue-50 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400"
+                  ? "bg-red-500/10 text-red-400"
                   : maxCantidad > 0
-                  ? "bg-green-50 dark:bg-green-400/10 text-green-700 dark:text-green-400"
-                  : "bg-red-50 dark:bg-red-400/10 text-red-600 dark:text-red-400"
+                  ? "bg-green-500/10 text-green-400"
+                  : "bg-red-500/10 text-red-500"
               }`}>
                 {hasVariations && variationAttributeIds.length > 0 && !variationAttributeIds.every(attrId => selectedVariations[attrId])
                   ? "Selecciona opciones para ver stock"
@@ -565,18 +565,34 @@ export default function ProductDetailPage({ params }) {
               />
             )}
 
-            {/* Campos de personalización */}
+{/* Campos de personalización */}
             {(producto as any)?.personalizado && (producto as any)?.camposPersonalizacion && (producto as any).camposPersonalizacion.length > 0 && (
-              <div className="mt-6 rounded-xl border p-4" style={{ borderColor: "var(--border)", background: "var(--bgSecondary)" }}>
-                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: "#92400e" }}>
+              <div
+                className="mt-6 rounded-2xl p-4"
+                style={{
+                  background: "linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)",
+                  boxShadow: `
+                    0 0 0 3px #000000,
+                    0 0 0 6px rgba(255,255,255,0.22),
+                    inset 0 8px 30px rgba(255,255,255,0.08),
+                    inset 0 -20px 30px -10px rgba(0,0,0,0.5),
+                    0 16px 36px rgba(0,0,0,0.65),
+                    0 4px 10px rgba(0,0,0,0.5)
+                  `,
+                }}
+              >
+                <h3 className="text-sm font-bold mb-3 flex items-center gap-2 text-red-500">
                   <span className="material-icons-round text-base">auto_awesome</span>
                   Personalización
                 </h3>
                 <div className="space-y-3">
                   {(producto as any).camposPersonalizacion.map((campo: any) => (
                     <div key={campo.id}>
-                      <label className="block text-xs font-medium mb-1" style={{ color: "var(--text)" }}>
+                      <label className="block text-xs font-bold mb-1.5 text-white">
                         {campo.nombre}
+                        {campo.ejemplo && (
+                          <span className="text-white font-bold"> (Ej. {campo.ejemplo})</span>
+                        )}
                       </label>
                       {campo.tipo === "texto" ? (
                         <input
@@ -584,8 +600,7 @@ export default function ProductDetailPage({ params }) {
                           value={personalizacionValues[campo.id] || ""}
                           onChange={(e) => setPersonalizacionValues(prev => ({ ...prev, [campo.id]: e.target.value }))}
                           placeholder={`Ingresa ${campo.nombre.toLowerCase()}`}
-                          className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
-                          style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--text)" }}
+                          className="w-full rounded-xl border-none px-4 py-3.5 text-base outline-none focus:ring-2 focus:ring-red-600 bg-white text-black placeholder:text-black/45"
                         />
                       ) : campo.tipo === "numero" ? (
                         <input
@@ -593,16 +608,14 @@ export default function ProductDetailPage({ params }) {
                           value={personalizacionValues[campo.id] || ""}
                           onChange={(e) => setPersonalizacionValues(prev => ({ ...prev, [campo.id]: e.target.value }))}
                           placeholder={`Ingresa ${campo.nombre.toLowerCase()}`}
-                          className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
-                          style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--text)" }}
+                          className="w-full rounded-xl border-none px-4 py-3.5 text-base outline-none focus:ring-2 focus:ring-red-600 bg-white text-black placeholder:text-black/45"
                         />
                       ) : campo.tipo === "fecha" ? (
                         <input
                           type="date"
                           value={personalizacionValues[campo.id] || ""}
                           onChange={(e) => setPersonalizacionValues(prev => ({ ...prev, [campo.id]: e.target.value }))}
-                          className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
-                          style={{ borderColor: "var(--border)", background: "var(--background)", color: "var(--text)" }}
+                          className="w-full rounded-xl border-none px-4 py-3.5 text-base outline-none focus:ring-2 focus:ring-red-600 bg-white text-black"
                         />
                       ) : null}
                     </div>
@@ -611,21 +624,22 @@ export default function ProductDetailPage({ params }) {
               </div>
             )}
 
+
             {/* Cantidad */}
             {maxCantidad > 0 && (
               <div className="flex items-center gap-3">
-                <span className="text-xs text-slate-400 dark:text-white/30 font-medium">Cantidad:</span>
-                <div className="flex items-center bg-[var(--bgSecondary)] rounded-xl p-1 gap-1">
+                <span className="text-xs text-white/40 font-medium">Cantidad:</span>
+                <div className="flex items-center bg-[#0a0a0a] rounded-xl p-1 gap-1">
                   <button
                     onClick={() => setCantidad((v) => Math.max(1, v - 1))}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-white/60 hover:bg-white dark:hover:bg-white/10 font-bold text-lg transition-colors"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-white/60 hover:bg-white/10 font-bold text-lg transition-colors"
                   >−</button>
-                  <span className="w-9 text-center text-sm font-semibold text-slate-800 dark:text-white">
+                  <span className="w-9 text-center text-sm font-semibold text-white">
                     {cantidad}
                   </span>
                   <button
                     onClick={() => setCantidad((v) => Math.min(maxCantidad, v + 1))}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-white/60 hover:bg-white dark:hover:bg-white/10 font-bold text-lg transition-colors"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-white/60 hover:bg-white/10 font-bold text-lg transition-colors"
                   >+</button>
                 </div>
               </div>
@@ -638,10 +652,10 @@ export default function ProductDetailPage({ params }) {
                 disabled={maxCantidad === 0 || (hasVariations && variationAttributeIds.length > 0 && !variationAttributeIds.every(attrId => selectedVariations[attrId]))}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold border transition-all ${
                   maxCantidad === 0 || (hasVariations && variationAttributeIds.length > 0 && !variationAttributeIds.every(attrId => selectedVariations[attrId]))
-                    ? "bg-white text-slate-300 border-slate-200 cursor-not-allowed opacity-50 shadow-none"
+                    ? "bg-black text-white/20 border-white/10 cursor-not-allowed opacity-50 shadow-none"
                     : inCart
-                      ? "bg-[var(--card)] text-[var(--text)] border-[var(--primary)] hover:border-[var(--primaryHover)] hover:shadow-md"
-                      : "bg-[var(--card)] text-[var(--text)] border-[var(--border)] hover:border-[var(--primary)] hover:shadow-md"
+                      ? "bg-red-600 text-white border-red-600 hover:bg-red-700 hover:shadow-md"
+                      : "bg-red-600 text-white border-red-600 hover:bg-red-700 hover:shadow-md"
                 }`}
               >
                 <span className="material-icons-round text-[18px]">
@@ -655,8 +669,8 @@ export default function ProductDetailPage({ params }) {
                   onClick={handleFav}
                   className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${
                     isFav
-                      ? "bg-red-500 text-white shadow"
-                      : "bg-[var(--card)] border border-[var(--border)] text-[var(--text)] hover:border-[var(--primary)] hover:text-[var(--primary)] hover:shadow-sm"
+                      ? "bg-red-600 text-white shadow"
+                      : "bg-black border border-white/15 text-white hover:border-red-600 hover:text-red-500 hover:shadow-sm"
                   }`}
                   title={isFav ? "Quitar de favoritos" : "Agregar a favoritos"}
                 >
@@ -669,19 +683,19 @@ export default function ProductDetailPage({ params }) {
 
             {/* Descripción debajo de Añadir al carrito */}
             <div className="mt-6">
-              <h2 className="text-lg font-semibold mb-2 text-black dark:text-white">Descripción del producto</h2>
+              <h2 className="text-lg font-semibold mb-2 text-white">Descripción del producto</h2>
               {rawDescripcion.trim() ? (
                 descItems.length > 0 && (descItems.length > 1 || descItems[0].sub.length > 0 || descItems[0].text !== rawDescripcion.trim()) ? (
                   <ul className="space-y-2">
                     {descItems.map((item, idx) => (
-                      <li key={idx} className="flex gap-2 text-sm text-black/80 dark:text-white/80 leading-relaxed">
-                        <span className="text-slate-300 dark:text-white/20 flex-shrink-0 mt-0.5">›</span>
+                      <li key={idx} className="flex gap-2 text-sm text-white/80 leading-relaxed">
+                        <span className="text-red-600 flex-shrink-0 mt-0.5">›</span>
                         <span>
                           {item.text}
                           {item.sub.length > 0 && (
                             <ul className="mt-1 space-y-0.5 ml-3">
                               {item.sub.map((s, j) => (
-                                <li key={j} className="flex gap-1.5 text-slate-400 dark:text-white/35">
+                                <li key={j} className="flex gap-1.5 text-white/40">
                                   <span className="flex-shrink-0">–</span>{s}
                                 </li>
                               ))}
@@ -692,26 +706,26 @@ export default function ProductDetailPage({ params }) {
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-black/80 dark:text-white/80 leading-relaxed whitespace-pre-line">{rawDescripcion}</p>
+                  <p className="text-sm text-white/80 leading-relaxed whitespace-pre-line">{rawDescripcion}</p>
                 )
               ) : (
-                <p className="text-sm text-slate-400 dark:text-white/40">Sin descripción</p>
+                <p className="text-sm text-white/40">Sin descripción</p>
               )}
             </div>
 
             {/* Descripción */}
             {descItems.length > 0 && (
               <ul className="space-y-2">
-                <h1 className="text-black bg-text-white">Descripción:</h1>
+                <h1 className="text-white">Descripción:</h1>
                 {descItems.map((item, idx) => (
-                  <li key={idx} className="flex gap-2 text-sm text-black/80 dark:text-white/80 leading-relaxed">
-                    <span className="text-slate-300 dark:text-white/20 flex-shrink-0 mt-0.5">›</span>
+                  <li key={idx} className="flex gap-2 text-sm text-white/80 leading-relaxed">
+                    <span className="text-red-600 flex-shrink-0 mt-0.5">›</span>
                     <span>
                       {item.text}
                       {item.sub.length > 0 && (
                         <ul className="mt-1 space-y-0.5 ml-3">
                           {item.sub.map((s, j) => (
-                            <li key={j} className="flex gap-1.5 text-slate-400 dark:text-white/35">
+                            <li key={j} className="flex gap-1.5 text-white/40">
                               <span className="flex-shrink-0">–</span>{s}
                             </li>
                           ))}
@@ -729,14 +743,14 @@ export default function ProductDetailPage({ params }) {
 
         {/* ── TABS móvil: debajo de info, encima de relacionados ── */}
         <div className="md:hidden mt-4 flex flex-col gap-0">
-          <div className="flex rounded-xl overflow-hidden border border-slate-200 dark:border-white/[0.08]">
+          <div className="flex rounded-xl overflow-hidden border border-white/10">
             {hasCaracteristicas && (
               <button
                 onClick={() => handleTabToggle("caracteristicas")}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold transition-all ${
                   activeTab === "caracteristicas"
-                    ? "bg-black text-white"
-                    : "bg-white text-slate-600 hover:bg-slate-50"
+                    ? "bg-red-600 text-white"
+                    : "bg-black text-white/70 hover:bg-white/5"
                 }`}
               >
                 <span className="material-icons-round text-[16px]">list_alt</span>
@@ -746,11 +760,11 @@ export default function ProductDetailPage({ params }) {
             <button
               onClick={() => handleTabToggle("resenas")}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold transition-all ${
-                hasCaracteristicas ? "border-l border-slate-200 dark:border-white/[0.08]" : ""
+                hasCaracteristicas ? "border-l border-white/10" : ""
               } ${
                 activeTab === "resenas"
-                  ? "bg-black text-white"
-                  : "bg-white text-slate-600 hover:bg-slate-50"
+                  ? "bg-red-600 text-white"
+                  : "bg-black text-white/70 hover:bg-white/5"
               }`}
             >
               <span className="material-icons-round text-[16px]">star_outline</span>
@@ -759,7 +773,7 @@ export default function ProductDetailPage({ params }) {
                 <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
                   activeTab === "resenas"
                     ? "bg-white text-black"
-                    : "bg-slate-100 text-slate-600"
+                    : "bg-white/10 text-white"
                 }`}>
                   {reviews.length}
                 </span>
@@ -768,12 +782,12 @@ export default function ProductDetailPage({ params }) {
           </div>
 
           {activeTab && (
-            <div className="border border-t-0 border-slate-200 dark:border-white/[0.08] rounded-b-xl px-4 py-4 bg-slate-50 dark:bg-white/[0.02]">
+            <div className="border border-t-0 border-white/10 rounded-b-xl px-4 py-4 bg-[#0a0a0a]">
               {activeTab === "caracteristicas" && hasCaracteristicas && (
                 <ul className="space-y-2">
                   {producto.caracteristicas.map((c, idx) => (
-                    <li key={idx} className="flex items-start gap-2.5 text-sm text-black/80 dark:text-white/80">
-                      <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20 mt-2 flex-shrink-0" />
+                    <li key={idx} className="flex items-start gap-2.5 text-sm text-white/80">
+                      <span className="w-1 h-1 rounded-full bg-red-600 mt-2 flex-shrink-0" />
                       <Markdown>{c}</Markdown>
                     </li>
                   ))}
@@ -805,41 +819,41 @@ function ReviewsSection({
       {/* Resumen */}
       {reviews.length > 0 ? (
         <div className="flex items-center gap-3">
-          <span className="text-4xl font-extrabold text-slate-800 dark:text-white leading-none">
+          <span className="text-4xl font-extrabold text-white leading-none">
             {avgRating.toFixed(1)}
           </span>
           <div>
             <div className="flex gap-0.5 mb-0.5">
               {Array.from({ length: 5 }).map((_, i) => (
-                <span key={i} className={`text-lg ${i < Math.round(avgRating) ? "text-yellow-400" : "text-slate-200 dark:text-white/10"}`}>★</span>
+                <span key={i} className={`text-lg ${i < Math.round(avgRating) ? "text-yellow-400" : "text-white/10"}`}>★</span>
               ))}
             </div>
-            <p className="text-xs text-slate-400 dark:text-white/25">
+            <p className="text-xs text-white/40">
               {reviews.length} reseña{reviews.length !== 1 ? "s" : ""}
             </p>
           </div>
         </div>
       ) : (
-        <p className="text-sm text-black/80 dark:text-white/80">Sé el primero en dejar una reseña.</p>
+        <p className="text-sm text-white/80">Sé el primero en dejar una reseña.</p>
       )}
 
       {/* Lista de reseñas */}
       {reviews.length > 0 && (
         <ul className="space-y-4">
           {reviews.map((r: any) => (
-            <li key={r.id} className="pb-4 border-b border-slate-100 dark:border-white/[0.05]">
+            <li key={r.id} className="pb-4 border-b border-white/10">
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                <span className="text-sm font-semibold text-slate-700 dark:text-white/75">{r.userName}</span>
+                <span className="text-sm font-semibold text-white/90">{r.userName}</span>
                 <div className="flex gap-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <span key={i} className={`text-sm ${i < r.rating ? "text-yellow-400" : "text-slate-200 dark:text-white/10"}`}>★</span>
+                    <span key={i} className={`text-sm ${i < r.rating ? "text-yellow-400" : "text-white/10"}`}>★</span>
                   ))}
                 </div>
-                <span className="text-xs text-slate-300 dark:text-white/20 ml-auto">
+                <span className="text-xs text-white/30 ml-auto">
                   {new Date(r.createdAt).toLocaleDateString("es-EC", { day: "2-digit", month: "short", year: "numeric" })}
                 </span>
               </div>
-              <p className="text-sm text-slate-500 dark:text-white/45 leading-relaxed">{r.comment}</p>
+              <p className="text-sm text-white/60 leading-relaxed">{r.comment}</p>
             </li>
           ))}
         </ul>
@@ -847,48 +861,48 @@ function ReviewsSection({
 
       {/* Formulario */}
       <form onSubmit={handleSubmitReview} className="pt-2 space-y-4">
-        <p className="text-sm font-medium text-black/80 dark:text-white/80">Escribe una reseña</p>
+        <p className="text-sm font-medium text-white/80">Escribe una reseña</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-black/75 dark:text-white/80">Nombre</label>
+            <label className="text-xs text-white/75">Nombre</label>
             <input className={inputCls} placeholder="Tu nombre" value={reviewName}
               onChange={(e) => setReviewName(e.target.value)} required={!isLogged} />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-black/75 dark:text-white/80">Correo</label>
+            <label className="text-xs text-white/75">Correo</label>
             <input className={inputCls} placeholder="tu@correo.com" type="email" value={reviewEmail}
               onChange={(e) => setReviewEmail(e.target.value)} required={!isLogged} />
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-black/80 dark:text-white/80">Calificación</label>
+          <label className="text-xs text-white/80">Calificación</label>
           <div className="flex gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
               <span key={i} onClick={() => setReviewRating(i + 1)} role="button"
                 aria-label={`Calificación ${i + 1}`}
                 className={`text-2xl cursor-pointer transition-transform hover:scale-110 select-none ${
-                  i < reviewRating ? "text-yellow-400" : "text-slate-200 dark:text-white/10"
+                  i < reviewRating ? "text-yellow-400" : "text-white/10"
                 }`}>★</span>
             ))}
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-black/80 dark:text-white/80">Comentario</label>
+          <label className="text-xs text-white/80">Comentario</label>
           <textarea className={`${inputCls} resize-none`} rows={3}
             placeholder="Cuéntanos tu experiencia..." value={reviewText}
             onChange={(e) => setReviewText(e.target.value)} required />
         </div>
 
         {reviewError && (
-          <p className="text-xs text-red-500 dark:text-red-400">{reviewError}</p>
+          <p className="text-xs text-red-500">{reviewError}</p>
         )}
 
         <div className="flex items-center justify-between gap-4">
           <button type="submit" disabled={reviewLoading}
-            className="px-6 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm font-bold hover:border-black/60 hover:text-black hover:shadow-sm disabled:opacity-40 transition-all">
+            className="px-6 py-2.5 rounded-xl bg-red-600 border border-red-600 text-white text-sm font-bold hover:bg-red-700 hover:shadow-sm disabled:opacity-40 transition-all">
             {reviewLoading ? "Enviando..." : "Publicar reseña"}
           </button>
         </div>

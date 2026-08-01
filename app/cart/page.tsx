@@ -181,22 +181,22 @@ export default function CartPage() {
 
   const EmptyCart = () => (
     <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
-      <div className="w-20 h-20 rounded-full bg-[var(--muted)] flex items-center justify-center">
-        <span className="material-icons-round text-4xl text-[var(--mutedForeground)]">
+      <div className="w-20 h-20 rounded-full bg-[#0a0a0a] border border-white/10 flex items-center justify-center">
+        <span className="material-icons-round text-4xl text-white/40">
           shopping_bag
         </span>
       </div>
       <div>
-        <h3 className="text-lg font-semibold text-[var(--text)]">
+        <h3 className="text-lg font-semibold text-white">
           Tu carrito está vacío
         </h3>
-        <p className="text-sm text-[var(--textSecondary)] mt-1">
+        <p className="text-sm text-white/50 mt-1">
           Agrega productos para continuar
         </p>
       </div>
       <a
         href="/products-by-category"
-        className="mt-2 inline-flex items-center gap-2 text-white bg-[var(--card)] border border-[var(--border)] hover:border-[var(--primary)] hover:shadow-md font-semibold px-6 py-2.5 rounded-xl transition-colors shadow"
+        className="mt-2 inline-flex items-center gap-2 text-white bg-black border border-white/15 hover:border-red-600 hover:shadow-md font-semibold px-6 py-2.5 rounded-xl transition-colors shadow"
       >
         <span className="material-icons-round text-white text-base">storefront</span>
         Ver productos
@@ -206,21 +206,21 @@ export default function CartPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors">
+      <div className="min-h-screen bg-black text-white transition-colors">
         <main className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-10">
           <div className="flex items-center gap-3 mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text)]">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">
               Carrito
             </h1>
             {carrito.length > 0 && (
-              <span className="bg-[var(--card)] border border-[var(--border)] text-[var(--text)] text-xs font-bold px-2.5 py-1 rounded-full">
+              <span className="bg-black border border-white/15 text-white text-xs font-bold px-2.5 py-1 rounded-full">
                 {carrito.length} {carrito.length === 1 ? "producto" : "productos"}
               </span>
             )}
           </div>
 
           {error && (
-            <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm mb-6">
+            <div className="flex items-start gap-2 bg-red-600/10 border border-red-600/40 text-red-400 rounded-xl px-4 py-3 text-sm mb-6">
               <span className="material-icons-round text-base mt-0.5 shrink-0">error_outline</span>
               {error}
             </div>
@@ -241,9 +241,9 @@ export default function CartPage() {
                   return (
                     <div
                       key={itemKey}
-                      className="bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-sm p-4 flex gap-3 sm:gap-4 items-start"
+                      className="bg-[#0a0a0a] rounded-2xl border border-white/10 shadow-sm p-4 flex gap-3 sm:gap-4 items-start"
                     >
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden bg-[var(--muted)] border border-[var(--border)] flex items-center justify-center">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden bg-black border border-white/10 flex items-center justify-center">
                         <img
                           src={p.imagenes?.[0] || "/no-image.png"}
                           alt={p.nombre}
@@ -252,16 +252,16 @@ export default function CartPage() {
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm sm:text-base leading-tight line-clamp-2 text-[var(--text)]">
+                        <p className="font-semibold text-sm sm:text-base leading-tight line-clamp-2 text-white">
                           {p.nombre}
                         </p>
                         {p.selectedTalla && p.selectedColor && (
-                          <p className="text-xs text-[var(--textSecondary)] mt-0.5">
+                          <p className="text-xs text-white/50 mt-0.5">
                             Talla {p.selectedTalla} · Color {p.selectedColor}
                           </p>
                         )}
                         {p.selectedVariations && p.variationAttributeIds && p.variationAttributeIds.length > 0 && (
-                          <p className="text-xs text-[var(--textSecondary)] mt-0.5">
+                          <p className="text-xs text-white/50 mt-0.5">
                             {p.variationAttributeIds
                               .map((attrId: string) => {
                                 const atributo = atributos.find((a: any) => a.id === attrId);
@@ -276,16 +276,14 @@ export default function CartPage() {
 
                         {/* Personalización */}
                         {personalizacionFields.length > 0 && (
-                          <div className="mt-1.5 rounded-lg border p-2 flex flex-col gap-0.5"
-                            style={{ borderColor: "var(--border)", background: "var(--bgSecondary)" }}>
-                            <span className="text-[10px] font-semibold uppercase tracking-wide flex items-center gap-1"
-                              style={{ color: "var(--textSecondary)" }}>
+                          <div className="mt-1.5 rounded-lg border border-red-600/30 bg-red-600/5 p-2 flex flex-col gap-0.5">
+                            <span className="text-[10px] font-semibold uppercase tracking-wide flex items-center gap-1 text-red-500">
                               <span className="material-icons-round text-xs">auto_awesome</span>
                               Personalización
                             </span>
                             {personalizacionFields.map((campo, idx) => (
-                              <span key={idx} className="text-xs text-[var(--text)]">
-                                <span className="text-[var(--textSecondary)]">{campo.nombre}:</span> {campo.valor}
+                              <span key={idx} className="text-xs text-white">
+                                <span className="text-white/50">{campo.nombre}:</span> {campo.valor}
                               </span>
                             ))}
                           </div>
@@ -293,51 +291,51 @@ export default function CartPage() {
 
                         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                           {hasDiscount && (
-                            <span className="text-xs text-[var(--textSecondary)] line-through">
+                            <span className="text-xs text-white/40 line-through">
                               ${fakeOldPrice?.toFixed(2)}
                             </span>
                           )}
-                          <span className="text-sm font-bold text-[var(--text)]">
+                          <span className="text-sm font-bold text-white">
                             ${finalPrice.toFixed(2)}
                           </span>
                           {hasDiscount && (
-                            <span className="text-[10px] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">
+                            <span className="text-[10px] font-bold bg-red-600/15 text-red-500 px-1.5 py-0.5 rounded-full">
                               -{discount}%
                             </span>
                           )}
                         </div>
 
                         <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-                          <div className="flex items-center gap-1 bg-white rounded-lg p-0.5">
+                          <div className="flex items-center gap-1 bg-black border border-white/10 rounded-lg p-0.5">
                             <button
                               onClick={() => handleCantidad(itemKey, (p.cantidad || 1) - 1)}
-                              className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-[var(--card)] transition-colors text-[var(--text)] font-bold text-base"
+                              className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white/10 transition-colors text-white font-bold text-base"
                             >
                               -
                             </button>
-                            <span className="w-7 text-center text-sm font-semibold text-[var(--text)]">
+                            <span className="w-7 text-center text-sm font-semibold text-white">
                               {p.cantidad || 1}
                             </span>
                             <button
                               onClick={() => handleCantidad(itemKey, (p.cantidad || 1) + 1)}
-                              className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-[var(--card)] transition-colors text-[var(--text)] font-bold text-base"
+                              className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white/10 transition-colors text-white font-bold text-base"
                             >
                               +
                             </button>
                           </div>
-                          <span className="text-xs text-[var(--textSecondary)]">
+                          <span className="text-xs text-white/50">
                             {availableStock} en stock
                           </span>
                         </div>
                       </div>
 
                       <div className="flex flex-col items-end justify-between h-full gap-3 shrink-0">
-                        <span className="font-bold text-sm sm:text-base text-[var(--text)]">
+                        <span className="font-bold text-sm sm:text-base text-white">
                           ${lineTotal.toFixed(2)}
                         </span>
                         <button
                           onClick={() => removeCarrito(itemKey)}
-                          className="text-[var(--textSecondary)] hover:text-red-500 transition-colors"
+                          className="text-white/50 hover:text-red-500 transition-colors"
                           title="Eliminar"
                         >
                           <span className="material-icons-round text-xl">delete_outline</span>
@@ -349,7 +347,7 @@ export default function CartPage() {
 
                 <a
                   href="/products-by-category"
-                  className="inline-flex items-center gap-1.5 text-sm text-[var(--text)] hover:underline mt-1"
+                  className="inline-flex items-center gap-1.5 text-sm text-white hover:text-red-500 hover:underline mt-1 transition-colors"
                 >
                   <span className="material-icons-round text-base">arrow_back</span>
                   Continuar comprando
@@ -357,11 +355,11 @@ export default function CartPage() {
               </div>
 
               <div className="lg:col-span-1">
-                <div className="bg-[var(--card)] rounded-2xl border border-[var(--border)] shadow-md p-5 md:sticky md:top-20 space-y-4">
+                <div className="bg-[#0a0a0a] rounded-2xl border border-white/10 shadow-md p-5 md:sticky md:top-20 space-y-4">
                   <div>
-                    <p className="text-base font-bold mb-3 text-[var(--text)]">Resumen del pedido</p>
+                    <p className="text-base font-bold mb-3 text-white">Resumen del pedido</p>
                     <div className="space-y-1.5">
-                      <div className="flex justify-between text-sm text-[var(--textSecondary)]">
+                      <div className="flex justify-between text-sm text-white/50">
                         <span>
                           Subtotal ({carrito.reduce((n, p) => n + (p.cantidad || 1), 0)} items)
                         </span>
@@ -369,16 +367,16 @@ export default function CartPage() {
                       </div>
 
                     </div>
-                    <div className="border-t border-[var(--border)] mt-3 pt-3 flex justify-between font-bold text-base">
-                      <span className="text-[var(--text)]">Total</span>
-                      <span className="text-[var(--text)]">${total.toFixed(2)}</span>
+                    <div className="border-t border-white/10 mt-3 pt-3 flex justify-between font-bold text-base">
+                      <span className="text-white">Total</span>
+                      <span className="text-white">${total.toFixed(2)}</span>
                     </div>
                   </div>
 
                   <div>
                     <button
                       onClick={handleGenerarOrden}
-                      className="w-full flex items-center justify-center gap-2 py-3.5 px-6 bg-[var(--primary)] hover:bg-[var(--primaryHover)] text-white font-extrabold text-sm rounded-xl transition-colors shadow-md"
+                      className="w-full flex items-center justify-center gap-2 py-3.5 px-6 bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm rounded-xl transition-colors shadow-md"
                       title="Enviar pedido por WhatsApp"
                     >
                       <span className="material-icons-round text-base">chat</span>

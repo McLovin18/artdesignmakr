@@ -81,7 +81,7 @@ export default function FeaturedProductsSection({
 
       <div className="w-full max-w-7xl mx-auto px-2 sm:px-6 md:px-12">
         {/* ── Grid: 1 columna en móvil, 3 desde sm ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
           {recentProducts.map((prod: any, idx: number) => (
             <div
               key={prod.id}

@@ -31,16 +31,16 @@ const cardStyles = `
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background: #ffffff;
+    background: #000000;
     overflow: hidden;
     cursor: pointer;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255,255,255,0.12);
     transition: border-color 0.25s, box-shadow 0.25s;
   }
 
   .pc-card:hover {
-    border-color: var(--secondary);
-    box-shadow: 0 8px 40px color-mix(in srgb, var(--primary) 14%, transparent);
+    border-color: #e11d1d;
+    box-shadow: 0 8px 40px rgba(225,29,29,0.18);
   }
 
   /* ── imagen ── */
@@ -48,7 +48,7 @@ const cardStyles = `
     position: relative;
     width: 100%;
     aspect-ratio: 4 / 3;
-    background: var(--galleryImgBg);
+    background: #0a0a0a;
     overflow: hidden;
     flex-shrink: 0;
   }
@@ -62,6 +62,7 @@ const cardStyles = `
   .pc-img-wrap img {
     object-fit: cover !important;
     padding: 0 !important;
+    transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94) !important;
   }
 
   .pc-card:hover .pc-img-wrap img {
@@ -74,8 +75,8 @@ const cardStyles = `
     top: 10px;
     left: 10px;
     z-index: 10;
-    background: red;
-    color: var(--secondaryForeground);
+    background: #e11d1d;
+    color: #ffffff;
     font-family: 'Barlow', sans-serif;
     font-size: 10px;
     font-weight: 700;
@@ -89,7 +90,7 @@ const cardStyles = `
     position: absolute;
     inset: 0;
     z-index: 10;
-    background: rgba(245,245,243,0.72);
+    background: rgba(0,0,0,0.75);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -101,9 +102,9 @@ const cardStyles = `
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--mutedForeground);
-    background: var(--card);
-    border: 1px solid var(--border);
+    color: #ffffff;
+    background: #000000;
+    border: 1px solid rgba(255,255,255,0.2);
     padding: 5px 12px;
     border-radius: 2px;
   }
@@ -118,7 +119,8 @@ const cardStyles = `
     height: 30px;
     border-radius: 50%;
     border: none;
-    background: rgba(255,255,255,0.85);
+    background: rgba(0,0,0,0.6);
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -132,8 +134,8 @@ const cardStyles = `
   .pc-fav.is-fav {
     opacity: 1;
     transform: scale(1);
-    background: var(--secondary);
-    color: var(--secondaryForeground);
+    background: #e11d1d;
+    color: #ffffff;
   }
 
   .pc-card:hover .pc-fav {
@@ -141,7 +143,7 @@ const cardStyles = `
     transform: scale(1);
   }
 
-  /* ── info (ya sin contenedor/fondo, va directo sobre blanco) ── */
+  /* ── info ── */
   .pc-info {
     padding: 10px 12px 12px;
     display: flex;
@@ -158,14 +160,15 @@ const cardStyles = `
 
   /* nombre */
   .pc-name {
-    color: #000000;
+    color: #ffffff;
     transition: color 0.25s ease;
-    font-size: 20px;
+    font-size: 12px;
     font-weight: 700;
   }
 
   @media (min-width: 640px) {
     .pc-name {
+    font-size: 22px;
     }
   }
 
@@ -182,7 +185,7 @@ const cardStyles = `
     font-family: 'Barlow', sans-serif;
     font-weight: 700;
     font-size: 13px;
-    color: #000000;
+    color: #ffffff;
     letter-spacing: 0.02em;
     transition: color 0.25s ease;
   }
@@ -197,7 +200,7 @@ const cardStyles = `
     font-family: 'Barlow', sans-serif;
     font-weight: 400;
     font-size: 11px;
-    color: rgba(0,0,0,0.4);
+    color: rgba(255,255,255,0.35);
     text-decoration: line-through;
     transition: color 0.25s ease;
   }
@@ -297,7 +300,7 @@ function ProductoCard({
               alt={producto.nombre}
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-contain"
+              className="object-cover"
               style={{
                 opacity: 0,
                 transition: "opacity 0.4s ease",
@@ -357,13 +360,9 @@ function ProductoCard({
   );
 }
 
-
-
 export default React.memo(ProductoCard, (prevProps, nextProps) => {
   return (
     prevProps.producto.id === nextProps.producto.id &&
-    prevProps.showCart === nextProps.showCart &&
-    prevProps.showEye === nextProps.showEye &&
     prevProps.showFav === nextProps.showFav
   );
 });
