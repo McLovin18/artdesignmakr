@@ -15,6 +15,7 @@ import BottomBarPublic from "../components/BottomBarPublic";
 import dynamic from "next/dynamic";
 import { getCartItemKey } from "../context/userLocalStorage";
 import { getCatalogPricing } from "../lib/pricing";
+import { formatRoundedMeasure, getMeasurePricing } from "../lib/measure-pricing";
 
 const Markdown = dynamic(() => import("../components/Markdown"), { ssr: false });
 
@@ -37,6 +38,7 @@ export default function ProductDetailPage({ params }) {
   const [currentStock, setCurrentStock] = useState(0);
   const [atributos, setAtributos] = useState<Record<string, string>>({}); // Mapeo de ID -> nombre
   const [personalizacionValues, setPersonalizacionValues] = useState<Record<string, string>>({});
+  const [altoRelieve, setAltoRelieve] = useState(false);
 
   const {
     isLogged, user, isAdmin,
@@ -207,6 +209,10 @@ export default function ProductDetailPage({ params }) {
   const hasVariations = producto?.hasVariations || producto?.isCamiseta || false;
   const variationAttributeIds = producto?.variationAttributeIds || [];
   const stockVariants = producto?.stockVariants || [];
+  const customizationFields = Array.isArray((producto as any)?.camposPersonalizacion)
+    ? (producto as any).camposPersonalizacion
+    : [];
+  const priceAffectingField = customizationFields.find((campo: any) => campo?.afectaPrecio);
   
   // Calcular maxCantidad basado en currentStock (que es actualizado por VariationsManager)
   const maxCantidad = hasVariations ? currentStock : (producto?.stock || 0);
@@ -214,28 +220,53 @@ export default function ProductDetailPage({ params }) {
   const isFav = favoritos?.some((p) => p.id === producto?.id);
   
   // Generar cartKey basado en variaciones seleccionadas
+  const normalizePersonalizacionValues = () =>
+    Object.entries(personalizacionValues)
+      .filter(([, value]) => String(value || "").trim() !== "")
+      .sort(([a], [b]) => a.localeCompare(b))
+      .reduce((acc, [key, value]) => {
+        acc[key] = String(value).trim();
+        return acc;
+      }, {} as Record<string, string>);
+
   const generateCartKey = () => {
-    if (!hasVariations) return producto.id;
-    if (variationAttributeIds.length === 0) return producto.id;
+    let baseCartKey = producto.id;
+
+    if (hasVariations && variationAttributeIds.length > 0) {
+      // Verificar que todas las variaciones estén seleccionadas
+      const allSelected = variationAttributeIds.every(attrId => selectedVariations[attrId]);
+      if (!allSelected) return null;
+
+      // Generar key con valores de variaciones
+      const values = variationAttributeIds.map(attrId => selectedVariations[attrId]).join(":");
+      baseCartKey = `${producto.id}:${values}`;
+    }
     
-    // Verificar que todas las variaciones estén seleccionadas
-    const allSelected = variationAttributeIds.every(attrId => selectedVariations[attrId]);
-    if (!allSelected) return null;
-    
-    // Generar key con valores de variaciones
-    const values = variationAttributeIds.map(attrId => selectedVariations[attrId]).join(":");
-    return `${producto.id}:${values}`;
+    if (altoRelieve && priceAffectingField && measurePricing?.isValid && !measurePricing?.error) {
+      baseCartKey = `${baseCartKey}:alto-relieve`;
+    }
+
+    if (customizationFields.length === 0) return baseCartKey;
+
+    const allCustomizationCompleted = customizationFields.every(
+      (campo: any) => String(personalizacionValues[campo.id] || "").trim() !== ""
+    );
+    if (!allCustomizationCompleted) return null;
+    if (priceAffectingField && measurePricing.error) return null;
+
+    const personalizationKey = encodeURIComponent(
+      JSON.stringify(normalizePersonalizacionValues())
+    );
+
+    return `${baseCartKey}:custom:${personalizationKey}`;
   };
-  
-  const currentCartKey = generateCartKey();
-  const inCart = currentCartKey ? carrito?.some((p) => getCartItemKey(p) === currentCartKey) : false;
   
   // Detectar si es un producto de ensambles (subcategoría 1775935523162)
   const isEnsamblesProduct = producto.subcategoria === "1775935523162";
   const imageContainerWidthClass = isEnsamblesProduct ? "md:w-[60%]" : "md:w-[44%]";
 
   // Obtener precio base - soportar variaciones dinámicas
-  const basePrice = (() => {
+  const variantBasePrice = (() => {
     if (!hasVariations) return Number(producto.precio || 0);
     
     if (variationAttributeIds.length === 0) return Number(producto.precio || 0);
@@ -254,10 +285,28 @@ export default function ProductDetailPage({ params }) {
     
     return matchingVariant?.precio ?? Number(producto.precio || 0);
   })();
+
+  const measurePricing = priceAffectingField
+    ? getMeasurePricing(
+        variantBasePrice,
+        personalizacionValues[priceAffectingField.id] || ""
+      )
+    : null;
+  const effectiveBasePrice =
+    measurePricing?.isValid && measurePricing.adjustedPrice !== null
+      ? measurePricing.adjustedPrice
+      : variantBasePrice;
+  const shouldApplyAltoRelieve =
+    altoRelieve && !!priceAffectingField && !!measurePricing?.isValid && !measurePricing?.error;
+  const effectiveBasePriceWithAltoRelieve = shouldApplyAltoRelieve
+    ? Math.round(effectiveBasePrice * 1.15 * 100) / 100
+    : effectiveBasePrice;
+  const currentCartKey = generateCartKey();
+  const inCart = currentCartKey ? carrito?.some((p) => getCartItemKey(p) === currentCartKey) : false;
   
   const { discount, hasDiscount, fakeOldPrice, finalPrice } = getCatalogPricing({
     ...producto,
-    precio: basePrice,
+    precioBase: effectiveBasePriceWithAltoRelieve,
   });
 
   const avgRating = reviews.length > 0
@@ -285,6 +334,11 @@ export default function ProductDetailPage({ params }) {
       }
     }
 
+    if (priceAffectingField && measurePricing?.error) {
+      showToast(measurePricing.error, "error");
+      return;
+    }
+
     if (inCart && currentCartKey) {
       removeCarrito(currentCartKey);
       showToast("Eliminado del carrito", "info");
@@ -292,11 +346,12 @@ export default function ProductDetailPage({ params }) {
       const cartItem = {
         ...producto,
         cantidad,
-        precioBase: basePrice,
+        precioBase: effectiveBasePriceWithAltoRelieve,
         precioUnitario: finalPrice,
         stock: maxCantidad,
         ...(hasVariations && { selectedVariations, variationAttributeIds }),
-        ...(producto as any)?.personalizado && { personalizacionValues },
+        ...(producto as any)?.personalizado && { personalizacionValues: normalizePersonalizacionValues() },
+        ...(shouldApplyAltoRelieve && { altoRelieve: true }),
         cartKey: currentCartKey,
       };
       addCarrito(cartItem);
@@ -522,6 +577,26 @@ return (
               )}
             </div>
 
+            {priceAffectingField && (
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white/65">
+                {!personalizacionValues[priceAffectingField.id]?.trim() && (
+                  <p>El precio base corresponde a la medida estandar de 180x100 cm. Escribe una medida como 180x100 cm para recalcular.</p>
+                )}
+                {measurePricing?.error && (
+                  <p className="text-red-400">{measurePricing.error}</p>
+                )}
+                {measurePricing?.isValid && (
+                  <p className="text-emerald-400">
+                    Precio calculado con {formatRoundedMeasure(measurePricing)}
+                    {(measurePricing.rawWidthCm !== measurePricing.roundedWidthCm ||
+                      measurePricing.rawHeightCm !== measurePricing.roundedHeightCm) && (
+                      <> tras redondear desde {measurePricing.rawWidthCm}x{measurePricing.rawHeightCm} cm.</>
+                    )}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="h-px bg-white/10" />
 
             {/* Stock */}
@@ -594,7 +669,22 @@ return (
                           <span className="text-white font-bold"> (Ej. {campo.ejemplo})</span>
                         )}
                       </label>
-                      {campo.tipo === "texto" ? (
+                      {campo.afectaPrecio ? (
+                        <>
+                          <input
+                            type="text"
+                            value={personalizacionValues[campo.id] || ""}
+                            onChange={(e) => setPersonalizacionValues(prev => ({ ...prev, [campo.id]: e.target.value }))}
+                            placeholder="180x100 cm"
+                            className={`w-full rounded-xl border-none px-4 py-3.5 text-base outline-none focus:ring-2 focus:ring-red-600 bg-white text-black placeholder:text-black/45 ${
+                              measurePricing?.error ? "ring-2 ring-red-500" : ""
+                            }`}
+                          />
+                          <p className={`mt-1.5 text-xs ${measurePricing?.error ? "text-red-400" : "text-white/55"}`}>
+                            {measurePricing?.error || "Formato requerido: ancho x alto. Ejemplo: 180x100 cm."}
+                          </p>
+                        </>
+                      ) : campo.tipo === "texto" ? (
                         <input
                           type="text"
                           value={personalizacionValues[campo.id] || ""}
@@ -627,7 +717,7 @@ return (
 
             {/* Cantidad */}
             {maxCantidad > 0 && (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <span className="text-xs text-white/40 font-medium">Cantidad:</span>
                 <div className="flex items-center bg-[#0a0a0a] rounded-xl p-1 gap-1">
                   <button
@@ -642,6 +732,17 @@ return (
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-white/60 hover:bg-white/10 font-bold text-lg transition-colors"
                   >+</button>
                 </div>
+                {priceAffectingField && measurePricing?.isValid && !measurePricing?.error && (
+                  <label className="flex items-center gap-2 text-xs text-white/70 select-none">
+                    <input
+                      type="checkbox"
+                      checked={altoRelieve}
+                      onChange={(e) => setAltoRelieve(e.target.checked)}
+                      className="w-4 h-4 accent-red-600"
+                    />
+                    desea agregar alto relieve al cuadro?
+                  </label>
+                )}
               </div>
             )}
 

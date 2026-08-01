@@ -5,6 +5,7 @@ import { Loading3DIcon } from "../../components/Loading3DIcon";
 import ProductoCard from "../../components/ProductoCard";
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { formatRoundedMeasure, getMeasurePricing } from "../../lib/measure-pricing";
 
 const Markdown = dynamic(() => import("../../components/Markdown"), { ssr: false });
 import { ProductReview } from "../../lib/reviews-types";
@@ -148,13 +149,46 @@ export default function ProductDetailPage({ params }) {
   // ── Derivados ────────────────────────────────────────────────────────────
   const maxCantidad = producto.stock;
   const isFav = favoritos?.some((p) => p.id === producto.id);
-  const inCart = carrito?.some((p) => p.id === producto.id);
-
-  const basePrice = Number(producto.precio || 0);
+  const customizationFields = Array.isArray((producto as any)?.camposPersonalizacion)
+    ? (producto as any).camposPersonalizacion
+    : [];
+  const priceAffectingField = customizationFields.find((campo: any) => campo?.afectaPrecio);
+  const normalizePersonalizacionValues = () =>
+    Object.entries(personalizacionValues)
+      .filter(([, value]) => String(value || "").trim() !== "")
+      .sort(([a], [b]) => a.localeCompare(b))
+      .reduce((acc, [key, value]) => {
+        acc[key] = String(value).trim();
+        return acc;
+      }, {} as Record<string, string>);
+  const measurePricing = priceAffectingField
+    ? getMeasurePricing(
+        Number(producto.precio || 0),
+        personalizacionValues[priceAffectingField.id] || ""
+      )
+    : null;
+  const basePrice =
+    measurePricing?.isValid && measurePricing.adjustedPrice !== null
+      ? measurePricing.adjustedPrice
+      : Number(producto.precio || 0);
   const discount = Number(producto.descuento || 0);
   const hasDiscount = !isNaN(discount) && discount > 0 && discount < 100;
   const finalPrice = hasDiscount ? Math.round(basePrice * (1 - discount / 100) * 100) / 100 : basePrice;
   const fakeOldPrice = hasDiscount ? basePrice : null;
+  const currentCartKey = (() => {
+    if (customizationFields.length === 0) return producto.id;
+
+    const allCustomizationCompleted = customizationFields.every(
+      (campo: any) => String(personalizacionValues[campo.id] || "").trim() !== ""
+    );
+    if (!allCustomizationCompleted) return null;
+    if (priceAffectingField && measurePricing?.error) return null;
+
+    return `${producto.id}:custom:${encodeURIComponent(
+      JSON.stringify(normalizePersonalizacionValues())
+    )}`;
+  })();
+  const inCart = currentCartKey ? carrito?.some((p) => (p.cartKey || p.id) === currentCartKey) : false;
 
   const avgRating = reviews.length > 0
     ? reviews.reduce((a, b) => a + b.rating, 0) / reviews.length
@@ -172,14 +206,22 @@ export default function ProductDetailPage({ params }) {
       }
     }
 
+    if (priceAffectingField && measurePricing?.error) {
+      showToast("Escribe la medida en formato ancho x alto, por ejemplo 180x100 cm", "error");
+      return;
+    }
+
     if (inCart) {
-      removeCarrito(producto.id);
+      removeCarrito(currentCartKey);
       showToast("Eliminado del carrito", "info");
-    } else {
+    } else if (currentCartKey) {
       addCarrito({ 
         ...producto, 
         cantidad,
-        ...(producto as any)?.personalizado && { personalizacionValues }
+        precioBase: basePrice,
+        precioUnitario: finalPrice,
+        ...(producto as any)?.personalizado && { personalizacionValues: normalizePersonalizacionValues() },
+        cartKey: currentCartKey,
       });
       showToast(`${producto.nombre} añadido al carrito`, "success");
     }
@@ -402,6 +444,26 @@ export default function ProductDetailPage({ params }) {
               )}
             </div>
 
+            {priceAffectingField && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                {!personalizacionValues[priceAffectingField.id]?.trim() && (
+                  <p>El precio base corresponde a la medida estandar de 180x100 cm. Escribe una medida como 180x100 cm para recalcular.</p>
+                )}
+                {measurePricing?.error && (
+                  <p className="text-red-600">{measurePricing.error}</p>
+                )}
+                {measurePricing?.isValid && (
+                  <p className="text-emerald-700">
+                    Precio calculado con {formatRoundedMeasure(measurePricing)}
+                    {(measurePricing.rawWidthCm !== measurePricing.roundedWidthCm ||
+                      measurePricing.rawHeightCm !== measurePricing.roundedHeightCm) && (
+                      <> tras redondear desde {measurePricing.rawWidthCm}x{measurePricing.rawHeightCm} cm.</>
+                    )}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="h-px bg-slate-100 dark:bg-white/[0.06]" />
 
             {/* Stock */}
@@ -429,7 +491,22 @@ export default function ProductDetailPage({ params }) {
                       <label className="block text-xs font-medium mb-1 text-amber-800">
                         {campo.nombre}
                       </label>
-                      {campo.tipo === "texto" ? (
+                      {campo.afectaPrecio ? (
+                        <>
+                          <input
+                            type="text"
+                            value={personalizacionValues[campo.id] || ""}
+                            onChange={(e) => setPersonalizacionValues(prev => ({ ...prev, [campo.id]: e.target.value }))}
+                            placeholder="180x100 cm"
+                            className={`w-full rounded-lg border px-3 py-2 text-sm outline-none bg-white ${
+                              measurePricing?.error ? "border-red-400 ring-2 ring-red-200" : "border-amber-300 focus:ring-2 focus:ring-amber-200"
+                            }`}
+                          />
+                          <p className={`mt-1.5 text-xs ${measurePricing?.error ? "text-red-600" : "text-amber-700"}`}>
+                            {measurePricing?.error || "Formato requerido: ancho x alto. Ejemplo: 180x100 cm."}
+                          </p>
+                        </>
+                      ) : campo.tipo === "texto" ? (
                         <input
                           type="text"
                           value={personalizacionValues[campo.id] || ""}

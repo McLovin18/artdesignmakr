@@ -48,7 +48,12 @@ type Producto = {
   caracteristicas: string[];
   bodegaId?: string;
   personalizado?: boolean;
-  camposPersonalizacion?: { id: string; nombre: string; tipo: string }[];
+  camposPersonalizacion?: {
+    id: string;
+    nombre: string;
+    tipo: string;
+    afectaPrecio?: boolean;
+  }[];
 };
 
 type ProductoFormProps = {
@@ -77,7 +82,12 @@ type DraftFields = {
   marca: string;
   bodegaId: string;
   personalizado: boolean;
-  camposPersonalizacion: { id: string; nombre: string; tipo: string }[];
+  camposPersonalizacion: {
+    id: string;
+    nombre: string;
+    tipo: string;
+    afectaPrecio?: boolean;
+  }[];
 };
 
 const DRAFT_KEY = "producto-form-draft-v1";
@@ -151,7 +161,12 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
   const [atributos, setAtributos] = useState<any[]>([]);
   const [selectedAttributeIds, setSelectedAttributeIds] = useState<string[]>(initialData?.variationAttributeIds || []);
   const [personalizado, setPersonalizado] = useState<boolean>(Boolean(initialData?.personalizado));
-  const [camposPersonalizacion, setCamposPersonalizacion] = useState<{ id: string; nombre: string; tipo: string }[]>(initialData?.camposPersonalizacion || []);
+  const [camposPersonalizacion, setCamposPersonalizacion] = useState<{
+    id: string;
+    nombre: string;
+    tipo: string;
+    afectaPrecio?: boolean;
+  }[]>(initialData?.camposPersonalizacion || []);
   const [draftDisponible, setDraftDisponible] = useState(false);
 
   // ── Manejo de URLs de imagen sin fugas de memoria ──
@@ -557,7 +572,8 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
     const nuevoCampo = {
       id: `campo-${Date.now()}`,
       nombre: "",
-      tipo: "texto"
+      tipo: "texto",
+      afectaPrecio: false,
     };
     setCamposPersonalizacion([...camposPersonalizacion, nuevoCampo]);
   }
@@ -566,10 +582,29 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
     setCamposPersonalizacion(camposPersonalizacion.filter(c => c.id !== id));
   }
 
-  function handleCampoPersonalizacionChange(id: string, field: "nombre" | "tipo", value: string) {
-    setCamposPersonalizacion(camposPersonalizacion.map(c =>
-      c.id === id ? { ...c, [field]: value } : c
-    ));
+  function handleCampoPersonalizacionChange(
+    id: string,
+    field: "nombre" | "tipo" | "afectaPrecio",
+    value: string | boolean
+  ) {
+    setCamposPersonalizacion((current) =>
+      current.map((campo) => {
+        if (field === "afectaPrecio") {
+          if (campo.id === id) {
+            return {
+              ...campo,
+              afectaPrecio: Boolean(value),
+              tipo: Boolean(value) ? "texto" : campo.tipo,
+            };
+          }
+
+          return value ? { ...campo, afectaPrecio: false } : campo;
+        }
+
+        if (campo.id !== id) return campo;
+        return { ...campo, [field]: value };
+      })
+    );
   }
 
   // Selectores dependientes
@@ -912,17 +947,34 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
                           value={campo.nombre}
                           onChange={(e) => handleCampoPersonalizacionChange(campo.id, "nombre", e.target.value)}
                           placeholder="Nombre del campo (ej: Forma, Diseño)"
-                          className="w-full rounded-lg border border-amber-200 px-3 py-2 text-base outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-200"
+                          className="w-full rounded-lg border border-amber-200 px-3 py-2 text-base text-black outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-200"
                         />
                         <select
                           value={campo.tipo}
                           onChange={(e) => handleCampoPersonalizacionChange(campo.id, "tipo", e.target.value)}
-                          className="w-full rounded-lg border border-amber-200 px-3 py-2 text-base outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-200"
+                          disabled={Boolean(campo.afectaPrecio)}
+                          className="w-full rounded-lg border border-amber-200 px-3 py-2 text-base text-black outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-200"
                         >
                           <option value="texto">Texto</option>
                           <option value="numero">Número</option>
                           <option value="fecha">Fecha</option>
                         </select>
+                        <label className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                          <input
+                            type="checkbox"
+                            checked={Boolean(campo.afectaPrecio)}
+                            onChange={(e) =>
+                              handleCampoPersonalizacionChange(campo.id, "afectaPrecio", e.target.checked)
+                            }
+                            className="mt-0.5 h-4 w-4 cursor-pointer accent-rose-500"
+                          />
+                          <span className="text-sm text-amber-900">
+                            <span className="font-semibold">Afecta al precio</span>
+                            <span className="block text-xs text-amber-700">
+                              Usa este campo para medidas tipo 180x100 cm. Solo uno puede modificar el precio.
+                            </span>
+                          </span>
+                        </label>
                       </div>
                       <button
                         type="button"
@@ -1329,7 +1381,15 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
         descripcion,
         caracteristicas,
         personalizado,
-        camposPersonalizacion: personalizado ? camposPersonalizacion.filter(c => c.nombre.trim() !== "") : undefined
+        camposPersonalizacion: personalizado
+          ? camposPersonalizacion
+              .filter((c) => c.nombre.trim() !== "")
+              .map((c) => ({
+                ...c,
+                afectaPrecio: Boolean(c.afectaPrecio),
+                tipo: c.afectaPrecio ? "texto" : c.tipo,
+              }))
+          : undefined
       });
 
       // Se guardó con éxito: ya no hace falta el borrador
