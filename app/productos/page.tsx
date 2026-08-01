@@ -283,63 +283,83 @@ export default function ProductosPage() {
   return (
     <div className="min-h-screen flex flex-col transition-colors" style={{ background: "var(--bg)", color: "var(--text)" }}>
       <main className="max-w-7xl mx-auto w-full px-3 sm:px-5 py-6 sm:py-15 flex-1">
-        <div className="rounded-2xl px-4 py-3.5 mb-5 space-y-3" style={{ background: "var(--bgSecondary)", borderColor: "var(--border)" }}>
-          <div className="flex flex-wrap gap-2 items-center">
-            <div className="relative flex-1 min-w-40 max-w-[min(75vw,300px)] sm:max-w-sm">
-              <span className="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/30 text-[17px] pointer-events-none">
-                search
-              </span>
-              <input
-                type="text"
-                placeholder="Buscar productos..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className={`${inputCls} w-full pl-9 pr-8`}
-              />
-              {search && (
-                <button
-                  onClick={() => setSearch("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white/80"
-                >
-                  <span className="material-icons-round text-[15px]">close</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
 
-        {categorias.length > 0 && (
-          <div className="mb-6 overflow-x-auto pb-2" ref={categoriesScrollRef}>
-            <div className="flex gap-2 min-w-max">
-              <button
-                type="button"
-                onClick={selectTodas}
-                className={`px-4 py-2 rounded-full whitespace-nowrap font-medium text-sm transition-all ${
-                  !categoria
-                    ? "shadow-sm scale-105 bg-black text-white border border-black"
-                    : "bg-white text-slate-900 border border-slate-300 hover:border-black/60 hover:shadow-sm"
-                }`}
-              >
-                Todas
-              </button>
-              {categorias.map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => selectCategoria(cat.id)}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap font-medium text-sm transition-all ${
-                    sameCategoryId(categoria, cat.id)
-                      ? "shadow-sm scale-105 bg-black text-white border border-black"
-                      : "bg-white text-slate-900 border border-slate-300 hover:border-black/60 hover:shadow-sm"
-                  }`}
-                >
-                  {cat.icono && <span className="mr-1">🏷️</span>}
-                  {cat.nombre}
-                </button>
-              ))}
+      {categorias.length > 0 && (
+        <div
+          ref={categoriesScrollRef}
+          className="mt-2 mb-8 w-full max-w-full flex items-center justify-center gap-4 overflow-x-auto overflow-y-hidden pb-2 pr-2 no-scrollbar"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
+          <button
+            type="button"
+            onClick={selectTodas}
+            className="flex flex-col items-center w-24 shrink-0 select-none"
+          >
+            <div
+              className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 shadow-sm flex items-center justify-center ${
+                !categoria
+                  ? "border-red-600 ring-2 ring-white/20"
+                  : "border-white/20"
+              } bg-black`}
+            >
+              <span className="text-xs font-bold tracking-wide text-white/80">
+                TODOS
+              </span>
             </div>
-          </div>
-        )}
+
+            <span
+              className={`mt-2 text-sm ${
+                !categoria ? "text-white" : "text-white/70"
+              } text-center`}
+            >
+              Todos
+            </span>
+          </button>
+
+          {categorias.map((cat) => {
+            const selected = sameCategoryId(categoria, cat.id);
+
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => selectCategoria(cat.id)}
+                className="flex flex-col items-center w-24 shrink-0 select-none"
+              >
+                <div
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 shadow-sm overflow-hidden ${
+                    selected
+                      ? "border-red-600 ring-2 ring-white/20"
+                      : "border-white/20"
+                  } bg-black`}
+                >
+                  {cat.imagen ? (
+                    <img
+                      src={cat.imagen}
+                      alt={cat.nombre}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-2xl font-black text-white/70">
+                        {cat.nombre.slice(0, 1).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <span
+                  className={`mt-2 text-sm ${
+                    selected ? "text-white" : "text-white/70"
+                  } text-center leading-tight`}
+                >
+                  {cat.nombre}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
         {loading ? (
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">

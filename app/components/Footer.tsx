@@ -70,7 +70,7 @@ const Footer: React.FC = () => {
                   <li key={label}>
                     <a
                       href={href}
-                      className="flex items-center justify-center w-9 h-9 rounded-full border border-white/15 text-white transition-colors hover:bg-red-600 hover:border-red-600"
+                      className="flex items-center justify-center w-9 h-9 rounded-full border border-white/15 text-white transition-colors hover:bg-red-600  hover:border-red-600"
                       target="_blank"
                       rel="noreferrer"
                       title={label}

@@ -48,7 +48,7 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
         </h2>
 
         <div
-          className="mt-6 w-full max-w-full flex items-start justify-start gap-4 overflow-x-auto overflow-y-hidden pb-2 pr-2 no-scrollbar"
+          className="mt-6 w-full max-w-full flex items-center justify-center gap-4 overflow-x-auto overflow-y-hidden pb-2 pr-2 no-scrollbar"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           <button
@@ -63,7 +63,7 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
                   : "border-white/20"
               } bg-black`}
             >
-              <span className="text-xs font-bold tracking-wide text-white/80">
+              <span className="flex flex-col items-center w-24 shrink-0 select-none">
                 TODOS
               </span>
             </div>
@@ -83,7 +83,7 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedCatId(cat.id)}
-                className="flex flex-col items-center min-w-[84px] shrink-0 select-none"
+                className="flex flex-col items-center w-24 shrink-0 select-none"
               >
                 <div
                   className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 shadow-sm overflow-hidden ${
@@ -100,9 +100,7 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-2xl font-black text-white/70">
-                        {(cat.nombre || "").slice(0, 1).toUpperCase()}
-                      </span>
+
                     </div>
                   )}
                 </div>
@@ -111,7 +109,6 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
                     selected ? "text-white" : "text-white/70"
                   } text-center leading-tight`}
                 >
-                  {cat.nombre}
                 </span>
               </button>
             );
