@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import BottomBarPublic from "./components/BottomBarPublic";
 import WhatsAppFloatingButton from "./components/WhatsAppFloatingButton";
+import HomeCategoriesProductsSection from "./components/HomeCategoriesProductsSection";
 import { SectionRenderer } from "./landing/sectionRegistry";
 import { getLandingPage } from "./lib/landing-db";
 import { obtenerProductos } from "./lib/productos-db";
@@ -17,6 +18,7 @@ export default function Home() {
     sections?: LandingSection[];
     featuredProducts?: string[];
   } | null>(null);
+  const [allProducts, setAllProducts] = useState<any[]>([]);
   const [featuredProductsResolved, setFeaturedProductsResolved] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,12 +40,14 @@ export default function Home() {
 
         if (mounted) {
           setLanding(data);
+          setAllProducts(products || []);
           setFeaturedProductsResolved(recentProducts);
         }
       } catch (error) {
         console.error("Error cargando landing publicada:", error);
         if (mounted) {
           setLanding(null);
+          setAllProducts([]);
           setFeaturedProductsResolved([]);
         }
       } finally {
@@ -185,6 +189,7 @@ const lastHeroIndex = useMemo(() => {
             No hay secciones publicadas para mostrar.
           </div>
         )}
+        {!loading && <HomeCategoriesProductsSection products={allProducts} />}
       </main>
       {!isLogged && <BottomBarPublic />}
     </>

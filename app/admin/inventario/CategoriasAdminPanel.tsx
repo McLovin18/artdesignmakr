@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { obtenerCategorias, guardarCategoria, eliminarCategoria } from "../../lib/categorias-db";
+import { uploadImageAndGetUrl } from "../../lib/upload-image";
 
 export type Categoria = {
   id: string;
   nombre: string;
   icono?: string;
+  imagen?: string;
   orden?: number;
   subcategorias?: Categoria[];
 };
@@ -39,6 +41,15 @@ function getByPath(categorias: Categoria[], path: number[]): Categoria[] | null 
     current = current.subcategorias[idx];
   }
   return current?.subcategorias || null;
+}
+
+function getNodeByPath(categorias: Categoria[], path: number[]): Categoria | null {
+  let current: any = { subcategorias: categorias };
+  for (const idx of path) {
+    if (!current.subcategorias || !current.subcategorias[idx]) return null;
+    current = current.subcategorias[idx];
+  }
+  return (current as Categoria) || null;
 }
 
 // Mover elemento dentro de la estructura jerárquica
@@ -90,6 +101,8 @@ export default function CategoriasAdminPanel({ onCategoriasChange }: { onCategor
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [nuevaCategoria, setNuevaCategoria] = useState("");
   const [nuevoIcono, setNuevoIcono] = useState("");
+  const [nuevaImagen, setNuevaImagen] = useState<File | null>(null);
+  const [nuevaImagenPreview, setNuevaImagenPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<{[key: string]: boolean}>({});
   const [draggedPath, setDraggedPath] = useState<{ path: number[]; level: number } | null>(null);
@@ -107,13 +120,96 @@ export default function CategoriasAdminPanel({ onCategoriasChange }: { onCategor
     if (onCategoriasChange) onCategoriasChange(categorias);
   }, [categorias, onCategoriasChange]);
 
+  useEffect(() => {
+    if (!nuevaImagen) {
+      setNuevaImagenPreview(null);
+      return;
+    }
+    const url = URL.createObjectURL(nuevaImagen);
+    setNuevaImagenPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [nuevaImagen]);
+
+  const subirImagenCategoria = async (file: File, categoriaId: string) => {
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `categorias/${categoriaId}_${Date.now()}.${ext}`;
+    return await uploadImageAndGetUrl(file, path);
+  };
+
   const agregarCategoria = async () => {
     if (!nuevaCategoria.trim()) return;
-    const nueva: Categoria = { id: Date.now().toString(), nombre: nuevaCategoria, icono: nuevoIcono.trim() || undefined, orden: categorias.length, subcategorias: [] };
-    await guardarCategoria(nueva);
-    setCategorias(prev => [...prev, nueva]);
-    setNuevaCategoria("");
-    setNuevoIcono("");
+    if (loading) return;
+    setLoading(true);
+    try {
+      const id = Date.now().toString();
+      let imagen: string | undefined = undefined;
+      if (nuevaImagen) {
+        try {
+          imagen = await subirImagenCategoria(nuevaImagen, id);
+        } catch (err: any) {
+          alert("Error subiendo imagen: " + (err?.message || err));
+          imagen = undefined;
+        }
+      }
+      const nueva: Categoria = {
+        id,
+        nombre: nuevaCategoria,
+        icono: nuevoIcono.trim() || undefined,
+        imagen,
+        orden: categorias.length,
+        subcategorias: [],
+      };
+      await guardarCategoria(nueva);
+      setCategorias((prev) => [...prev, nueva]);
+      setNuevaCategoria("");
+      setNuevoIcono("");
+      setNuevaImagen(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSetImagen = async (path: number[], file: File) => {
+    const node = getNodeByPath(categorias, path);
+    if (!node) return;
+    if (loading) return;
+    setLoading(true);
+    try {
+      const url = await subirImagenCategoria(file, node.id);
+      setCategorias((prev) => {
+        const copy = JSON.parse(JSON.stringify(prev)) as Categoria[];
+        let pointer = copy as any;
+        for (let i = 0; i < path.length - 1; i++) {
+          pointer = pointer[path[i]].subcategorias || [];
+        }
+        pointer[path[path.length - 1]].imagen = url;
+        guardarCategoria(copy[path[0]]);
+        return copy;
+      });
+    } catch (err: any) {
+      alert("Error subiendo imagen: " + (err?.message || err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEliminarImagen = async (path: number[]) => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      setCategorias((prev) => {
+        const copy = JSON.parse(JSON.stringify(prev)) as Categoria[];
+        let pointer = copy as any;
+        for (let i = 0; i < path.length - 1; i++) {
+          pointer = pointer[path[i]].subcategorias || [];
+        }
+        pointer[path[path.length - 1]].imagen = undefined;
+        guardarCategoria(copy[path[0]]);
+        return copy;
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEliminarCategoria = async (cat: Categoria, nivel: number, parentPath: number[] = []) => {
@@ -284,7 +380,43 @@ export default function CategoriasAdminPanel({ onCategoriasChange }: { onCategor
                 </>
               ) : (
                 <>
+                  {cat.imagen ? (
+                    <img
+                      src={cat.imagen}
+                      alt={cat.nombre}
+                      className="w-9 h-9 rounded-full object-cover border border-gray-300 flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xs text-gray-700 flex-shrink-0">
+                      {(cat.nombre || "").slice(0, 1).toUpperCase()}
+                    </div>
+                  )}
                   <span className="font-semibold text-black flex-1">{cat.nombre}</span>
+                  <label className="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded hover:bg-slate-200 cursor-pointer flex-shrink-0">
+                    Img
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleSetImagen(path, file);
+                        e.currentTarget.value = "";
+                      }}
+                      disabled={loading}
+                    />
+                  </label>
+                  {cat.imagen && (
+                    <button
+                      className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 flex-shrink-0"
+                      onClick={() => handleEliminarImagen(path)}
+                      type="button"
+                      disabled={loading}
+                      title="Quitar imagen"
+                    >
+                      Img×
+                    </button>
+                  )}
                   <button
                     className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded hover:bg-yellow-200 flex-shrink-0"
                     onClick={() => {
@@ -357,9 +489,32 @@ export default function CategoriasAdminPanel({ onCategoriasChange }: { onCategor
           maxLength={30}
           title="Nombre del icono de Material Icons"
         />
+        <label className="flex items-center gap-2 border rounded px-3 py-2 bg-white cursor-pointer">
+          <span className="text-sm text-gray-700 whitespace-nowrap">Imagen</span>
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null;
+              setNuevaImagen(file);
+            }}
+            disabled={loading}
+          />
+          {nuevaImagenPreview ? (
+            <img
+              src={nuevaImagenPreview}
+              alt="Nueva categoría"
+              className="w-8 h-8 rounded-full object-cover border border-gray-300"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-300" />
+          )}
+        </label>
         <button
           className="bg-blue-700 text-white px-4 py-2 rounded font-bold hover:bg-blue-800"
           onClick={agregarCategoria}
+          disabled={loading}
         >
           Agregar
         </button>

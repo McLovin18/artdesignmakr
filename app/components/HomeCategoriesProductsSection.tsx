@@ -1,0 +1,134 @@
+"use client";
+import { useEffect, useMemo, useState } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
+import ProductoCard from "./ProductoCard";
+import { db } from "../lib/firebase";
+import {
+  mapCategorySnapshot,
+  productMatchesCategoria,
+  sortCategoriasByOrder,
+} from "../lib/categorias-db";
+
+type Props = {
+  products: any[];
+};
+
+export default function HomeCategoriesProductsSection({ products }: Props) {
+  const [categorias, setCategorias] = useState<any[]>([]);
+  const [selectedCatId, setSelectedCatId] = useState<string>("");
+
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, "categorias"), (snap) => {
+      setCategorias(sortCategoriasByOrder(mapCategorySnapshot(snap.docs)));
+    });
+    return () => unsub();
+  }, []);
+
+  const topCategories = useMemo(() => {
+    return (categorias || []).filter((c) => c?.id && c?.nombre);
+  }, [categorias]);
+
+  const filteredProducts = useMemo(() => {
+    const list = Array.isArray(products) ? products : [];
+    if (!selectedCatId) return list;
+    return list.filter((p) => productMatchesCategoria(p, selectedCatId, categorias));
+  }, [products, selectedCatId, categorias]);
+
+  const shownProducts = useMemo(() => {
+    return filteredProducts.slice(0, 12);
+  }, [filteredProducts]);
+
+  if (!topCategories.length) return null;
+
+  return (
+    <section className="px-4 lg:px-6 py-10 bg-black">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-center text-xl sm:text-2xl font-extrabold tracking-wide text-white">
+          Categorías
+        </h2>
+
+        <div className="mt-6 flex items-start justify-center gap-6 overflow-x-auto pb-2 no-scrollbar">
+          <button
+            type="button"
+            onClick={() => setSelectedCatId("")}
+            className="flex flex-col items-center min-w-[88px] select-none"
+          >
+            <div
+              className={`w-20 h-20 rounded-full border-4 shadow-sm flex items-center justify-center ${
+                !selectedCatId
+                  ? "border-red-600 ring-2 ring-white/20"
+                  : "border-white/20"
+              } bg-black`}
+            >
+              <span className="text-xs font-bold tracking-wide text-white/80">
+                TODOS
+              </span>
+            </div>
+            <span
+              className={`mt-2 text-sm ${
+                !selectedCatId ? "text-white" : "text-white/70"
+              } text-center`}
+            >
+              Todos
+            </span>
+          </button>
+
+          {topCategories.map((cat) => {
+            const selected = selectedCatId === cat.id;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setSelectedCatId(cat.id)}
+                className="flex flex-col items-center min-w-[88px] select-none"
+              >
+                <div
+                  className={`w-20 h-20 rounded-full border-4 shadow-sm overflow-hidden ${
+                    selected
+                      ? "border-red-600 ring-2 ring-white/20"
+                      : "border-white/20"
+                  } bg-black`}
+                >
+                  {cat.imagen ? (
+                    <img
+                      src={cat.imagen}
+                      alt={cat.nombre}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-2xl font-black text-white/70">
+                        {(cat.nombre || "").slice(0, 1).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <span
+                  className={`mt-2 text-sm ${
+                    selected ? "text-white" : "text-white/70"
+                  } text-center leading-tight`}
+                >
+                  {cat.nombre}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-8">
+          {shownProducts.length === 0 ? (
+            <div className="py-10 text-center text-sm text-white/60">
+              No hay productos para esta categoría.
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 animate-in fade-in duration-700">
+              {shownProducts.map((p: any, index: number) => (
+                <ProductoCard key={p.id} producto={p} index={index} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
