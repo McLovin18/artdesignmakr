@@ -22,6 +22,7 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
       setCategorias(sortCategoriasByOrder(mapCategorySnapshot(snap.docs)));
     });
     return () => unsub();
+    
   }, []);
 
   const topCategories = useMemo(() => {

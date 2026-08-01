@@ -6,6 +6,7 @@ import { getSnapshotPricing } from "../lib/pricing";
 import { useUser } from "../context/UserContext";
 import BottomBarPublic from "../components/BottomBarPublic";
 import { obtenerAtributos } from "../lib/atributos-db";
+import ModalTransferencia from "../components/ModalTransferencia";
 
 function resolveCartItemKey(item: any) {
   if (!item) return "";
@@ -66,6 +67,7 @@ export default function CartPage() {
   const [error, setError] = useState("");
   const { isLogged } = useUser();
   const [atributos, setAtributos] = useState<any[]>([]);
+  const [showModalTransferencia, setShowModalTransferencia] = useState(false);
 
   const calcularPrecioData = (p: any) => {
     const { basePrice, discount, hasDiscount, fakeOldPrice, finalPrice } = getSnapshotPricing(p);
@@ -87,6 +89,12 @@ export default function CartPage() {
   }, 0);
 
   const total = subtotal;
+
+  // Resumen simple de productos para guardar en la orden de transferencia
+  const productosResumen = carrito.map((p) => ({
+    nombre: p.nombre,
+    cantidad: p.cantidad || 1,
+  }));
 
   // Arma el texto de la variación seleccionada (talla/color legacy o variaciones dinámicas)
   const getVariationText = (p: any): string => {
@@ -160,6 +168,25 @@ export default function CartPage() {
     const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "0988705890";
     const message = await generateWhatsAppMessage();
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
+  };
+
+  const handleAbrirTransferencia = () => {
+    setError("");
+
+    if (carrito.length === 0) {
+      setError("El carrito está vacío");
+      return;
+    }
+
+    for (const p of carrito) {
+      const availableStock = resolveAvailableStock(p);
+      if (p.cantidad > availableStock) {
+        setError(`Solo hay ${availableStock} unidades disponibles de "${p.nombre}".`);
+        return;
+      }
+    }
+
+    setShowModalTransferencia(true);
   };
 
   const handleCantidad = (id: string, cantidad: number) => {
@@ -373,7 +400,7 @@ export default function CartPage() {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="space-y-2.5">
                     <button
                       onClick={handleGenerarOrden}
                       className="w-full flex items-center justify-center gap-2 py-3.5 px-6 bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm rounded-xl transition-colors shadow-md"
@@ -382,6 +409,18 @@ export default function CartPage() {
                       <span className="material-icons-round text-base">chat</span>
                       Pedir por WhatsApp
                     </button>
+
+                    <button
+                      onClick={handleAbrirTransferencia}
+                      className="w-full flex items-center justify-center gap-2 py-3.5 px-6 bg-black border border-white/15 hover:border-red-600 text-white font-bold text-sm rounded-xl transition-colors"
+                      title="Pagar el 30% inicial por transferencia bancaria"
+                    >
+                      <span className="material-icons-round text-base">account_balance</span>
+                      Pagar por Transferencia Bancaria
+                    </button>
+                    <p className="text-[11px] text-center text-white/40">
+                      Reserva tu pedido con un 30% inicial. El resto se coordina por WhatsApp.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -390,6 +429,13 @@ export default function CartPage() {
         </main>
       </div>
       {!isLogged && <BottomBarPublic />}
+
+      <ModalTransferencia
+        open={showModalTransferencia}
+        onClose={() => setShowModalTransferencia(false)}
+        total={total}
+        productos={productosResumen}
+      />
     </>
   );
 }
