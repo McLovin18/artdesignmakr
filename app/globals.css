@@ -32,7 +32,6 @@
   /* --- Semántica --- */
 /* --- Semántica --- */
    --background: #000000;
-  --foreground: #ffffff;
 
   --bg: black;
   --bgSecondary: #ffffff;
@@ -216,3 +215,17 @@ body {
 }
 
 
+
+
+
+input,
+textarea,
+select {
+  color: #000;
+  background: #fff;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280;
+}

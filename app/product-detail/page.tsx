@@ -733,7 +733,7 @@ return (
                   >+</button>
                 </div>
                 {priceAffectingField && measurePricing?.isValid && !measurePricing?.error && (
-                  <label className="flex items-center gap-2 text-xs text-white/70 select-none">
+                  <label className="flex items-center gap-2 text-xl text-white/70 select-none">
                     <input
                       type="checkbox"
                       checked={altoRelieve}

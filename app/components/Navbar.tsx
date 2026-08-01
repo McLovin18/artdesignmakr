@@ -154,7 +154,7 @@ return (
           className="relative flex items-center justify-between gap-4 px-4 py-2 lg:px-6 lg:py-2"
           style={{ color: BRAND.white }}
         >
-          {/* ── Izquierda: menú móvil + logo (desktop) ── */}
+{/* ── Izquierda: menú móvil + logo (desktop) ── */}
           <div className="flex items-center gap-3 shrink-0">
             <button
               className="lg:hidden p-2 rounded-xl transition-colors hover:bg-white/10"
@@ -168,17 +168,14 @@ return (
               href={user ? "/admin" : "/"}
               className="hidden lg:flex items-center leading-none"
             >
-              <span
-                className="whitespace-nowrap"
-                style={{
-                  fontFamily: "'Hagrid Text', serif",
-                  fontSize: "clamp(1.2rem, 2vw, 2rem)",
-                  color: "#ffffff",
-                  lineHeight: 1,
-                }}
-              >
-                ART DESIGN MAKR
-              </span>
+              <Image
+                src="/logo_art1.png"
+                alt="Art Design MAKR"
+                width={190}
+                height={60}
+                priority
+                style={{ height:"65px", width: "auto" }}
+              />
             </a>
           </div>
 
@@ -188,17 +185,14 @@ return (
               href={user ? "/admin" : "/"}
               className="pointer-events-auto flex flex-col items-center leading-none"
             >
-              <span
-                className="whitespace-nowrap"
-                style={{
-                  fontFamily: "'Hagrid Text', serif",
-                  fontSize: "clamp(1.2rem, 2vw, 2rem)",
-                  color: "#ffffff",
-                  lineHeight: 1,
-                }}
-              >
-                Art Design Makr
-              </span>
+              <Image
+                src="/logo_art1.png"
+                alt="Art Design MAKR"
+                width={180}
+                height={62}
+                priority
+                style={{ height: "65px",width: "auto"}}
+              />
             </a>
           </div>
 
