@@ -207,7 +207,7 @@ export default function ProductDetailPage({ params }) {
     }
 
     if (priceAffectingField && measurePricing?.error) {
-      showToast("Escribe la medida en formato ancho x alto, por ejemplo 180x100 cm", "error");
+      showToast(measurePricing.error, "error");
       return;
     }
 
@@ -447,7 +447,7 @@ export default function ProductDetailPage({ params }) {
             {priceAffectingField && (
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
                 {!personalizacionValues[priceAffectingField.id]?.trim() && (
-                  <p>El precio base corresponde a la medida estandar de 180x100 cm. Escribe una medida como 180x100 cm para recalcular.</p>
+                  <p>El precio base corresponde a la medida estandar de 150x100 cm. Escribe una medida como 150x100 cm para recalcular.</p>
                 )}
                 {measurePricing?.error && (
                   <p className="text-red-600">{measurePricing.error}</p>
@@ -497,13 +497,13 @@ export default function ProductDetailPage({ params }) {
                             type="text"
                             value={personalizacionValues[campo.id] || ""}
                             onChange={(e) => setPersonalizacionValues(prev => ({ ...prev, [campo.id]: e.target.value }))}
-                            placeholder="180x100 cm"
+                            placeholder="150x100 cm"
                             className={`w-full rounded-lg border px-3 py-2 text-sm outline-none bg-white ${
                               measurePricing?.error ? "border-red-400 ring-2 ring-red-200" : "border-amber-300 focus:ring-2 focus:ring-amber-200"
                             }`}
                           />
                           <p className={`mt-1.5 text-xs ${measurePricing?.error ? "text-red-600" : "text-amber-700"}`}>
-                            {measurePricing?.error || "Formato requerido: ancho x alto. Ejemplo: 180x100 cm."}
+                            {measurePricing?.error || "Formato requerido: ancho x alto. Ejemplo: 150x100 cm."}
                           </p>
                         </>
                       ) : campo.tipo === "texto" ? (

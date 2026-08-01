@@ -1,6 +1,7 @@
-const STANDARD_WIDTH_CM = 180;
+const STANDARD_WIDTH_CM = 150;
 const STANDARD_HEIGHT_CM = 100;
 const MEASURE_STEP_CM = 10;
+const STANDARD_BASE_PRICE = 250;
 const MIN_MEASURE_CM = 30;
 const MIN_ADJUSTED_PRICE = 80;
 
@@ -61,7 +62,11 @@ function roundPrice(value: number): number {
 }
 
 export function getMeasurePricing(basePrice: number, inputValue: string): MeasurePricingResult {
-  const safeBasePrice = Number(basePrice || 0);
+  const requestedBasePrice = Number(basePrice);
+  const safeBasePrice =
+    Number.isFinite(requestedBasePrice) && requestedBasePrice > 0
+      ? requestedBasePrice
+      : STANDARD_BASE_PRICE;
   const widthStepPrice = safeBasePrice / (STANDARD_WIDTH_CM / MEASURE_STEP_CM);
   const heightStepPrice = safeBasePrice / (STANDARD_HEIGHT_CM / MEASURE_STEP_CM);
   const parsedMeasure = parseMeasureInput(inputValue);
@@ -85,7 +90,7 @@ export function getMeasurePricing(basePrice: number, inputValue: string): Measur
   if (!parsedMeasure) {
     return {
       isValid: false,
-      error: "Escribe la medida en formato ancho x alto, por ejemplo 180x100 cm.",
+      error: "Escribe la medida en formato ancho x alto, por ejemplo 150x100 cm.",
       rawWidthCm: null,
       rawHeightCm: null,
       roundedWidthCm: null,

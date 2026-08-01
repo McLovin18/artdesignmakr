@@ -580,7 +580,7 @@ return (
             {priceAffectingField && (
               <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white/65">
                 {!personalizacionValues[priceAffectingField.id]?.trim() && (
-                  <p>El precio base corresponde a la medida estandar de 180x100 cm. Escribe una medida como 180x100 cm para recalcular.</p>
+                  <p>El precio base corresponde a la medida estandar de 150x100 cm. Escribe una medida como 150x100 cm para recalcular.</p>
                 )}
                 {measurePricing?.error && (
                   <p className="text-red-400">{measurePricing.error}</p>
@@ -675,13 +675,13 @@ return (
                             type="text"
                             value={personalizacionValues[campo.id] || ""}
                             onChange={(e) => setPersonalizacionValues(prev => ({ ...prev, [campo.id]: e.target.value }))}
-                            placeholder="180x100 cm"
+                            placeholder="150x100 cm"
                             className={`w-full rounded-xl border-none px-4 py-3.5 text-base outline-none focus:ring-2 focus:ring-red-600 bg-white text-black placeholder:text-black/45 ${
                               measurePricing?.error ? "ring-2 ring-red-500" : ""
                             }`}
                           />
                           <p className={`mt-1.5 text-xs ${measurePricing?.error ? "text-red-400" : "text-white/55"}`}>
-                            {measurePricing?.error || "Formato requerido: ancho x alto. Ejemplo: 180x100 cm."}
+                            {measurePricing?.error || "Formato requerido: ancho x alto. Ejemplo: 150x100 cm."}
                           </p>
                         </>
                       ) : campo.tipo === "texto" ? (

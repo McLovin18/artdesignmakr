@@ -971,7 +971,7 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
                           <span className="text-sm text-amber-900">
                             <span className="font-semibold">Afecta al precio</span>
                             <span className="block text-xs text-amber-700">
-                              Usa este campo para medidas tipo 180x100 cm. Solo uno puede modificar el precio.
+                              Usa este campo para medidas tipo 150x100 cm. Solo uno puede modificar el precio.
                             </span>
                           </span>
                         </label>
