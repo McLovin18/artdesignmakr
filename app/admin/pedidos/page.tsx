@@ -169,7 +169,7 @@ export default function OrdenesTransferenciaAdminPage() {
                       </span>
                     </div>
                     <p className="text-xs text-slate-400 dark:text-slate-500">
-                      {orden.whatsapp} · {formatFecha(orden.fecha)}
+                      {orden.whatsapp} · {orden.banco} · {formatFecha(orden.fecha)}
                     </p>
                     <div className="flex items-center gap-4 mt-2 flex-wrap text-sm">
                       <span className="text-slate-500 dark:text-slate-400">
@@ -253,6 +253,7 @@ export default function OrdenesTransferenciaAdminPage() {
                 {[
                   ["Nombre", seleccionada.nombre],
                   ["WhatsApp", seleccionada.whatsapp],
+                  ["Banco", seleccionada.banco],
                   ["Total del pedido", `$${seleccionada.montoTotal.toFixed(2)}`],
                   [
                     `Pago inicial (${seleccionada.porcentajeInicial}%)`,

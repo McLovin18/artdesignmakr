@@ -7,15 +7,38 @@ import {
   ProductoResumen,
 } from "../lib/ordenes-transferencia-db";
 
-// ---- Datos bancarios: AJUSTA con los datos reales del cliente ----
-const DATOS_BANCARIOS = {
-  banco: "Banco Pichincha",
-  tipoCuenta: "Cuenta de Ahorros",
-  numeroCuenta: "0000000000",
-  titular: "Art Design Makr",
-  cedulaRuc: "0000000000001",
-  correo: "artdesignmakr@gmail.com",
-};
+// ---- Datos bancarios: AJUSTA con las cuentas reales del cliente ----
+// Agrega, quita o edita bancos aquí; el cliente elige uno antes de ver los datos.
+interface DatosBanco {
+  id: string;
+  banco: string;
+  tipoCuenta: string;
+  numeroCuenta: string;
+  titular: string;
+  cedulaRuc: string;
+  correo: string;
+}
+
+const BANCOS_DISPONIBLES: DatosBanco[] = [
+  {
+    id: "pichincha",
+    banco: "Banco Pichincha",
+    tipoCuenta: "Cuenta de Ahorros",
+    numeroCuenta: "2205458629",
+    titular: "Hernan Molero",
+    cedulaRuc: "1759369851",
+    correo: "art.design.makr@gmail.com",
+  },
+  {
+    id: "guayaquil",
+    banco: "Banco de Guayaquil",
+    tipoCuenta: "Cuenta de Ahorros",
+    numeroCuenta: "0035538351",
+    titular: "Hernan Molero",
+    cedulaRuc: "1759369851",
+    correo: "art.design.makr@gmail.com",
+  }
+];
 
 const PORCENTAJE_INICIAL = 30;
 
@@ -36,10 +59,15 @@ export default function ModalTransferencia({
 }: ModalTransferenciaProps) {
   const [nombre, setNombre] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [bancoSeleccionadoId, setBancoSeleccionadoId] = useState<string>("");
   const [imagen, setImagen] = useState<File | null>(null);
   const [previewURL, setPreviewURL] = useState<string>("");
   const [error, setError] = useState("");
   const [paso, setPaso] = useState<Paso>("form");
+
+  const bancoSeleccionado = BANCOS_DISPONIBLES.find(
+    (b) => b.id === bancoSeleccionadoId
+  );
 
   const montoInicial = Number(((total * PORCENTAJE_INICIAL) / 100).toFixed(2));
   const montoRestante = Number((total - montoInicial).toFixed(2));
@@ -61,6 +89,7 @@ export default function ModalTransferencia({
   const resetYCerrar = () => {
     setNombre("");
     setWhatsapp("");
+    setBancoSeleccionadoId("");
     setImagen(null);
     setPreviewURL("");
     setError("");
@@ -79,6 +108,10 @@ export default function ModalTransferencia({
       setError("Ingresa un número de WhatsApp válido.");
       return;
     }
+    if (!bancoSeleccionado) {
+      setError("Selecciona el banco al que realizaste la transferencia.");
+      return;
+    }
     if (!imagen) {
       setError("Sube una imagen del comprobante de transferencia.");
       return;
@@ -94,6 +127,7 @@ export default function ModalTransferencia({
         porcentajeInicial: PORCENTAJE_INICIAL,
         comprobanteURL,
         productos,
+        banco: bancoSeleccionado.banco,
       });
       setPaso("exito");
     } catch (err) {
@@ -232,26 +266,56 @@ export default function ModalTransferencia({
             {/* 3. Datos bancarios */}
             <div className="space-y-2">
               <p className="text-xs font-semibold uppercase tracking-wide text-white/50">
-                Datos bancarios
+                Selecciona un banco
               </p>
-              <div className="rounded-2xl border border-white/10 divide-y divide-white/10 overflow-hidden">
-                {[
-                  ["Banco", DATOS_BANCARIOS.banco],
-                  ["Tipo de cuenta", DATOS_BANCARIOS.tipoCuenta],
-                  ["Número de cuenta", DATOS_BANCARIOS.numeroCuenta],
-                  ["Titular", DATOS_BANCARIOS.titular],
-                  ["Cédula/RUC", DATOS_BANCARIOS.cedulaRuc],
-                  ["Correo", DATOS_BANCARIOS.correo],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="flex items-center justify-between px-3.5 py-2 text-sm bg-black"
-                  >
-                    <span className="text-white/50">{label}</span>
-                    <span className="font-medium text-white">{value}</span>
-                  </div>
-                ))}
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {BANCOS_DISPONIBLES.map((b) => {
+                  const activo = b.id === bancoSeleccionadoId;
+                  return (
+                    <button
+                      key={b.id}
+                      type="button"
+                      onClick={() => setBancoSeleccionadoId(b.id)}
+                      className={`flex items-center gap-2 px-3.5 py-3 rounded-xl border text-left text-sm font-semibold transition-colors ${
+                        activo
+                          ? "border-red-600 bg-red-600/10 text-white"
+                          : "border-white/10 bg-black text-white/70 hover:border-white/30"
+                      }`}
+                    >
+                      <span
+                        className={`material-icons-round text-base ${
+                          activo ? "text-red-500" : "text-white/30"
+                        }`}
+                      >
+                        {activo ? "radio_button_checked" : "radio_button_unchecked"}
+                      </span>
+                      {b.banco}
+                    </button>
+                  );
+                })}
               </div>
+
+              {bancoSeleccionado && (
+                <div className="rounded-2xl border border-white/10 divide-y divide-white/10 overflow-hidden mt-1">
+                  {[
+                    ["Banco", bancoSeleccionado.banco],
+                    ["Tipo de cuenta", bancoSeleccionado.tipoCuenta],
+                    ["Número de cuenta", bancoSeleccionado.numeroCuenta],
+                    ["Titular", bancoSeleccionado.titular],
+                    ["Cédula/RUC", bancoSeleccionado.cedulaRuc],
+                    ["Correo", bancoSeleccionado.correo],
+                  ].map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="flex items-center justify-between px-3.5 py-2 text-sm bg-black"
+                    >
+                      <span className="text-white/50">{label}</span>
+                      <span className="font-medium text-white">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* 4. Subir comprobante */}

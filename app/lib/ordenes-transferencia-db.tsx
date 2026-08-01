@@ -30,6 +30,7 @@ export interface OrdenTransferencia {
   id?: string;
   nombre: string;
   whatsapp: string;
+  banco: string;
   montoTotal: number;
   porcentajeInicial: number;
   montoInicial: number;
@@ -66,6 +67,7 @@ export async function subirComprobanteTransferencia(
 export async function crearOrdenTransferencia(data: {
   nombre: string;
   whatsapp: string;
+  banco: string;
   montoTotal: number;
   porcentajeInicial: number;
   comprobanteURL: string;
@@ -79,6 +81,7 @@ export async function crearOrdenTransferencia(data: {
   const docRef = await addDoc(collection(db, COLLECTION_NAME), {
     nombre: data.nombre,
     whatsapp: data.whatsapp,
+    banco: data.banco,
     montoTotal: data.montoTotal,
     porcentajeInicial: data.porcentajeInicial,
     montoInicial,
