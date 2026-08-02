@@ -350,23 +350,6 @@ export default function CartPage() {
                           </div>
                         )}
 
-                        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                          {hasDiscount && (
-                            <span className="text-xs text-white/40 line-through">
-                              ${fakeOldPrice?.toFixed(2)}
-                            </span>
-                          )}
-                          <span className="text-sm font-bold text-white">
-                            ${finalPrice.toFixed(2)}
-                          </span>
-                          {hasDiscount && (
-                            <span className="text-[10px] font-bold bg-red-600/15 text-red-500 px-1.5 py-0.5 rounded-full">
-                              -{discount}%
-                            </span>
-                          )}
-                        </div>
-
-
 
                         <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-red-600/20 bg-red-600/5 px-2.5 py-1">
                           <span className="material-icons-round text-[14px] text-red-500">
@@ -403,9 +386,7 @@ export default function CartPage() {
                       </div>
 
                       <div className="flex flex-col items-end justify-between h-full gap-3 shrink-0">
-                        <span className="font-bold text-sm sm:text-base text-white">
-                          ${lineTotal.toFixed(2)}
-                        </span>
+
                         <button
                           onClick={() => removeCarrito(itemKey)}
                           className="text-white/50 hover:text-red-500 transition-colors"
@@ -431,19 +412,6 @@ export default function CartPage() {
                 <div className="bg-[#0a0a0a] rounded-2xl border border-white/10 shadow-md p-5 md:sticky md:top-20 space-y-4">
                   <div>
                     <p className="text-base font-bold mb-3 text-white">Resumen del pedido</p>
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-sm text-white/50">
-                        <span>
-                          Subtotal ({carrito.reduce((n, p) => n + (p.cantidad || 1), 0)} items)
-                        </span>
-                        <span>${subtotal.toFixed(2)}</span>
-                      </div>
-
-                    </div>
-                    <div className="border-t border-white/10 mt-3 pt-3 flex justify-between font-bold text-base">
-                      <span className="text-white">Total</span>
-                      <span className="text-white">${total.toFixed(2)}</span>
-                    </div>
                                 {/* 1. Info del pago */}
                     <div className="rounded-2xl p-4 border border-red-600/25 bg-red-600/5 space-y-2">
                       <p className="text-xs font-semibold uppercase tracking-wide text-white/50">
