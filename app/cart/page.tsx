@@ -165,9 +165,22 @@ export default function CartPage() {
       }
     }
 
+    // Abrir la ventana ANTES del await — en iOS Safari, window.open()
+    // solo funciona si ocurre de forma síncrona dentro del gesto de click.
+    // Si se abre después de un await, el navegador lo bloquea sin avisar.
+    const whatsappWindow = window.open("", "_blank");
+
     const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "0988705890";
     const message = await generateWhatsAppMessage();
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
+    const url = `https://wa.me/${whatsappNumber}?text=${message}`;
+
+    if (whatsappWindow) {
+      whatsappWindow.location.href = url;
+    } else {
+      // Fallback por si el navegador bloqueó incluso la ventana en blanco
+      // (por ejemplo, si algo más rompió el gesto síncrono)
+      window.location.href = url;
+    }
   };
 
   const handleAbrirTransferencia = () => {
@@ -189,6 +202,7 @@ export default function CartPage() {
     setShowModalTransferencia(true);
   };
 
+  
   const handleCantidad = (id: string, cantidad: number) => {
     if (cantidad < 1) return;
     const prod = carrito.find((p) => resolveCartItemKey(p) === id);

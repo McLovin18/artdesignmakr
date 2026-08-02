@@ -340,7 +340,6 @@ function ProductoCard({
 
           {/* ── INFO (ahora sin contenedor con fondo) ── */}
           <div className="pc-info">
-            <p className="pc-name">{producto.nombre}</p>
 
             <div className="pc-prices">
               {hasDiscount && (
