@@ -263,6 +263,11 @@ export default function ProductDetailPage({ params }) {
   
   // Detectar si es un producto de ensambles (subcategoría 1775935523162)
   const isEnsamblesProduct = producto.subcategoria === "1775935523162";
+  // Categoría que solo sirve para mostrar trabajos realizados
+  const VISUAL_ONLY_CATEGORY_ID = "1785564342207";
+
+  const isVisualOnlyProduct =
+  producto.categoria === VISUAL_ONLY_CATEGORY_ID;
   const imageContainerWidthClass = isEnsamblesProduct ? "md:w-[60%]" : "md:w-[44%]";
 
   // Obtener precio base - soportar variaciones dinámicas
@@ -412,8 +417,12 @@ return (
         <div className="flex flex-col md:flex-row gap-8 lg:gap-14">
 
           {/* ══ GALERÍA + TABS ══════════════════════════════════════ */}
-          <div className={`w-full ${imageContainerWidthClass} flex flex-col gap-3`}>
-
+          <div
+            className={`w-full ${imageContainerWidthClass} flex flex-col gap-3 ${
+              isVisualOnlyProduct ? "mx-auto" : ""
+            }`}
+          >
+            
             {/* Imagen principal */}
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#0a0a0a] border border-white/10">
               {hasDiscount && (
@@ -464,6 +473,8 @@ return (
             )}
 
             {/* ── TABS: Características / Reseñas — solo desktop ───── */}
+
+          {!isVisualOnlyProduct && (
             <div className="hidden md:flex mt-1 flex-col gap-0 py-18">
               {/* Botones tab */}
               <div className="flex rounded-xl overflow-hidden border border-white/10">
@@ -528,11 +539,11 @@ return (
                 </div>
               )}
             </div>
-            {/* ── FIN TABS ─────────────────────────────────────────── */}
-
+          )}
           </div>
 
           {/* ══ INFO ════════════════════════════════════════════════ */}
+        {!isVisualOnlyProduct && (
           <div className="flex-1 flex flex-col gap-5 min-w-0">
 
             {/* Nombre + SKU */}
@@ -599,7 +610,6 @@ return (
 
             <div className="h-px bg-white/10" />
 
-            {/* Stock */}
             <div className="flex items-center gap-2">
               <span className="text-xs text-white/40 font-medium">Disponibilidad:</span>
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
@@ -617,6 +627,8 @@ return (
               </span>
             </div>
 
+
+            
             {/* Selectors de variaciones */}
             {hasVariations && variationAttributeIds.length > 0 && (
               <VariationsManager
@@ -838,11 +850,13 @@ return (
               </ul>
             )}
           </div>
-
+      )}
         </div>
+
       </div>
 
         {/* ── TABS móvil: debajo de info, encima de relacionados ── */}
+        {!isVisualOnlyProduct && (
         <div className="md:hidden mt-4 flex flex-col gap-0">
           <div className="flex rounded-xl overflow-hidden border border-white/10">
             {hasCaracteristicas && (
@@ -900,6 +914,7 @@ return (
             </div>
           )}
         </div>
+        )}
         {/* ── FIN TABS móvil ───────────────────────────────────── */}
     </div>
   );
