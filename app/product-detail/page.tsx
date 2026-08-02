@@ -409,6 +409,12 @@ export default function ProductDetailPage({ params }) {
     setActiveTab((prev) => (prev === tab ? null : tab));
   };
 
+  
+const movePriceBelowCart =
+  ((personalizacionValues[priceAffectingField?.id] || "").trim() !== "") ||
+  altoRelieve;
+
+
 return (
     <div className="min-h-screen flex flex-col mt-2 bg-black text-white transition-colors">
       <BottomBarPublic/>
@@ -572,21 +578,25 @@ return (
               </div>
             )}
 
-            <div className="flex items-baseline gap-3 flex-wrap">
-              {hasDiscount && (
-                <span className="text-sm text-white/30 line-through">
-                  ${fakeOldPrice?.toFixed(2)}
+            {!movePriceBelowCart && (
+              <div className="flex items-baseline gap-3 flex-wrap">
+                {hasDiscount && (
+                  <span className="text-sm text-white/30 line-through">
+                    ${fakeOldPrice?.toFixed(2)}
+                  </span>
+                )}
+
+                <span className="text-3xl font-extrabold text-white">
+                  ${finalPrice.toFixed(2)}
                 </span>
-              )}
-              <span className="text-3xl font-extrabold text-white">
-                ${finalPrice.toFixed(2)}
-              </span>
-              {hasDiscount && (
-                <span className="text-xs font-semibold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full">
-                  {discount}% OFF
-                </span>
-              )}
-            </div>
+
+                {hasDiscount && (
+                  <span className="text-xs font-semibold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full">
+                    {discount}% OFF
+                  </span>
+                )}
+              </div>
+            )}
 
             {priceAffectingField && (
               <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-white/65">
@@ -793,6 +803,27 @@ return (
                 </button>
               )}
             </div>
+
+
+            {movePriceBelowCart && (
+              <div className="flex items-baseline gap-3 flex-wrap mt-2">
+                {hasDiscount && (
+                  <span className="text-sm text-white/30 line-through">
+                    ${fakeOldPrice?.toFixed(2)}
+                  </span>
+                )}
+
+                <span className="text-3xl font-extrabold text-white">
+                  ${finalPrice.toFixed(2)}
+                </span>
+
+                {hasDiscount && (
+                  <span className="text-xs font-semibold text-red-500 bg-red-500/10 px-2 py-0.5 rounded-full">
+                    {discount}% OFF
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* Descripción debajo de Añadir al carrito */}
             <div className="mt-6">
