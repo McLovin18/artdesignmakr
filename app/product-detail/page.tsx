@@ -409,7 +409,7 @@ export default function ProductDetailPage({ params }) {
     setActiveTab((prev) => (prev === tab ? null : tab));
   };
 
-  
+
 const movePriceBelowCart =
   ((personalizacionValues[priceAffectingField?.id] || "").trim() !== "") ||
   altoRelieve;
@@ -619,23 +619,6 @@ return (
             )}
 
             <div className="h-px bg-white/10" />
-
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-white/40 font-medium">Disponibilidad:</span>
-              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                hasVariations && variationAttributeIds.length > 0 && !variationAttributeIds.every(attrId => selectedVariations[attrId])
-                  ? "bg-red-500/10 text-red-400"
-                  : maxCantidad > 0
-                  ? "bg-green-500/10 text-green-400"
-                  : "bg-red-500/10 text-red-500"
-              }`}>
-                {hasVariations && variationAttributeIds.length > 0 && !variationAttributeIds.every(attrId => selectedVariations[attrId])
-                  ? "Selecciona opciones para ver stock"
-                  : maxCantidad > 0
-                  ? `${maxCantidad} en stock`
-                  : "Sin stock"}
-              </span>
-            </div>
 
 
             

@@ -126,7 +126,7 @@ export default function CartPage() {
     // Campos personalizados
     const campos = resolvePersonalizacionFields(p);
     parts.push(...campos.map((c) => `${c.nombre}: ${c.valor}`));
-    
+
     // Alto relieve
     if (typeof p.altoRelieve === "boolean") {
       parts.push(`Alto relieve: ${p.altoRelieve ? "Sí" : "No"}`);
@@ -157,8 +157,12 @@ export default function CartPage() {
 
     // Para WhatsApp, solo incluir subtotal + envío
     const totalWhatsApp = subtotal;
+    
 
-    const message = `${headerMsg}\n\n${productosText}\n\n--------------------\nTOTAL: $${totalWhatsApp.toFixed(2)}\n--------------------\n\n${footerMsg}`;
+    const abonoInicial = totalWhatsApp * 0.3;
+    const restante = totalWhatsApp * 0.7;
+
+    const message = `${headerMsg}\n\n${productosText}\n\n--------------------\nTOTAL: $${totalWhatsApp.toFixed(2)}\n\nAbono inicial (30%): $${abonoInicial.toFixed(2)}\nRestante: $${restante.toFixed(2)}\n--------------------\n\n${footerMsg}`;
     return encodeURIComponent(message);
   };
 
@@ -362,6 +366,16 @@ export default function CartPage() {
                           )}
                         </div>
 
+                        <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-red-600/20 bg-red-600/5 px-2.5 py-1">
+                          <span className="material-icons-round text-[14px] text-red-500">
+                            payments
+                          </span>
+                          <span className="text-[11px] text-red-400 font-medium">
+                            Abono inicial (30%): $
+                            {((lineTotal * 0.3)).toFixed(2)}
+                          </span>
+                        </div>
+
                         <div className="flex items-center gap-2 mt-2.5 flex-wrap">
                           <div className="flex items-center gap-1 bg-black border border-white/10 rounded-lg p-0.5">
                             <button
@@ -427,6 +441,26 @@ export default function CartPage() {
                     <div className="border-t border-white/10 mt-3 pt-3 flex justify-between font-bold text-base">
                       <span className="text-white">Total</span>
                       <span className="text-white">${total.toFixed(2)}</span>
+                    </div>
+
+                    <div className="border-t border-white/10 mt-3 pt-3 flex justify-between font-bold text-base">
+                      <span className="text-white">Total</span>
+                      <span className="text-white">${total.toFixed(2)}</span>
+                    </div>
+
+                    <div className="mt-3 rounded-xl border border-red-600/20 bg-red-600/5 p-3">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-white/70">Abono inicial (30%)</span>
+                        <span className="font-bold text-red-500">
+                          ${(total * 0.3).toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm mt-1">
+                        <span className="text-white/50">Restante</span>
+                        <span className="text-white/70">
+                          ${(total * 0.7).toFixed(2)}
+                        </span>
+                      </div>
                     </div>
                   </div>
 

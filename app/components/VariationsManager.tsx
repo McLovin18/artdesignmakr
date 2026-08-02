@@ -184,34 +184,6 @@ export default function VariationsManager({
         })}
       </div>
 
-      {/* Stock */}
-      {variationAttributeIds.every(
-        (attrId) => selectedVariations[attrId]
-      ) && (
-        <div className="mt-5 pt-4 border-t border-white/10">
-
-          <div className="flex items-center justify-between">
-
-            <span className="text-xs uppercase tracking-wider text-white/40">
-              Disponibilidad
-            </span>
-
-            <div
-              className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                currentStock > 0
-                  ? "bg-green-500/15 text-green-400 border border-green-500/20"
-                  : "bg-red-500/15 text-red-400 border border-red-500/20"
-              }`}
-            >
-              {currentStock > 0
-                ? `${currentStock} unidades`
-                : "Sin stock"}
-            </div>
-
-          </div>
-
-        </div>
-      )}
     </div>
   );
 }
