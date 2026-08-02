@@ -267,7 +267,7 @@ export default function CartPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-black text-white transition-colors">
+      <div className="min-h-screen text-white transition-colors">
         <main className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-10">
           <div className="flex items-center gap-3 mb-6">
             <h1 className="text-2xl sm:text-3xl font-bold text-white">

@@ -291,7 +291,7 @@ export default function ProductosPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors" style={{ background: "var(--bg)", color: "var(--text)" }}>
+    <div className="min-h-screen flex flex-col transition-colors" style={{color: "var(--text)" }}>
       <BottomBarPublic />
       <main className="max-w-7xl mx-auto w-full px-3 sm:px-5 py-6 sm:py-15 flex-1">
 

@@ -419,7 +419,7 @@ const movePriceBelowCart =
 
 
 return (
-    <div className="min-h-screen flex flex-col mt-2 bg-black text-white transition-colors">
+    <div className="min-h-screen flex flex-col mt- text-white transition-colors">
       <BottomBarPublic/>
 
       <div className="max-w-5xl mx-auto w-full px-3 sm:px-6 py-6 sm:py-10">
@@ -433,7 +433,7 @@ return (
           >
             
           {/* Imagen principal */}
-          <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#0a0a0a] border border-white/10">
+          <div className="relative aspect-square rounded-2xl overflow-hidden backdrop-blur-sm border border-white/10">
             {hasDiscount && (
               <span className="absolute top-3 left-3 z-10 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                 -{discount}%
@@ -475,7 +475,7 @@ return (
                   <button
                     key={idx}
                     onClick={() => setImgIdx(idx)}
-                    className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all bg-[#0a0a0a] ${
+                    className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all bg-black/30 backdrop-blur-sm ${
                       imgIdx === idx
                         ? "border-red-600 scale-105"
                         : "border-transparent opacity-50 hover:opacity-80"
@@ -499,7 +499,7 @@ return (
                     className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold transition-all ${
                       activeTab === "caracteristicas"
                             ? "bg-red-600 text-white"
-                            : "bg-[#0a0a0a] text-white hover:bg-white/5"
+                            : ": bg-black/30 backdrop-blur-sm text-white hover:bg-white/10"
                     }`}
                   >
                     <span className="material-icons-round text-[16px]">list_alt</span>
@@ -513,7 +513,7 @@ return (
                   } ${
                     activeTab === "resenas"
                             ? "bg-red-600 text-white"
-                            : "bg-[#0a0a0a] text-white hover:bg-white/5"
+                            : "bg-black/30 backdrop-blur-sm text-white hover:bg-white/10"
                   }`}
                 >
                   <span className="material-icons-round text-[16px]">star_outline</span>
@@ -532,7 +532,7 @@ return (
 
               {/* Panel de contenido del tab activo */}
               {activeTab && (
-                <div className="border border-t-0 border-white/10 rounded-b-xl px-4 py-4 bg-[#0a0a0a]">
+                <div className="border border-t-0 border-white/10 rounded-b-xl px-4 py-4 bg-black/30 backdrop-blur-sm">
 
                   {/* Panel: Características */}
                   {activeTab === "caracteristicas" && hasCaracteristicas && (
