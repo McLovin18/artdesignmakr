@@ -9,7 +9,7 @@ import {
   doc,
   getDoc,
 } from "firebase/firestore";
-import { getOrCreateDeviceId } from "./device-id-client";
+import { getOrCreateDeviceId, getOrCreateSessionId } from "./device-id-client";
 
 const ANALYTICS_COLLECTION = "analytics";
 const API_TRACK_URL = "/api/analytics/track";
@@ -30,6 +30,13 @@ interface DailyAnalytics {
   lastUpdated: any;
 }
 
+export interface PublicTodayAnalytics {
+  visitors: number;
+  purchases: number;
+  purchasesWhatsApp: number;
+  purchasesTransfer: number;
+}
+
 /**
  * Get today's date in YYYY-MM-DD format
  */
@@ -44,8 +51,8 @@ function getTodayDate(): string {
  */
 export async function trackPageView(): Promise<void> {
   try {
-    const deviceId = getOrCreateDeviceId();
-    console.log("[Analytics] Tracking page view for device:", deviceId);
+    const sessionId = getOrCreateSessionId();
+    console.log("[Analytics] Tracking session start:", sessionId);
     
     const response = await fetch(API_TRACK_URL, {
       method: "POST",
@@ -53,8 +60,8 @@ export async function trackPageView(): Promise<void> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        eventType: "pageView",
-        deviceId,
+        eventType: "sessionStart",
+        sessionId,
       }),
     });
 
@@ -75,7 +82,7 @@ export async function trackPageView(): Promise<void> {
  * Uses API endpoint for safety and permissions
  */
 export async function trackClick(
-  type: "productClick" | "categoryClick" | "buttonClick" | "linkClick" | "blogClick" = "buttonClick"
+  type: string = "buttonClick"
 ): Promise<void> {
   try {
     const deviceId = getOrCreateDeviceId();
@@ -121,6 +128,24 @@ export async function getTodayAnalytics(): Promise<DailyAnalytics | null> {
   } catch (error) {
     console.error("[Analytics] Error getting today's analytics:", error);
     return null;
+  }
+}
+
+export async function getPublicTodayAnalytics(): Promise<PublicTodayAnalytics> {
+  try {
+    const response = await fetch("/api/analytics/public", { cache: "no-store" });
+    if (!response.ok) {
+      return { visitors: 0, purchases: 0, purchasesWhatsApp: 0, purchasesTransfer: 0 };
+    }
+    const data = (await response.json()) as Partial<PublicTodayAnalytics>;
+    return {
+      visitors: Number((data as any).visitors ?? 0),
+      purchases: Number(data.purchases ?? 0),
+      purchasesWhatsApp: Number(data.purchasesWhatsApp ?? 0),
+      purchasesTransfer: Number(data.purchasesTransfer ?? 0),
+    };
+  } catch {
+    return { visitors: 0, purchases: 0, purchasesWhatsApp: 0, purchasesTransfer: 0 };
   }
 }
 

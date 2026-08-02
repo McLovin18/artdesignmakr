@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useTracking } from "../lib/useAnalytics";
 import WhatsAppFloatingButton from "./WhatsAppFloatingButton";
 import styles from "./Footer.module.css";
+import { getPublicTodayAnalytics, PublicTodayAnalytics } from "../lib/analytics-db";
 
 const IconInstagram = () => (
   <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
@@ -36,8 +37,13 @@ const WHATSAPP_DISPLAY = "+593 97 880 3423"; // como se muestra al usuario
 const Footer: React.FC = () => {
   const pathname = usePathname();
   const { trackLinkClick } = useTracking();
+  const [analytics, setAnalytics] = useState<PublicTodayAnalytics | null>(null);
 
   const showWhatsAppFloating = pathname && !pathname.startsWith("/admin");
+
+  useEffect(() => {
+    getPublicTodayAnalytics().then(setAnalytics).catch(() => setAnalytics(null));
+  }, []);
 
   return (
     <>
@@ -65,25 +71,41 @@ const Footer: React.FC = () => {
 
             {/* Columna 2: Redes sociales */}
             <div className="w-full flex justify-center">
-              <ul className={styles.ftSocials}>
-                {socialLinks.map(({ href, label, Icon }) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      className="flex items-center justify-center w-9 h-9 rounded-full border border-white/15 text-white transition-colors hover:bg-red-600  hover:border-red-600"
-                      target="_blank"
-                      rel="noreferrer"
-                      title={label}
-                      onClick={() => trackLinkClick().catch(console.error)}
-                    >
-                      <Icon />
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <div className="w-full max-w-md flex items-center justify-between gap-3">
+                <div className="text-xs text-white/60 font-semibold">
+                  Visitantes:{" "}
+                  <span className="text-white">
+                    {analytics ? analytics.visitors : "-"}
+                  </span>
+                </div>
+
+                <ul className={styles.ftSocials}>
+                  {socialLinks.map(({ href, label, Icon }) => (
+                    <li key={label}>
+                      <a
+                        href={href}
+                        className="flex items-center justify-center w-9 h-9 rounded-full border border-white/15 text-white transition-colors hover:bg-red-600  hover:border-red-600"
+                        target="_blank"
+                        rel="noreferrer"
+                        title={label}
+                        onClick={() => trackLinkClick().catch(console.error)}
+                      >
+                        <Icon />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="text-xs text-white/60 font-semibold text-right">
+                  Compras realizadas:{" "}
+                  <span className="text-white">
+                    {analytics ? analytics.purchases : "-"}
+                  </span>
+                </div>
+              </div>
             </div>
             {/* Columna 3: Contacto */}
-            <div className="flex flex-col items-center md:items-start gap-2.5">
+            <div className="flex flex-col items-center md:items-end gap-2.5">
               <a 
                 href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
@@ -91,8 +113,8 @@ const Footer: React.FC = () => {
                 className="flex items-center gap-2 text-xl text-white/70 hover:text-red-500 transition-colors"
                 onClick={() => trackLinkClick().catch(console.error)}
               >
-                <IconWhatsApp />
                 <span>{WHATSAPP_DISPLAY}</span>
+                <IconWhatsApp />
               </a>
 
             </div>

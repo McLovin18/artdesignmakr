@@ -28,6 +28,17 @@ export function getOrCreateDeviceId(): string {
   return newId;
 }
 
+export function getOrCreateSessionId(): string {
+  const stored = sessionStorage.getItem("sessionId");
+  if (stored) {
+    return stored;
+  }
+
+  const newId = generateDeviceId();
+  sessionStorage.setItem("sessionId", newId);
+  return newId;
+}
+
 // Helper para registrarse
 export async function registerWithRateLimit(email: string, password: string, displayName: string) {
   const deviceId = getOrCreateDeviceId();

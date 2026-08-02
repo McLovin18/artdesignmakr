@@ -8,8 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import admin from "firebase-admin";
-import { db } from "../../../lib/firebase-admin";
+import admin, { db } from "../../../lib/firebase-admin";
 
 const ANALYTICS_COLLECTION = "analytics";
 
@@ -25,13 +24,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     console.log("[Analytics API] 2. Body received:", body);
     
-    const { eventType, deviceId, clickType: bodyClickType } = body;
-    console.log("[Analytics API] 3. Extracted values:", { eventType, deviceId, bodyClickType });
+    const { eventType, deviceId, sessionId, clickType: bodyClickType } = body;
+    console.log("[Analytics API] 3. Extracted values:", { eventType, deviceId, sessionId, bodyClickType });
 
-    if (!eventType || !deviceId) {
-      console.error("[Analytics API] ❌ Missing required fields:", { eventType, deviceId });
+    if (!eventType) {
+      console.error("[Analytics API] ❌ Missing required fields:", { eventType });
       return NextResponse.json(
-        { error: "Missing eventType or deviceId" },
+        { error: "Missing eventType" },
         { status: 400 }
       );
     }
@@ -43,11 +42,18 @@ export async function POST(req: NextRequest) {
     const docRef = db.collection(ANALYTICS_COLLECTION).doc(today);
     console.log("[Analytics API] 6. Doc ref created:", { collection: ANALYTICS_COLLECTION, doc: today });
 
-    console.log(`[Analytics API] 7. Processing ${eventType} for device ${deviceId}`);
+    console.log(`[Analytics API] 7. Processing ${eventType}`);
 
-    if (eventType === "pageView") {
-      console.log("[Analytics API] 8a. Branch: pageView");
-      // Track page view
+    if (eventType === "sessionStart" || eventType === "pageView") {
+      console.log("[Analytics API] 8a. Branch: sessionStart/pageView");
+      const effectiveSessionId = sessionId || deviceId;
+      if (!effectiveSessionId) {
+        return NextResponse.json(
+          { error: "Missing sessionId" },
+          { status: 400 }
+        );
+      }
+
       const docSnap = await docRef.get();
       console.log("[Analytics API] 8b. Document exists:", docSnap.exists);
 
@@ -55,24 +61,24 @@ export async function POST(req: NextRequest) {
         const data = docSnap.data() as any;
         console.log("[Analytics API] 8c. Existing doc data:", data);
         
-        if (!data.visitorIds || !data.visitorIds.includes(deviceId)) {
-          console.log("[Analytics API] 8d. New visitor, incrementing count...");
-          const updatedVisitors = [...(data.visitorIds || []), deviceId];
+        if (!data.sessionIds || !data.sessionIds.includes(effectiveSessionId)) {
+          console.log("[Analytics API] 8d. New session, incrementing count...");
+          const updatedSessions = [...(data.sessionIds || []), effectiveSessionId];
           await docRef.update({
-            visitorIds: updatedVisitors,
-            uniqueVisitors: admin.firestore.FieldValue.increment(1),
+            sessionIds: updatedSessions,
+            visits: admin.firestore.FieldValue.increment(1),
             lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
           });
-          console.log(`[Analytics API] ✅ Updated page view - new visitor`);
+          console.log(`[Analytics API] ✅ Updated session start - new session`);
         } else {
-          console.log(`[Analytics API] Page view - returning visitor, no update`);
+          console.log(`[Analytics API] Session already counted, no update`);
         }
       } else {
         console.log("[Analytics API] 8e. Creating new analytics doc...");
         await docRef.set({
           date: today,
-          uniqueVisitors: 1,
-          visitorIds: [deviceId],
+          visits: 1,
+          sessionIds: [effectiveSessionId],
           totalClicks: 0,
           clicksByType: {
             productClick: 0,
@@ -90,6 +96,12 @@ export async function POST(req: NextRequest) {
       // Track click
       const clickType = bodyClickType || "buttonClick";
       console.log(`[Analytics API] 8b. Click type: ${clickType}`);
+      if (!deviceId) {
+        return NextResponse.json(
+          { error: "Missing deviceId" },
+          { status: 400 }
+        );
+      }
 
       const docSnap = await docRef.get();
       console.log("[Analytics API] 8c. Document exists:", docSnap.exists);
@@ -118,8 +130,8 @@ export async function POST(req: NextRequest) {
 
         await docRef.set({
           date: today,
-          uniqueVisitors: 0,
-          visitorIds: [],
+          visits: 0,
+          sessionIds: [],
           totalClicks: 1,
           clicksByType: newClicksByType,
           lastUpdated: admin.firestore.FieldValue.serverTimestamp(),

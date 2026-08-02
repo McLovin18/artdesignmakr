@@ -11,11 +11,11 @@ import { trackPageView, trackClick } from "../lib/analytics-db";
 /**
  * Hook to track page views on component mount
  */
-export function useTrackPageView() {
+export function useTrackPageView(enabled: boolean = true) {
   useEffect(() => {
-    // Track page view when component mounts
+    if (!enabled) return;
     trackPageView().catch(console.error);
-  }, []);
+  }, [enabled]);
 }
 
 /**
@@ -28,5 +28,7 @@ export function useTracking() {
     trackButtonClick: () => trackClick("buttonClick"),
     trackLinkClick: () => trackClick("linkClick"),
     trackBlogClick: () => trackClick("blogClick"),
+    trackPurchaseWhatsApp: () => trackClick("purchase_whatsapp"),
+    trackPurchaseTransfer: () => trackClick("purchase_transfer"),
   };
 }

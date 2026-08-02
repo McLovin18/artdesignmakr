@@ -7,6 +7,7 @@ import { useUser } from "../context/UserContext";
 import BottomBarPublic from "../components/BottomBarPublic";
 import { obtenerAtributos } from "../lib/atributos-db";
 import ModalTransferencia from "../components/ModalTransferencia";
+import { useTracking } from "../lib/useAnalytics";
 
 function resolveCartItemKey(item: any) {
   if (!item) return "";
@@ -68,6 +69,7 @@ export default function CartPage() {
   const { isLogged } = useUser();
   const [atributos, setAtributos] = useState<any[]>([]);
   const [showModalTransferencia, setShowModalTransferencia] = useState(false);
+  const { trackPurchaseWhatsApp, trackPurchaseTransfer } = useTracking();
 
   const calcularPrecioData = (p: any) => {
     const { basePrice, discount, hasDiscount, fakeOldPrice, finalPrice } = getSnapshotPricing(p);
@@ -166,6 +168,8 @@ export default function CartPage() {
       }
     }
 
+    trackPurchaseWhatsApp().catch(() => {});
+
     // Abrir la ventana ANTES del await — en iOS Safari, window.open()
     // solo funciona si ocurre de forma síncrona dentro del gesto de click.
     // Si se abre después de un await, el navegador lo bloquea sin avisar.
@@ -200,6 +204,7 @@ export default function CartPage() {
       }
     }
 
+    trackPurchaseTransfer().catch(() => {});
     setShowModalTransferencia(true);
   };
 

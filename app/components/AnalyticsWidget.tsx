@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { getTodayAnalytics } from "../lib/analytics-db";
 
 interface Analytics {
-  uniqueVisitors: number;
+  visits: number;
   totalClicks: number;
   clicksByType?: {
     productClick: number;
@@ -32,7 +32,15 @@ export default function AnalyticsWidget() {
       try {
         setLoading(true);
         const data = await getTodayAnalytics();
-        setAnalytics(data || { uniqueVisitors: 0, totalClicks: 0, clicksByType: {} });
+        setAnalytics(
+          (data as any)
+            ? ({
+                visits: Number((data as any).visits ?? (data as any).uniqueVisitors ?? 0),
+                totalClicks: Number((data as any).totalClicks ?? 0),
+                clicksByType: (data as any).clicksByType || {},
+              } as Analytics)
+            : { visits: 0, totalClicks: 0, clicksByType: {} }
+        );
         setError(null);
       } catch (err) {
         setError("Error cargando analytics");
@@ -82,7 +90,7 @@ export default function AnalyticsWidget() {
   const engagementScore = Math.min(
     100,
     Math.round(
-      (analytics?.totalClicks || 0) / Math.max(1, analytics?.uniqueVisitors || 1) * 100
+      (analytics?.totalClicks || 0) / Math.max(1, analytics?.visits || 1) * 100
     )
   );
 
@@ -117,10 +125,10 @@ export default function AnalyticsWidget() {
           <div className="flex items-start justify-between mb-4">
             <div>
               <p className="text-sm font-medium text-blue-600 dark:text-blue-300 mb-1">
-                Visitantes \u00danicos
+                Sesiones
               </p>
               <p className="text-4xl font-bold text-blue-900 dark:text-blue-100">
-                {analytics?.uniqueVisitors || 0}
+                {analytics?.visits || 0}
               </p>
             </div>
             <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center">
@@ -130,7 +138,7 @@ export default function AnalyticsWidget() {
             </div>
           </div>
           <p className="text-xs text-blue-600 dark:text-blue-400">
-            Personas \u00fanicas que entraron por device-id
+            Entradas contadas por sesi\u00f3n
           </p>
         </div>
 
