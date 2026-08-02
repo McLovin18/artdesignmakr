@@ -7,6 +7,9 @@ import { useUser } from "../context/UserContext";
 import { useRouter } from "next/navigation";
 import { useTracking } from "../lib/useAnalytics";
 import { getCatalogPricing } from "../lib/pricing";
+import { useSiteSettings } from "../context/SiteSettingsContext";
+import WatermarkedImage from "../components/WaterMarketImage";
+
 
 const cardStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow:wght@400;500;600;700&display=swap');
@@ -237,8 +240,10 @@ function ProductoCard({
   const { isLogged, isAdmin, favoritos, addFavorito, removeFavorito } = useUser();
   const router = useRouter();
   const { trackProductClick } = useTracking();
-
+  const { settings } = useSiteSettings();
+  const primeraImagenTieneWatermark = Boolean(producto.imagenesWatermark?.[0]);
   const isFav = favoritos?.some((p) => p.id === producto.id);
+
 
   const isVisualOnlyProduct =
   producto.categoria === "1785564342207";
@@ -298,21 +303,14 @@ function ProductoCard({
         <div className="pc-card" onClick={onClick || goToDetail}>
           {/* ── IMAGEN ── */}
           <div className="pc-img-wrap">
-            <Image
+
+            <WatermarkedImage
               src={producto.imagenes?.[0] || "/no-image.png"}
+              watermarkSrc={primeraImagenTieneWatermark ? settings.productWatermarkUrl : null}
               alt={producto.nombre}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover"
-              style={{
-                opacity: 0,
-                transition: "opacity 0.4s ease",
-              }}
-              onLoad={(e) => {
-                (e.currentTarget as HTMLImageElement).style.opacity = "1";
-              }}
-              priority={index < 4}
-              loading={index < 4 ? "eager" : "lazy"}
+              imgClassName="w-full h-full object-cover"
+              objectFit="cover"
+              watermarkRatio={0.16}
             />
 
             {/* Badge descuento */}

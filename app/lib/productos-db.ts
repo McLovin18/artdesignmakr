@@ -20,6 +20,8 @@ export interface Producto {
   hasVariations?: boolean;
   stockVariants?: StockVariant[];
   variationAttributeIds?: string[];
+  imagenes?: string[];
+  imagenesWatermark?: boolean[];
   tallas?: string[];
   colores?: string[];
   categoria?: string;

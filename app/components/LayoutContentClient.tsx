@@ -2,6 +2,7 @@
 import { useOnboarding } from "../context/OnboardingContext";
 import { usePathname } from "next/navigation";
 import { UserProvider } from "../context/UserContext";
+import { SiteSettingsProvider } from "../context/SiteSettingsContext";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import ToastContainer from "./ToastContainer";
@@ -20,10 +21,12 @@ export default function LayoutContentClient({ children }: { children: React.Reac
   }
   return (
     <UserProvider>
-      <ToastContainer />
-      <Navbar />
-      {children}
-      <Footer />
+      <SiteSettingsProvider>
+        <ToastContainer />
+        <Navbar />
+        {children}
+        <Footer />
+      </SiteSettingsProvider>
     </UserProvider>
   );
 }

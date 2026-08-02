@@ -16,6 +16,8 @@ import dynamic from "next/dynamic";
 import { getCartItemKey } from "../context/userLocalStorage";
 import { getCatalogPricing } from "../lib/pricing";
 import { formatRoundedMeasure, getMeasurePricing } from "../lib/measure-pricing";
+import { useSiteSettings } from "../context/SiteSettingsContext";
+import WatermarkedImage from "../components/WaterMarketImage";
 
 const Markdown = dynamic(() => import("../components/Markdown"), { ssr: false });
 
@@ -39,6 +41,7 @@ export default function ProductDetailPage({ params }) {
   const [atributos, setAtributos] = useState<Record<string, string>>({}); // Mapeo de ID -> nombre
   const [personalizacionValues, setPersonalizacionValues] = useState<Record<string, string>>({});
   const [altoRelieve, setAltoRelieve] = useState(false);
+  const { settings } = useSiteSettings();
 
   const {
     isLogged, user, isAdmin,
@@ -429,35 +432,41 @@ return (
             }`}
           >
             
-            {/* Imagen principal */}
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#0a0a0a] border border-white/10">
-              {hasDiscount && (
-                <span className="absolute top-3 left-3 z-10 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                  -{discount}%
-                </span>
-              )}
-              <img
-                src={producto.imagenes[imgIdx]}
-                alt={producto.nombre}
-                className="w-full h-full object-contain p-5"
-              />
-              {producto.imagenes.length > 1 && imgIdx > 0 && (
-                <button
-                  onClick={() => setImgIdx(imgIdx - 1)}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#141313] border border-white/15 shadow flex items-center justify-center hover:scale-105 hover:border-red-600 transition-all"
-                >
-                  <span className="material-icons-round text-white/70 text-lg">chevron_left</span>
-                </button>
-              )}
-              {producto.imagenes.length > 1 && imgIdx < producto.imagenes.length - 1 && (
-                <button
-                  onClick={() => setImgIdx(imgIdx + 1)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#141313] border border-white/15 shadow flex items-center justify-center hover:scale-105 hover:border-red-600 transition-all"
-                >
-                  <span className="material-icons-round text-white/70 text-lg">chevron_right</span>
-                </button>
-              )}
-            </div>
+          {/* Imagen principal */}
+          <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#0a0a0a] border border-white/10">
+            {hasDiscount && (
+              <span className="absolute top-3 left-3 z-10 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                -{discount}%
+              </span>
+            )}
+
+            <WatermarkedImage
+              src={producto.imagenes[imgIdx]}
+              watermarkSrc={
+                Boolean(producto.imagenesWatermark?.[imgIdx]) ? settings.productWatermarkUrl : null
+              }
+              alt={producto.nombre}
+              imgClassName="w-full h-full object-contain p-5"
+              watermarkRatio={0.18}
+            />
+
+            {producto.imagenes.length > 1 && imgIdx > 0 && (
+              <button
+                onClick={() => setImgIdx(imgIdx - 1)}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#141313] border border-white/15 shadow flex items-center justify-center hover:scale-105 hover:border-red-600 transition-all"
+              >
+                <span className="material-icons-round text-white/70 text-lg">chevron_left</span>
+              </button>
+            )}
+            {producto.imagenes.length > 1 && imgIdx < producto.imagenes.length - 1 && (
+              <button
+                onClick={() => setImgIdx(imgIdx + 1)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#141313] border border-white/15 shadow flex items-center justify-center hover:scale-105 hover:border-red-600 transition-all"
+              >
+                <span className="material-icons-round text-white/70 text-lg">chevron_right</span>
+              </button>
+            )}
+          </div>
 
             {/* Miniaturas */}
             {producto.imagenes.length > 1 && (

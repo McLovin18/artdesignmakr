@@ -1,6 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../lib/firebase";
+import { uploadImageAndGetUrl } from "../../lib/upload-image";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 
 export default function ConfigPage() {
   const colors = {
@@ -38,10 +42,153 @@ export default function ConfigPage() {
           </div>
         </div>
       </div>
+
+      <div className="mt-12">
+        <h2 className="text-lg font-semibold mb-2">Marca de agua</h2>
+        <WatermarkSettings />
+      </div>
+
       {/* Cambiar contraseña */}
       <div className="mt-12">
         <h2 className="text-lg font-semibold mb-2">Cambiar contraseña</h2>
         <ChangePasswordForm />
+      </div>
+    </div>
+  );
+}
+
+function WatermarkSettings() {
+  const { settings } = useSiteSettings();
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (!file) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  const handleSave = async () => {
+    setMessage("");
+    if (!file) {
+      setMessage("Selecciona un archivo PNG primero.");
+      return;
+    }
+
+    const isPng =
+      file.type === "image/png" ||
+      file.name.toLowerCase().endsWith(".png");
+
+    if (!isPng) {
+      setMessage("La marca de agua debe ser un archivo PNG.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const path = `landing_page/watermark/watermark_${Date.now()}.png`;
+      const url = await uploadImageAndGetUrl(file, path);
+      await setDoc(
+        doc(db, "landingPage", "main"),
+        { productWatermarkUrl: url },
+        { merge: true }
+      );
+      setMessage("Marca de agua guardada correctamente.");
+      setFile(null);
+    } catch (e: any) {
+      setMessage("Error: " + (e?.message || "No se pudo guardar la marca de agua"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemove = async () => {
+    setMessage("");
+    setLoading(true);
+    try {
+      await setDoc(
+        doc(db, "landingPage", "main"),
+        { productWatermarkUrl: null },
+        { merge: true }
+      );
+      setMessage("Marca de agua eliminada.");
+    } catch (e: any) {
+      setMessage("Error: " + (e?.message || "No se pudo eliminar la marca de agua"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const currentUrl = settings.productWatermarkUrl;
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-slate-600">
+        Sube un PNG con fondo transparente. Se mostrará abajo a la derecha en las imágenes de productos donde esté activada.
+      </p>
+
+      {currentUrl && (
+        <div className="rounded-xl border border-slate-200 bg-white p-3">
+          <div className="text-xs font-semibold text-slate-600 mb-2">Actual</div>
+          <div className="relative w-44 h-44 rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
+            <img src={currentUrl} alt="Marca de agua" className="w-full h-full object-contain p-3" />
+          </div>
+        </div>
+      )}
+
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+        <label className="block">
+          <span className="block text-sm font-semibold text-slate-700 mb-2">Subir PNG</span>
+          <input
+            type="file"
+            accept="image/png"
+            disabled={loading}
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="block w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base file:mr-4 file:rounded-full file:border-0 file:bg-rose-500 file:px-4 file:py-2 file:text-white file:font-semibold disabled:opacity-60"
+          />
+        </label>
+
+        {previewUrl && (
+          <div className="rounded-xl border border-slate-200 bg-white p-3">
+            <div className="text-xs font-semibold text-slate-600 mb-2">Vista previa</div>
+            <div className="relative w-44 h-44 rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
+              <img src={previewUrl} alt="Vista previa" className="w-full h-full object-contain p-3" />
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={loading || !file}
+            className="bg-rose-600 text-white px-4 py-2 rounded-xl font-semibold disabled:opacity-60"
+          >
+            {loading ? "Guardando..." : "Guardar marca de agua"}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleRemove}
+            disabled={loading || !currentUrl}
+            className="bg-white text-slate-800 px-4 py-2 rounded-xl font-semibold border border-slate-200 disabled:opacity-60"
+          >
+            Quitar marca de agua
+          </button>
+        </div>
+
+        {message && (
+          <div className={`text-sm ${message.startsWith("Error") ? "text-red-600" : "text-green-600"}`}>
+            {message}
+          </div>
+        )}
       </div>
     </div>
   );

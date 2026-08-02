@@ -7,6 +7,7 @@ import { obtenerMarcas } from "../../lib/marcas-db";
 import { obtenerBodegas } from "../../lib/bodegas-db";
 import { obtenerAtributos, agregarValorAtributo } from "../../lib/atributos-db";
 import type { StockVariant } from "../../lib/productos-db";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 
 // ─────────────────────────────────────────────────────────────────────────
 // FIXES APLICADOS PARA MOVIL (iPhone / Android) — ver resumen al final del chat
@@ -44,6 +45,7 @@ type Producto = {
   subsubcategoria?: string;
   marca?: string;
   imagenes: (string | File)[];
+  imagenesWatermark?: boolean[];
   descripcion: string;
   caracteristicas: string[];
   bodegaId?: string;
@@ -61,6 +63,19 @@ type ProductoFormProps = {
   onSave?: (data: Producto) => void;
   onCancel?: () => void;
 };
+
+function WatermarkPreview({ enabled }: { enabled: boolean }) {
+  const { settings } = useSiteSettings();
+  const url = settings.productWatermarkUrl;
+  if (!enabled || !url) return null;
+  return (
+    <img
+      src={url}
+      alt=""
+      className="pointer-events-none select-none absolute bottom-2 right-2 z-10 w-[42%] max-w-[90px] h-auto"
+    />
+  );
+}
 
 type FormSection = "general" | "stock" | "photos" | "price";
 
@@ -150,6 +165,14 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
   const [subcategoria, setSubcategoria] = useState<string>(initialData?.subcategoria || "");
   const [subsubcategoria, setSubsubcategoria] = useState<string>(initialData?.subsubcategoria || "");
   const [imagenes, setImagenes] = useState<(string | File)[]>(initialData?.imagenes || []);
+  const [imagenesWatermark, setImagenesWatermark] = useState<boolean[]>(() => {
+    const imgs = (initialData?.imagenes || []) as unknown[];
+    const wm = (initialData as any)?.imagenesWatermark;
+    if (Array.isArray(wm)) {
+      return imgs.map((_, idx) => Boolean(wm[idx]));
+    }
+    return imgs.map(() => false);
+  });
   const [descripcion, setDescripcion] = useState<string>(initialData?.descripcion || "");
   const [caracteristicas, setCaracteristicas] = useState<string[]>(initialData?.caracteristicas || [""]);
   const [tieneMarca, setTieneMarca] = useState<boolean>(Boolean(initialData?.marca));
@@ -387,12 +410,17 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
       // para fotos de cámara de iPhone (varios MB, resolución muy alta).
       const comprimidas = await Promise.all(files.map((f) => compressImageFile(f)));
       setImagenes((prev) => [...prev, ...comprimidas]);
+      setImagenesWatermark((prev) => [
+        ...prev,
+        ...Array.from({ length: comprimidas.length }, () => false),
+      ]);
     } finally {
       setProcesandoImagenes(false);
     }
   }
   function handleAddImagenUrl() {
     setImagenes([...imagenes, ""]);
+    setImagenesWatermark((prev) => [...prev, false]);
   }
   function handleImagenUrlChange(idx: number, val: string) {
     setImagenes(imagenes.map((img, i) => i === idx ? val : img));
@@ -411,6 +439,7 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
       }
       return prev.filter((_, i) => i !== idx);
     });
+    setImagenesWatermark((prev) => prev.filter((_, i) => i !== idx));
   }
 
   // ── Reordenar imágenes: botones subir/bajar ──
@@ -423,6 +452,21 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
       if (target < 0 || target >= prev.length) return prev;
       const copia = [...prev];
       [copia[idx], copia[target]] = [copia[target], copia[idx]];
+      return copia;
+    });
+    setImagenesWatermark((prev) => {
+      const target = idx + direccion;
+      if (target < 0 || target >= prev.length) return prev;
+      const copia = [...prev];
+      [copia[idx], copia[target]] = [copia[target], copia[idx]];
+      return copia;
+    });
+  }
+
+  function toggleImagenWatermark(idx: number) {
+    setImagenesWatermark((prev) => {
+      const copia = [...prev];
+      copia[idx] = !Boolean(copia[idx]);
       return copia;
     });
   }
@@ -630,6 +674,7 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
             {imagenes.map((img, idx) => {
               const isFile = img instanceof File;
               const url = getPreviewUrl(img);
+              const hasWatermark = Boolean(imagenesWatermark[idx]);
 
               return (
                 <div
@@ -649,6 +694,8 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
                       <span className="material-icons-round text-3xl text-slate-300">image_not_supported</span>
                     </div>
                   )}
+
+                  <WatermarkPreview enabled={hasWatermark} />
 
                   {/* Controles: subir / bajar / eliminar. Siempre visibles en
                       móvil (no dependen de :hover, que no existe con el dedo) */}
@@ -686,8 +733,21 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
                     {idx + 1}
                   </div>
 
-                  {/* Etiqueta de tipo */}
-                  <div className="absolute top-2 right-2 bg-white/90 text-slate-700 rounded-lg px-2 py-1 text-[10px] font-semibold truncate max-w-[calc(100%-2.5rem)]">
+                  <button
+                    type="button"
+                    onClick={() => toggleImagenWatermark(idx)}
+                    className={`absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full ${
+                      hasWatermark ? "bg-rose-600 text-white" : "bg-white/90 text-slate-700"
+                    }`}
+                    aria-label={hasWatermark ? "Quitar marca de agua" : "Aplicar marca de agua"}
+                    title={hasWatermark ? "Con marca de agua" : "Sin marca de agua"}
+                  >
+                    <span className="material-icons-round text-[18px]">
+                      {hasWatermark ? "check_circle" : "radio_button_unchecked"}
+                    </span>
+                  </button>
+
+                  <div className="absolute top-2 right-12 bg-white/90 text-slate-700 rounded-lg px-2 py-1 text-[10px] font-semibold truncate max-w-[calc(100%-5.5rem)]">
                     {isFile ? "Archivo" : "URL"}
                   </div>
                 </div>
@@ -1326,29 +1386,34 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
     setLoading(true);
     try {
       // Procesar imágenes: subir archivos a Storage y dejar URLs directas
-      const imagenesProcesadas = await Promise.all(imagenes.map(async (img: string | File, idx: number) => {
-        if (typeof img === "string") {
-          // Si es URL (http/https), dejarla igual
-          if (img.startsWith("http")) return img;
-          // Si es blob, ignorar (no debería ocurrir)
-          return null;
-        } else if (img instanceof File) {
-          // Subir archivo a Storage
-          const ext = img.name.split('.').pop();
-          const nombreArchivo = `${nombre.replace(/\s+/g, "_")}_${Date.now()}_${idx}.${ext}`;
-          const path = `productos/${nombreArchivo}`;
-          try {
-            const url = await uploadImageAndGetUrl(img, path);
-            return url;
-          } catch (err: any) {
-            alert("Error subiendo imagen: " + (err?.message || err));
-            return null;
+      const imagenesProcesadas = await Promise.all(
+        imagenes.map(async (img: string | File, idx: number) => {
+          const watermark = Boolean(imagenesWatermark[idx]);
+          if (typeof img === "string") {
+            if (img.startsWith("http")) return { url: img, watermark };
+            return { url: null, watermark };
           }
-        }
-        return null;
-      }));
-      // Filtrar nulos/blobs
-      const imagenesFinal = imagenesProcesadas.filter((x): x is string => Boolean(x));
+          if (img instanceof File) {
+            const ext = img.name.split(".").pop();
+            const nombreArchivo = `${nombre.replace(/\s+/g, "_")}_${Date.now()}_${idx}.${ext}`;
+            const path = `productos/${nombreArchivo}`;
+            try {
+              const url = await uploadImageAndGetUrl(img, path);
+              return { url, watermark };
+            } catch (err: any) {
+              alert("Error subiendo imagen: " + (err?.message || err));
+              return { url: null, watermark };
+            }
+          }
+          return { url: null, watermark };
+        })
+      );
+      const imagenesFinal = imagenesProcesadas
+        .filter((x): x is { url: string; watermark: boolean } => Boolean(x.url))
+        .map((x) => ({ url: x.url, watermark: x.watermark }));
+
+      const imagenesUrlsFinal = imagenesFinal.map((x) => x.url);
+      const imagenesWatermarkFinal = imagenesFinal.map((x) => x.watermark);
       // Generar SKU automático para nuevas creaciones (no sobrescribir en edición)
       let finalSku = sku?.trim();
       if (!isEdit && !finalSku) {
@@ -1377,7 +1442,8 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
         subsubcategoria: subsubcategoriaRequired ? subsubcategoria : "",
         marca: tieneMarca ? marca : undefined,
         bodegaId,
-        imagenes: imagenesFinal,
+        imagenes: imagenesUrlsFinal,
+        imagenesWatermark: imagenesWatermarkFinal,
         descripcion,
         caracteristicas,
         personalizado,
@@ -1412,6 +1478,7 @@ export default function ProductoForm({ initialData = null, onSave, onCancel }: P
         setMarca("");
         setBodegaId("");
         setImagenes([]);
+        setImagenesWatermark([]);
         setDescripcion("");
         setCaracteristicas([""]);
         setCategoryPathChanged(false);
