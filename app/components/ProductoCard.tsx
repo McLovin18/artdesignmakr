@@ -240,6 +240,9 @@ function ProductoCard({
 
   const isFav = favoritos?.some((p) => p.id === producto.id);
 
+  const isVisualOnlyProduct =
+  producto.categoria === "1785564342207";
+
   const hasVariations =
     producto?.hasVariations || producto?.isCamiseta || false;
   const stockVariants = producto?.stockVariants || [];
@@ -340,18 +343,20 @@ function ProductoCard({
 
           {/* ── INFO (ahora sin contenedor con fondo) ── */}
           <div className="pc-info">
+            {!isVisualOnlyProduct && (
+              <div className="pc-prices">
+                {hasDiscount && (
+                  <span className="pc-price-old">
+                    ${fakeOldPrice.toFixed(2)}
+                  </span>
+                )}
 
-            <div className="pc-prices">
-              {hasDiscount && (
-                <span className="pc-price-old">
-                  ${fakeOldPrice.toFixed(2)}
+                <span className="pc-price-final">
+                  ${finalPrice.toFixed(2)}{" "}
+                  <span className="pc-price-currency">USD</span>
                 </span>
-              )}
-              <span className="pc-price-final">
-                ${finalPrice.toFixed(2)}{" "}
-                <span className="pc-price-currency">USD</span>
-              </span>
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </Link>
