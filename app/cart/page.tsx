@@ -131,11 +131,12 @@ export default function CartPage() {
 
     const productosText = carrito
       .map((p) => {
-        const tiempoEntrega = bodegasMap.get(p.bodegaId || "technothings") || 72;
+        const diasEntrega = bodegasMap.get(p.bodegaId || "technothings") || 10;
         const cantidad = p.cantidad || 1;
         const variationText = getVariationText(p);
         const personalizacionText = getPersonalizacionText(p);
-        return `• ${cantidad}x ${p.nombre}${variationText}${personalizacionText} (Entrega Aproximada en: ${tiempoEntrega}h)`;
+        const textoTiempo = diasEntrega === 1 ? "1 día" : `${diasEntrega} días`;
+        return `• ${cantidad}x ${p.nombre}${variationText}${personalizacionText} (Entrega Aproximada en: ${textoTiempo})`;
       })
       .join("\n");
 
@@ -202,7 +203,7 @@ export default function CartPage() {
     setShowModalTransferencia(true);
   };
 
-  
+
   const handleCantidad = (id: string, cantidad: number) => {
     if (cantidad < 1) return;
     const prod = carrito.find((p) => resolveCartItemKey(p) === id);

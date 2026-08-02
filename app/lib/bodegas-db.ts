@@ -15,7 +15,7 @@ const COLLECTION = "bodegas";
 export interface Bodega {
   id: string;
   nombre: string;
-  tiempoEntrega: number; // en horas laborales (12 o 72)
+  tiempoEntrega: number; // en días laborales (1 o 10)
   esNuevaColeccion?: boolean;
   createdAt?: Date;
 }
@@ -30,7 +30,7 @@ export async function obtenerBodegas(): Promise<Bodega[]> {
   } as Bodega));
 }
 
-export async function crearBodega(nombre: string, tiempoEntrega: number = 72): Promise<void> {
+export async function crearBodega(nombre: string, tiempoEntrega: number = 10): Promise<void> {
   const id = nombre.toLowerCase().replace(/\s+/g, "_");
   await setDoc(doc(db, COLLECTION, id), {
     nombre,
@@ -57,7 +57,7 @@ export async function crearBodegaDefault(): Promise<void> {
     const existeDefault = bodegas.some(b => b.id === "technothings");
     
     if (!existeDefault) {
-      await crearBodega("Technothings", 12);
+      await crearBodega("Technothings", 1);
     }
   } catch (error) {
     console.error("Error al crear bodega default:", error);
@@ -78,6 +78,34 @@ export async function setNuevaColeccion(bodegaId: string): Promise<void> {
   await setDoc(doc(db, COLLECTION, bodegaId), {
     esNuevaColeccion: true
   }, { merge: true });
+}
+
+// Migración única: convierte bodegas guardadas con el sistema viejo (horas: 12/72)
+// al nuevo sistema en días (1/10). Solo toca documentos cuyo valor coincide
+// exactamente con 12 o 72, para no afectar bodegas ya migradas o con valores
+// personalizados. Llamar una sola vez (por ejemplo desde un botón de admin
+// o un script), no en cada carga de la app.
+export async function migrarTiempoEntregaAHorasADias(): Promise<{ actualizadas: number }> {
+  const snapshot = await getDocs(collection(db, COLLECTION));
+  let actualizadas = 0;
+
+  for (const docSnapshot of snapshot.docs) {
+    const data = docSnapshot.data();
+    const valorActual = data.tiempoEntrega;
+
+    let nuevoValor: number | null = null;
+    if (valorActual === 12) nuevoValor = 1;
+    else if (valorActual === 72) nuevoValor = 10;
+
+    if (nuevoValor !== null) {
+      await setDoc(doc(db, COLLECTION, docSnapshot.id), {
+        tiempoEntrega: nuevoValor
+      }, { merge: true });
+      actualizadas++;
+    }
+  }
+
+  return { actualizadas };
 }
 
 // Listener para cambios en tiempo real
