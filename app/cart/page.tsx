@@ -121,10 +121,20 @@ export default function CartPage() {
 
   // Arma el texto de personalización para el mensaje de WhatsApp
   const getPersonalizacionText = (p: any): string => {
+    const parts: string[] = [];
+
+    // Campos personalizados
     const campos = resolvePersonalizacionFields(p);
-    if (campos.length === 0) return "";
-    const parts = campos.map((c) => `${c.nombre}: ${c.valor}`);
-    return ` [Personalización - ${parts.join(", ")}]`;
+    parts.push(...campos.map((c) => `${c.nombre}: ${c.valor}`));
+    
+    // Alto relieve
+    if (typeof p.altoRelieve === "boolean") {
+      parts.push(`Alto relieve: ${p.altoRelieve ? "Sí" : "No"}`);
+    }
+
+    if (parts.length === 0) return "";
+
+    return ` [${parts.join(", ")}]`;
   };
 
   const generateWhatsAppMessage = async (): Promise<string> => {
