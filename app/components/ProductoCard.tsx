@@ -47,24 +47,19 @@ const cardStyles = `
   }
 
   /* ── imagen ── */
-  /* Altura fija en px (no aspect-ratio) para que TODAS las imágenes
-     midan exactamente lo mismo, sin importar el ancho de cada columna. */
+  /* aspect-ratio 4/5: misma proporción que se le pide al cliente para
+     las fotos (1200x1500px). Así el contenedor siempre encaja con la
+     imagen recomendada, sin colchón vacío, tanto en móvil como desktop. */
   .pc-img-wrap {
     position: relative;
     width: 100%;
-    height: 220px;
+    aspect-ratio: 4 / 5;
     background: #0a0a0a;
     overflow: hidden;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  @media (min-width: 640px) {
-    .pc-img-wrap {
-      height: 340px;
-    }
   }
 
   /* Altura siempre llena el contenedor; el ancho se ajusta de forma

@@ -366,6 +366,8 @@ export default function CartPage() {
                           )}
                         </div>
 
+
+
                         <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-red-600/20 bg-red-600/5 px-2.5 py-1">
                           <span className="material-icons-round text-[14px] text-red-500">
                             payments
@@ -442,23 +444,39 @@ export default function CartPage() {
                       <span className="text-white">Total</span>
                       <span className="text-white">${total.toFixed(2)}</span>
                     </div>
-
-                    <div className="border-t border-white/10 mt-3 pt-3 flex justify-between font-bold text-base">
-                      <span className="text-white">Total</span>
-                      <span className="text-white">${total.toFixed(2)}</span>
-                    </div>
-
-                    <div className="mt-3 rounded-xl border border-red-600/20 bg-red-600/5 p-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-white/70">Abono inicial (30%)</span>
+                                {/* 1. Info del pago */}
+                    <div className="rounded-2xl p-4 border border-red-600/25 bg-red-600/5 space-y-2">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-white/50">
+                        Cómo funciona
+                      </p>
+                      <p className="text-sm text-white leading-relaxed">
+                        Para reservar tu pedido, pagas un{" "}
                         <span className="font-bold text-red-500">
-                          ${(total * 0.3).toFixed(2)}
+                          30% inicial
+                        </span>{" "}
+                        por transferencia. El resto se coordina directamente por
+                        WhatsApp con nuestro equipo.
+                      </p>
+                      <div className="flex items-center justify-between text-sm pt-1">
+                        <span className="text-white/50">Total del pedido</span>
+                        <span className="font-semibold text-white">
+                          ${total.toFixed(2)}
                         </span>
                       </div>
-                      <div className="flex justify-between text-sm mt-1">
-                        <span className="text-white/50">Restante</span>
-                        <span className="text-white/70">
-                          ${(total * 0.7).toFixed(2)}
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-white/50">
+                          Pago inicial 30%
+                        </span>
+                        <span className="font-bold text-red-500">
+                          ${(total*0.3).toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-white/50">
+                          Restante (por WhatsApp)
+                        </span>
+                        <span className="text-white/50">
+                          ${(total*0.7).toFixed(2)}
                         </span>
                       </div>
                     </div>
