@@ -8,7 +8,9 @@ type WatermarkedImageProps = {
   className?: string;
   imgClassName?: string;
   objectFit?: "cover" | "contain";
-  watermarkRatio?: number; // % del ancho de la imagen que ocupa el watermark
+  watermarkRatio?: number; // % del ancho de la imagen que ocupa el watermark (desktop)
+  watermarkRatioMobile?: number; // % del ancho de la imagen que ocupa el watermark (móvil)
+  mobileBreakpoint?: number; // px: por debajo de este ancho de pantalla se considera "móvil"
 };
 
 export default function WatermarkedImage({
@@ -19,6 +21,8 @@ export default function WatermarkedImage({
   imgClassName = "",
   objectFit = "contain",
   watermarkRatio = 0.22,
+  watermarkRatioMobile = 0.34,
+  mobileBreakpoint = 768,
 }: WatermarkedImageProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [finalSrc, setFinalSrc] = useState<string | null>(null);
@@ -63,18 +67,22 @@ export default function WatermarkedImage({
 
         ctx.drawImage(baseImg, 0, 0, canvas.width, canvas.height);
 
+        // En pantallas angostas (móvil) usamos un ratio más grande para que
+        // la marca de agua siga siendo legible al verse más pequeña en pantalla
+        const isMobileViewport =
+          typeof window !== "undefined" && window.innerWidth < mobileBreakpoint;
+        const effectiveRatio = isMobileViewport ? watermarkRatioMobile : watermarkRatio;
 
-
-        const wmWidth = canvas.width * watermarkRatio;
+        const wmWidth = canvas.width * effectiveRatio;
         const wmHeight = (wmImg.naturalHeight / wmImg.naturalWidth) * wmWidth;
-        const marginX = canvas.width * 0.21;   // más espacio desde el borde derecho
-        const marginY = canvas.height * 0.06;  // más espacio desde el borde inferior
+        const marginX = canvas.width * 0.05;   // más espacio desde el borde derecho
+        const marginY = canvas.height * 0.05;  // más espacio desde el borde inferior
         ctx.drawImage(
-        wmImg,
-        canvas.width - wmWidth - marginX,
-        canvas.height - wmHeight - marginY,
-        wmWidth,
-        wmHeight
+          wmImg,
+          canvas.width - wmWidth - marginX,
+          canvas.height - wmHeight - marginY,
+          wmWidth,
+          wmHeight
         );
 
         const dataUrl = canvas.toDataURL("image/png");
@@ -91,7 +99,7 @@ export default function WatermarkedImage({
     return () => {
       cancelled = true;
     };
-  }, [src, watermarkSrc, watermarkRatio]);
+  }, [src, watermarkSrc, watermarkRatio, watermarkRatioMobile, mobileBreakpoint]);
 
   return (
     <>

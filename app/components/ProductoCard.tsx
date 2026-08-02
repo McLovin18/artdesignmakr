@@ -47,23 +47,34 @@ const cardStyles = `
   }
 
   /* ── imagen ── */
+  /* Altura fija en px (no aspect-ratio) para que TODAS las imágenes
+     midan exactamente lo mismo, sin importar el ancho de cada columna. */
   .pc-img-wrap {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    height: 220px;
     background: #0a0a0a;
     overflow: hidden;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   @media (min-width: 640px) {
     .pc-img-wrap {
-      aspect-ratio: 3 / 3.8;
+      height: 340px;
     }
   }
 
+  /* Altura siempre llena el contenedor; el ancho se ajusta de forma
+     proporcional (sin recorte ni estiramiento). max-width evita que
+     una imagen muy ancha se salga del contenedor. */
   .pc-img-wrap img {
-    object-fit: cover !important;
+    height: 100% !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
     padding: 0 !important;
     transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94) !important;
   }
@@ -147,17 +158,21 @@ const cardStyles = `
   }
 
   /* ── info ── */
+  /* min-height fijo: así todas las cards miden lo mismo aunque
+     el producto "visual only" no muestre precio */
   .pc-info {
     padding: 10px 12px 12px;
     display: flex;
     flex-direction: column;
     gap: 3px;
     flex: 1;
+    min-height: 40px;
   }
 
   @media (min-width: 640px) {
     .pc-info {
       padding: 14px 16px 16px;
+      min-height: 52px;
     }
   }
 
@@ -308,9 +323,9 @@ function ProductoCard({
               src={producto.imagenes?.[0] || "/no-image.png"}
               watermarkSrc={primeraImagenTieneWatermark ? settings.productWatermarkUrl : null}
               alt={producto.nombre}
-              imgClassName="w-full h-full object-cover"
-              objectFit="cover"
+              objectFit="contain"
               watermarkRatio={0.16}
+              watermarkRatioMobile={0.26}
             />
 
             {/* Badge descuento */}
