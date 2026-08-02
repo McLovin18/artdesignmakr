@@ -97,7 +97,7 @@ const Footer: React.FC = () => {
                 </ul>
 
                 <div className="text-xs text-white/60 font-semibold text-right">
-                  Compras realizadas:{" "}
+                  Compras:{" "}
                   <span className="text-white">
                     {analytics ? analytics.purchases : "-"}
                   </span>

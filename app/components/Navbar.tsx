@@ -151,11 +151,26 @@ return (
       >
         {/* ── Header principal ── */}
         <div
-          className="relative flex items-center justify-between gap-4 px-4 py-2 lg:px-6 lg:py-2"
+          className="hidden lg:grid grid-cols-3 items-center px-6 py-2"
           style={{ color: BRAND.white }}
         >
-{/* ── Izquierda: menú móvil + logo (desktop) ── */}
-          <div className="flex items-center gap-3 shrink-0">
+          {/* ── Izquierda: botones inicio, productos── */}
+          <div className="flex items-center justify-start gap-1">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="px-3 py-2 rounded-xl text-sm font-medium text-white hover:bg-white/10"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+
+          {/* ── Centro: logo */}
+
+          <div className="flex justify-center">
             <button
               className="lg:hidden p-2 rounded-xl transition-colors hover:bg-white/10"
               onClick={() => setMobileOpen(true)}
@@ -196,132 +211,8 @@ return (
             </a>
           </div>
 
-          {/* ── Centro: Inicio + Categorías — solo desktop ── */}
-          <div className="hidden lg:flex flex-1 items-center justify-center gap-1">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-3 py-2 rounded-xl text-sm font-medium text-white transition-colors hover:bg-white/10 whitespace-nowrap text-body"
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            {/* Categorías dinámicas */}
-            {categorias.map((cat) => (
-              <div
-                key={cat.id}
-                className="relative group shrink-0"
-                onMouseEnter={() => windowWidth !== null && windowWidth >= 1024 && setOpenCatId(cat.id)}
-                onMouseLeave={() => windowWidth !== null && windowWidth >= 1024 && setOpenCatId(null)}
-              >
-                {cat.subcategorias?.length > 0 ? (
-                  <button
-                    onClick={() => setOpenCatId(openCatId === cat.id ? null : cat.id)}
-                    className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-colors rounded-xl hover:bg-white/10 text-white"
-                  >
-                    {cat.icono && (
-                      <span className="material-icons-round" style={{ fontSize: 15, color: BRAND.gold }}>{cat.icono}</span>
-                    )}
-                    <span className="text-white">{cat.nombre}</span>
-                    <span
-                      className="material-icons-round text-white transition-transform duration-200"
-                      style={{ fontSize: 14, transform: openCatId === cat.id ? "rotate(180deg)" : "rotate(0deg)" }}
-                    >
-                      arrow_drop_down
-                    </span>
-                  </button>
-                ) : (
-                  <Link
-                    href={`${basePath}?cat=${cat.id}`}
-                    className="flex items-center gap-1 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-colors rounded-xl hover:bg-white/10 text-white"
-                  >
-                    {cat.icono && (
-                      <span className="material-icons-round" style={{ fontSize: 15, color: BRAND.gold }}>{cat.icono}</span>
-                    )}
-                    <span className="text-white">{cat.nombre}</span>
-                  </Link>
-                )}
-
-                {/* Dropdown nivel 1 */}
-                {cat.subcategorias?.length > 0 && (
-                  <div
-                    className="absolute left-0 top-full min-w-52 rounded-2xl border shadow-xl py-1.5 z-50"
-                    style={{
-                      background: BRAND.bgSoft,
-                      borderColor: BRAND.border,
-                      opacity: openCatId === cat.id ? "1" : "0",
-                      pointerEvents: openCatId === cat.id ? "auto" : "none",
-                      transform: openCatId === cat.id ? "translateY(0)" : "translateY(-10px)",
-                      transition: "all 150ms",
-                    }}
-                  >
-                    {cat.subcategorias.map((sub: any) => (
-                      <div
-                        key={sub.id}
-                        className="relative group/sub"
-                        onMouseEnter={() => windowWidth !== null && windowWidth >= 1024 && setOpenSubId(sub.id)}
-                        onMouseLeave={() => windowWidth !== null && windowWidth >= 1024 && setOpenSubId(null)}
-                      >
-                        {sub.subcategorias?.length > 0 ? (
-                          <>
-                            <button
-                              onClick={() => setOpenSubId(openSubId === sub.id ? null : sub.id)}
-                              className="w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-white/10 rounded-md"
-                            >
-                              <span style={{ color: BRAND.white }} className="group-hover/sub:opacity-80 transition-opacity">{sub.nombre}</span>
-                              <span
-                                className="material-icons-round text-sm transition-transform duration-200"
-                                style={{ color: BRAND.gold, transform: openSubId === sub.id ? "rotate(90deg)" : "rotate(0deg)" }}
-                              >
-                                chevron_right
-                              </span>
-                            </button>
-
-                            {/* Dropdown nivel 2 — sibling del botón, no anidado dentro (evita <a> dentro de <button>) */}
-                            <div
-                              className="absolute left-full top-0 ml-1 min-w-44 rounded-2xl border shadow-xl py-1.5 z-60"
-                              style={{
-                                background: BRAND.bgSoft,
-                                borderColor: BRAND.border,
-                                opacity: openSubId === sub.id ? "1" : "0",
-                                pointerEvents: openSubId === sub.id ? "auto" : "none",
-                                transform: openSubId === sub.id ? "translateX(0)" : "translateX(-10px)",
-                                transition: "all 150ms",
-                              }}
-                            >
-                              {sub.subcategorias.map((subsub: any) => (
-                                <Link
-                                  key={subsub.id}
-                                  href={`${basePath}?cat=${cat.id}&sub=${sub.id}&subsub=${subsub.id}`}
-                                  className="block px-4 py-2.5 text-sm transition-colors hover:bg-white/10"
-                                  style={{ color: BRAND.white }}
-                                >
-                                  <span className="hover:opacity-80">{subsub.nombre}</span>
-                                </Link>
-                              ))}
-                            </div>
-                          </>
-                        ) : (
-                          <Link
-                            href={`${basePath}?cat=${cat.id}&sub=${sub.id}`}
-                            className="block px-4 py-2.5 text-sm transition-colors hover:bg-white/10 rounded-md"
-                            style={{ color: BRAND.white }}
-                          >
-                            <span className="group-hover/sub:opacity-80 transition-opacity">{sub.nombre}</span>
-                          </Link>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
           {/* ── Derecha: búsqueda, carrito, usuario ── */}
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+          <div className="flex justify-end items-center gap-3">
             <div className="relative" ref={searchContainerRef}>
               {!searchOpen ? (
                 <button

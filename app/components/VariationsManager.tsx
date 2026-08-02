@@ -130,33 +130,86 @@ export default function VariationsManager({
   );
 
   return (
-    <div className="space-y-4 border-t border-slate-100 dark:border-white/6 pt-4">
-      {variationAttributeIds.map((attrId, index) => {
-        const attrName = attributeNames[attrId] || attrId;
-        const options = availableOptions[attrId] || [];
-        const isEnabled = index === 0 || selectedVariations[variationAttributeIds[index - 1]];
+    <div
+      className="mt-6 rounded-2xl p-4"
+      style={{
+        background: "linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)",
+        boxShadow: `
+          0 0 0 3px #000000,
+          0 0 0 6px rgba(255,255,255,0.22),
+          inset 0 8px 30px rgba(255,255,255,0.08),
+          inset 0 -20px 30px -10px rgba(0,0,0,0.5),
+          0 16px 36px rgba(0,0,0,0.65),
+          0 4px 10px rgba(0,0,0,0.5)
+        `,
+      }}
+    >
+      {/* Encabezado */}
+      <div className="mb-5">
+        <h3 className="flex items-center gap-2 text-red-500 font-bold text-sm">
+          <span className="material-icons-round text-base">
+            tune
+          </span>
+          Opciones del producto
+        </h3>
 
-        return (
-          <VariationSelector
-            key={attrId}
-            label={attrName}
-            options={options}
-            selectedValue={selectedVariations[attrId] || ""}
-            onSelect={(value) => handleVariationChange(attrId, value)}
-            disabled={!isEnabled || options.length === 0}
-          />
-        );
-      })}
+        <p className="text-xs text-white/45 mt-1 leading-relaxed">
+          Selecciona las características antes de añadir el producto al carrito.
+        </p>
+      </div>
 
-      {/* Mostrar stock disponible */}
-      {variationAttributeIds.every((attrId) => selectedVariations[attrId]) && (
-        <div className="pt-2 border-t border-slate-100 dark:border-white/6">
-          <p className="text-xs text-slate-600 dark:text-white/50">
-            <span className="font-semibold">Stock disponible:</span>{" "}
-            <span className={currentStock > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}>
-              {currentStock} unidades
+      {/* Variaciones */}
+      <div className="space-y-5">
+        {variationAttributeIds.map((attrId, index) => {
+          const attrName = attributeNames[attrId] || attrId;
+
+          const options = availableOptions[attrId] || [];
+
+          const isEnabled =
+            index === 0 ||
+            !!selectedVariations[variationAttributeIds[index - 1]];
+
+          return (
+            <VariationSelector
+              key={attrId}
+              label={attrName}
+              options={options}
+              selectedValue={selectedVariations[attrId] || ""}
+              onSelect={(value) =>
+                handleVariationChange(attrId, value)
+              }
+              disabled={!isEnabled || options.length === 0}
+            />
+          );
+        })}
+      </div>
+
+      {/* Stock */}
+      {variationAttributeIds.every(
+        (attrId) => selectedVariations[attrId]
+      ) && (
+        <div className="mt-5 pt-4 border-t border-white/10">
+
+          <div className="flex items-center justify-between">
+
+            <span className="text-xs uppercase tracking-wider text-white/40">
+              Disponibilidad
             </span>
-          </p>
+
+            <div
+              className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                currentStock > 0
+                  ? "bg-green-500/15 text-green-400 border border-green-500/20"
+                  : "bg-red-500/15 text-red-400 border border-red-500/20"
+              }`}
+            >
+              {currentStock > 0
+                ? `${currentStock} unidades`
+                : "Sin stock"}
+            </div>
+
+          </div>
+
         </div>
       )}
     </div>
