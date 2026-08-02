@@ -11,9 +11,14 @@ import {
   mapCategorySnapshot,
   sortCategoriasByOrder,
   sameCategoryId,
+  productMatchesCategoria,
 } from "../lib/categorias-db";
 import { collection, query, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+
+// Categoría de "Trabajos entregados" — solo debe mostrarse en la grilla
+// de productos cuando el usuario la selecciona explícitamente, nunca en "Todos".
+const TRABAJOS_ENTREGADOS_CAT_ID = "1785564342207";
 
 export default function SearchResultsPage() {
   const searchParams = useSearchParams();
@@ -25,13 +30,13 @@ export default function SearchResultsPage() {
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState(queryParam);
-  const [precioMin, setPrecioMin] = useState("");
-  const [precioMax, setPrecioMax] = useState("");
   const [orden, setOrden] = useState("price-high");
-  const [marca, setMarca] = useState("");
-  const [marcas, setMarcas] = useState([]);
   const [categorias, setCategorias] = useState<any[]>([]);
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setSearch(queryParam);
+  }, [queryParam]);
 
   // 🔥 Cargar productos
   useEffect(() => {
@@ -40,8 +45,6 @@ export default function SearchResultsPage() {
       const prods = await obtenerProductos();
       setProductos(prods);
       setLoading(false);
-      const marcasUnicas = Array.from(new Set(prods.map(p => p.marca).filter(Boolean)));
-      setMarcas(marcasUnicas);
     }
     fetchProductos();
   }, []);
@@ -63,20 +66,18 @@ export default function SearchResultsPage() {
     return productos
       .filter(p => {
         const coincideTexto = productMatches(p, search);
-        const coincideMarca = !marca || p.marca === marca;
-        const coincideCategoria =
-          !categoriaId || sameCategoryId(p.categoria, categoriaId);
 
-        const basePrice = Number(p.precio || 0);
-        const discount = Number(p.descuento || 0);
-        const finalPrice = discount > 0 && discount < 100 ? basePrice * (1 - discount / 100) : basePrice;
+        let coincideCategoria = true;
+        if (categoriaId && categorias.length > 0) {
+          coincideCategoria = productMatchesCategoria(p, categoriaId, categorias);
+        } else if (categoriaId) {
+          coincideCategoria = sameCategoryId(p.categoria, categoriaId);
+        } else {
+          // "Todas": excluir siempre los productos de "Trabajos entregados"
+          coincideCategoria = !productMatchesCategoria(p, TRABAJOS_ENTREGADOS_CAT_ID, categorias);
+        }
 
-        const min = precioMin ? parseFloat(precioMin) : null;
-        const max = precioMax ? parseFloat(precioMax) : null;
-        const matchMin = min === null || finalPrice >= min;
-        const matchMax = max === null || finalPrice <= max;
-
-        return coincideTexto && coincideMarca && coincideCategoria && matchMin && matchMax;
+        return coincideTexto && coincideCategoria;
       })
       .sort((a, b) => {
         const getFinalPrice = (p: any) => {
@@ -89,7 +90,7 @@ export default function SearchResultsPage() {
         if (a.createdAt && b.createdAt) return b.createdAt - a.createdAt;
         return 0;
       });
-  }, [productos, search, precioMin, precioMax, orden, marca, categoriaId]);
+  }, [productos, search, orden, categoriaId, categorias]);
 
 
 
@@ -116,79 +117,96 @@ export default function SearchResultsPage() {
       const totalPages = Math.ceil(productosFiltrados.length / productsPerPage);
       const paginatedProducts = productosFiltrados.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
 
-
-
-  const hasFilters = search || precioMin || precioMax || marca || orden !== "newest";
-  const clearFilters = useCallback(() => {
-    setSearch("");
-    setPrecioMin("");
-    setPrecioMax("");
-    setMarca("");
-    setOrden("newest");
-  }, []);
-
-  const inputClass =
-    "w-[min(75vw,300px)] sm:w-[400px] px-3 py-1.5 sm:py-2.5 rounded-xl border border-slate-200 dark:border-white/20 bg-white dark:bg-gray-900 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/50 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-#e8c862 transition-all";
-
-  // 🔥 FilterPanel memoizado para no perder foco
-  const FilterPanel = useMemo(() => (
-    <div className="space-y-3 sm:space-y-5">
-      <div>
-        <label className="text-xs font-semibold mb-1 sm:mb-2 block text-slate-700 dark:text-white">Buscar</label>
-        <input
-          type="text"
-          placeholder="Nombre, descripción o categoría..."
-          className={inputClass}
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-      </div>
-
-    </div>
-  ), [search]);
-
   return (
-    <div className="min-h-screen flex flex-col transition-colors" style={{ background: "var(--bg)", color: "var(--text)" }}>
+    <div className="min-h-screen flex flex-col transition-colors bg-black text-white">
       <BottomBarPublic/>
 
       <main className="max-w-7xl mx-auto w-full px-3 sm:px-5 py-6 sm:py-15 flex-1">
-        <div className="mb-6">
-          {FilterPanel}
-        </div>
+        {queryParam && (
+          <p className="text-sm text-white/50 mb-4">
+            Resultados para <span className="text-white font-semibold">"{queryParam}"</span>
+          </p>
+        )}
 
-        {/*Buscador de productos */}
+        {/* ── Categorías — círculos, mismo patrón que en /productos ── */}
         {categorias.length > 0 && (
-          <div className="mb-6 overflow-x-auto pb-2" ref={categoriesScrollRef}>
-            <div className="flex gap-2 min-w-max">
-              <button
-                onClick={() => {
-                   window.location.href = `/search-results?query=${encodeURIComponent(queryParam)}`;
-                }}
-                className={`px-4 py-2 rounded-full whitespace-nowrap font-medium text-sm transition-all ${
+          <div
+            ref={categoriesScrollRef}
+            className="mt-2 mb-8 w-full max-w-full flex items-center justify-start sm:justify-center gap-4 overflow-x-auto overflow-y-hidden pb-2 pl-4 pr-4 -mx-3 sm:mx-0 sm:px-3 sm:pr-2 no-scrollbar"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = `/search-results?query=${encodeURIComponent(queryParam)}`;
+              }}
+              className="flex flex-col items-center w-24 shrink-0 select-none"
+            >
+              <div
+                className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 shadow-sm flex items-center justify-center ${
                   !categoriaId
-                    ? "shadow-sm scale-105 bg-black text-white border border-black"
-                    : "bg-white text-slate-900 border border-slate-300 hover:border-black/60 hover:shadow-sm"
-                }`}
+                    ? "border-red-600 ring-2 ring-white/20"
+                    : "border-white/20"
+                } bg-black`}
               >
-                Todas
-              </button>
-              {categorias.map((cat) => (
+                <span className="text-xs font-bold tracking-wide text-white/80">
+                  TODOS
+                </span>
+              </div>
+
+              <span
+                className={`mt-2 text-sm ${
+                  !categoriaId ? "text-white" : "text-white/70"
+                } text-center`}
+              >
+                Todos
+              </span>
+            </button>
+
+            {categorias.map((cat) => {
+              const selected = sameCategoryId(categoriaId, cat.id);
+
+              return (
                 <button
                   key={cat.id}
+                  type="button"
                   onClick={() => {
                     window.location.href = `/search-results?query=${encodeURIComponent(queryParam)}&cat=${encodeURIComponent(cat.id)}`;
                   }}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap font-medium text-sm transition-all ${
-                    categoriaId === cat.id
-                      ? "shadow-sm scale-105 bg-black text-white border border-black"
-                      : "bg-white text-slate-900 border border-slate-300 hover:border-black/60 hover:shadow-sm"
-                  }`}
+                  className="flex flex-col items-center w-24 shrink-0 select-none"
                 >
-                  {cat.icono && <span className="mr-1">🏷️</span>}
-                  {cat.nombre}
+                  <div
+                    className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 shadow-sm overflow-hidden ${
+                      selected
+                        ? "border-red-600 ring-2 ring-white/20"
+                        : "border-white/20"
+                    } bg-black`}
+                  >
+                    {cat.imagen ? (
+                      <img
+                        src={cat.imagen}
+                        alt={cat.nombre}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-2xl font-black text-white/70">
+                          {cat.nombre.slice(0, 1).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <span
+                    className={`mt-2 text-sm ${
+                      selected ? "text-white" : "text-white/70"
+                    } text-center leading-tight`}
+                  >
+                    {cat.nombre}
+                  </span>
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
         )}
 
@@ -197,15 +215,22 @@ export default function SearchResultsPage() {
                 <Loading3DIcon />
               </div>
             ) : productosFiltrados.length === 0 ? (
-              <p className="text-slate-700 dark:text-white/50">No hay resultados</p>
+              <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center">
+                  <span className="material-icons-round text-3xl text-white/20">search_off</span>
+                </div>
+                <div>
+                  <p className="font-semibold text-white/80">Sin resultados</p>
+                  <p className="text-sm text-white/30 mt-1 max-w-60">Prueba con otro término de búsqueda</p>
+                </div>
+              </div>
             ) : (
           <>
-              <div className="grid grid-cols-3 gap-2 lg:grid-cols-4 animate-in fade-in duration-700">              {paginatedProducts.map((p: any) => (
+              <div className="grid grid-cols-3 gap-2 lg:grid-cols-4 animate-in fade-in duration-700">
+                {paginatedProducts.map((p: any) => (
                 <ProductoCard
                   key={p.id}
                   producto={p}
-                  showCart
-                  showEye
                   isCompact={false}
                 />
               ))}
@@ -214,7 +239,7 @@ export default function SearchResultsPage() {
             {totalPages > 1 && (
               <div className="flex flex-wrap justify-center items-center gap-2 mt-8 select-none w-full">
                 <button
-                  className="px-3 py-1.5 rounded border text-xs font-medium bg-white border-slate-300 text-slate-900 hover:border-black/60 transition-all disabled:opacity-40"
+                  className="px-3 py-1.5 rounded border text-xs font-medium bg-black border-white/15 text-white hover:border-red-600 transition-all disabled:opacity-40"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
                 >
@@ -223,14 +248,14 @@ export default function SearchResultsPage() {
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
                   <button
                     key={n}
-                    className={`px-3 py-1.5 rounded border text-xs font-medium transition-all ${currentPage === n ? 'bg-black border-black text-white shadow-sm' : 'bg-white border-slate-300 text-slate-900 hover:border-black/60'}`}
+                    className={`px-3 py-1.5 rounded border text-xs font-medium transition-all ${currentPage === n ? 'bg-red-600 border-red-600 text-white shadow-sm' : 'bg-black border-white/15 text-white hover:border-red-600'}`}
                     onClick={() => setCurrentPage(n)}
                   >
                     {n}
                   </button>
                 ))}
                 <button
-                  className="px-3 py-1.5 rounded border text-xs font-medium bg-white border-slate-300 text-slate-900 hover:border-black/60 transition-all disabled:opacity-40"
+                  className="px-3 py-1.5 rounded border text-xs font-medium bg-black border-white/15 text-white hover:border-red-600 transition-all disabled:opacity-40"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
                 >

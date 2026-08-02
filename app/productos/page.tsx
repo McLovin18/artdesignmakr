@@ -4,6 +4,7 @@ import ProductoCard from "../components/ProductoCard";
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import type { Producto } from "../lib/productos-db";
 import { obtenerProductos } from "../lib/productos-db";
+import BottomBarPublic from "../components/BottomBarPublic";
 import {
   mapCategorySnapshot,
   sortCategoriasByOrder,
@@ -14,6 +15,10 @@ import {
 } from "../lib/categorias-db";
 import { collection, query, onSnapshot } from "firebase/firestore";
 import { db } from "../lib/firebase";
+
+// Categoría de "Trabajos entregados" — solo debe mostrarse en la grilla
+// de productos cuando el usuario la selecciona explícitamente, nunca en "Todos".
+const TRABAJOS_ENTREGADOS_CAT_ID = "1785564342207";
 
 export default function ProductosPage() {
   const router = useRouter();
@@ -154,6 +159,11 @@ export default function ProductosPage() {
           if (!productMatchesCategoria(p, categoria, categorias)) return false;
         } else if (categoria && !sameCategoryId(p.categoria, categoria)) {
           return false;
+        } else if (!categoria) {
+          // "Todos": excluir siempre los productos de "Trabajos entregados"
+          if (productMatchesCategoria(p, TRABAJOS_ENTREGADOS_CAT_ID, categorias)) {
+            return false;
+          }
         }
 
         if (subcategoria && categorias.length > 0) {
@@ -282,12 +292,13 @@ export default function ProductosPage() {
 
   return (
     <div className="min-h-screen flex flex-col transition-colors" style={{ background: "var(--bg)", color: "var(--text)" }}>
+      <BottomBarPublic />
       <main className="max-w-7xl mx-auto w-full px-3 sm:px-5 py-6 sm:py-15 flex-1">
 
       {categorias.length > 0 && (
         <div
           ref={categoriesScrollRef}
-          className="mt-2 mb-8 w-full max-w-full flex items-center justify-center gap-4 overflow-x-auto overflow-y-hidden pb-2 pr-2 no-scrollbar"
+          className="mt-2 mb-8 w-full max-w-full flex items-center justify-start sm:justify-center gap-4 overflow-x-auto overflow-y-hidden pb-2 pl-4 pr-4 -mx-3 sm:mx-0 sm:px-3 sm:pr-2 no-scrollbar"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           <button

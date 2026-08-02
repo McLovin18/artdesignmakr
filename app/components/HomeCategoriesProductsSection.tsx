@@ -13,6 +13,10 @@ type Props = {
   products: any[];
 };
 
+// Categoría de "Trabajos entregados" — solo debe mostrarse en la grilla
+// de productos cuando el usuario la selecciona explícitamente, nunca en "Todos".
+const TRABAJOS_ENTREGADOS_CAT_ID = "1785564342207";
+
 export default function HomeCategoriesProductsSection({ products }: Props) {
   const [categorias, setCategorias] = useState<any[]>([]);
   const [selectedCatId, setSelectedCatId] = useState<string>("");
@@ -31,8 +35,15 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
 
   const filteredProducts = useMemo(() => {
     const list = Array.isArray(products) ? products : [];
-    if (!selectedCatId) return list;
-    return list.filter((p) => productMatchesCategoria(p, selectedCatId, categorias));
+
+    if (selectedCatId) {
+      return list.filter((p) => productMatchesCategoria(p, selectedCatId, categorias));
+    }
+
+    // "Todos": excluir siempre los productos de "Trabajos entregados"
+    return list.filter(
+      (p) => !productMatchesCategoria(p, TRABAJOS_ENTREGADOS_CAT_ID, categorias)
+    );
   }, [products, selectedCatId, categorias]);
 
   const shownProducts = useMemo(() => {
@@ -49,7 +60,7 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
         </h2>
 
         <div
-          className="mt-6 w-full max-w-full flex items-center justify-center gap-4 overflow-x-auto overflow-y-hidden pb-2 pr-2 no-scrollbar"
+          className="mt-6 w-full max-w-full flex items-center justify-start sm:justify-center gap-4 overflow-x-auto overflow-y-hidden pb-2 pl-4 pr-4 -mx-4 sm:mx-0 sm:pl-0 sm:pr-2 no-scrollbar"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           <button
@@ -64,7 +75,7 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
                   : "border-white/20"
               } bg-black`}
             >
-              <span className="flex flex-col items-center w-24 shrink-0 select-none">
+              <span className="flex flex-col text-white text-sm items-center w-24 shrink-0 select-none">
                 TODOS
               </span>
             </div>
