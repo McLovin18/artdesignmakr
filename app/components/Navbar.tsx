@@ -151,11 +151,20 @@ return (
       >
         {/* ── Header principal ── */}
         <div
-          className="hidden lg:grid grid-cols-3 items-center px-6 py-2"
+          className="
+            relative
+            grid
+            grid-cols-[auto_1fr_auto]
+            lg:grid-cols-3
+            items-center
+            px-4
+            lg:px-6
+            py-2
+          "
           style={{ color: BRAND.white }}
-        >
+        > 
           {/* ── Izquierda: botones inicio, productos── */}
-          <div className="flex items-center justify-start gap-1">
+          <div className="hidden lg:flex items-center justify-start gap-1">
             {links.map((link) => (
               <Link
                 key={link.href}
@@ -172,7 +181,18 @@ return (
 
           <div className="flex justify-center">
             <button
-              className="lg:hidden p-2 rounded-xl transition-colors hover:bg-white/10"
+              className="    lg:hidden
+    absolute
+    left-4
+    top-1/2
+    -translate-y-1/2
+    p-2
+    rounded-xl
+    transition-colors
+    hover:bg-white/10
+    flex
+    items-center
+    justify-center"
               onClick={() => setMobileOpen(true)}
               aria-label="Abrir menú"
             >
