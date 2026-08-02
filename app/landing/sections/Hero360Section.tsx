@@ -86,7 +86,7 @@ export default function Hero360Section({
 
   return (
     <section
-      className="w-full relative overflow-hidden m-0 hero-360-section"
+      className="w-full relative overflow-hidden hero-360-section "
       style={{
         minHeight: isMobile ? "700px" : "800px",
         position: "relative",
@@ -106,6 +106,7 @@ export default function Hero360Section({
           objectPosition: "center",
           zIndex: 0,
           display: "block",
+          padding: "10px"
         }}
       />
 

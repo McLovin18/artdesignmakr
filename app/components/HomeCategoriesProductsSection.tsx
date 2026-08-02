@@ -53,7 +53,7 @@ export default function HomeCategoriesProductsSection({ products }: Props) {
   if (!topCategories.length) return null;
 
   return (
-    <section className="px-4 lg:px-6 py-10 bg-black">
+    <section className="px-4 lg:px-6 py-10">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-center text-xl sm:text-2xl font-extrabold tracking-wide text-white">
           Categorías

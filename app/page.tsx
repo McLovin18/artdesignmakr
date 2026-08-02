@@ -152,13 +152,13 @@ const lastHeroIndex = useMemo(() => {
 
   return (
     <>
-      <main className="min-h-screen w-full" style={{ background: "var(--bg)", color: "var(--text)" }}>
+      <main className="min-h-screen w-full" style={{color: "var(--text)" }}>
         {loading ? (
         <div
             className="w-full relative overflow-hidden"
-            style={{ aspectRatio: "2400 / 1000", minHeight: "300px", background: "var(--bgSecondary)" }}
+            style={{ aspectRatio: "2400 / 1000", minHeight: "300px"}}
         >
-            <div className="absolute inset-0" style={{ background: "var(--bg)" }} />
+            <div className="absolute inset-0" />
             <div
             className="absolute inset-0"
             style={{

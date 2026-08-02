@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
 
   return (
     <>
-      <footer className="bg-black border-t border-white/10 text-white">
+      <footer className=" border-t border-white/10 text-white">
         <div className={styles.ftGlowLeft} />
 
         <div className={styles.ftGlowLeft} />

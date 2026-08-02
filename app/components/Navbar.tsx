@@ -146,7 +146,7 @@ return (
     <>
 
       <nav
-        className="sticky top-0 z-40 border-b py-3 shadow-sm backdrop-blur-md bg-black text-white"
+        className="sticky top-0 z-40 border-b py-3 px-2 shadow-sm text-white"
         style={{ borderColor: BRAND.border }}
       >
         {/* ── Header principal ── */}
@@ -209,7 +209,7 @@ return (
                 width={190}
                 height={60}
                 priority
-                style={{ height:"65px", width: "auto" }}
+                style={{ height:"65px", width: "auto"}}
               />
             </a>
           </div>

@@ -173,14 +173,34 @@ export default function RootLayout({
         <StructuredData />
       </head>
 
-      <body className="relative">
-          <ToastProvider>
-            <OnboardingProvider>
-              <LayoutContentClient>
-                {children}
-              </LayoutContentClient>
-            </OnboardingProvider>
-          </ToastProvider>
+      <body className="relative min-h-screen">
+
+        {/* Fondo móvil */}
+        <div
+          className="fixed inset-0 -z-20 bg-cover bg-center md:hidden"
+          style={{
+            backgroundImage: "url('/movil_bg.jpeg')",
+          }}
+        />
+
+        {/* Fondo tablet + desktop */}
+        <div
+          className="fixed inset-0 -z-20 hidden md:block bg-cover bg-center bg-fixed"
+          style={{
+            backgroundImage: "url('/laptop_bg.jpeg')",
+          }}
+        />
+
+        {/* Capa oscura */}
+        <div className="fixed inset-0 -z-10 bg-black/45" />
+
+        <ToastProvider>
+          <OnboardingProvider>
+            <LayoutContentClient>
+              {children}
+            </LayoutContentClient>
+          </OnboardingProvider>
+        </ToastProvider>
 
       </body>
     </html>
