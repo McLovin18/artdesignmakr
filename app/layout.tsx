@@ -187,7 +187,7 @@ export default function RootLayout({
         <div
           className="fixed inset-0 -z-20 hidden md:block bg-cover bg-center bg-fixed"
           style={{
-            backgroundImage: "url('/laptop_bg.jpeg')",
+            backgroundImage: "url('/laptopBg.jpeg')",
           }}
         />
 

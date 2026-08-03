@@ -49,7 +49,7 @@ export default function BottomBarPublic() {
                         fontSize: cartCount > 99 ? 8 : 10,
                         lineHeight: 1,
                         borderRadius: 999,
-                        background: "var(--secondary)",
+                        background: "red",
                         color: "var(--secondaryForeground)",
                         // Borde que separa del ícono
                         outline: "2px solid #000000",
