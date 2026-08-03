@@ -557,6 +557,7 @@ return (
           )}
           </div>
 
+
           {/* ══ INFO ════════════════════════════════════════════════ */}
         {!isVisualOnlyProduct && (
           <div className="flex-1 flex flex-col gap-5 min-w-0">
@@ -587,16 +588,17 @@ return (
               </div>
             )}
 
+
             {!movePriceBelowCart && (
               <div className="flex items-baseline gap-3 flex-wrap">
                 {hasDiscount && (
                   <span className="text-sm text-white/30 line-through">
-                    ${fakeOldPrice?.toFixed(2)}
+                    ${(fakeOldPrice * cantidad).toFixed(2)}
                   </span>
                 )}
 
                 <span className="text-3xl font-extrabold text-white">
-                  ${finalPrice.toFixed(2)}
+                  ${(finalPrice * cantidad).toFixed(2)}
                 </span>
 
                 {hasDiscount && (
@@ -604,6 +606,7 @@ return (
                     {discount}% OFF
                   </span>
                 )}
+
               </div>
             )}
 
@@ -796,17 +799,16 @@ return (
               )}
             </div>
 
-
             {movePriceBelowCart && (
               <div className="flex items-baseline gap-3 flex-wrap mt-2">
                 {hasDiscount && (
                   <span className="text-sm text-white/30 line-through">
-                    ${fakeOldPrice?.toFixed(2)}
+                    ${(fakeOldPrice * cantidad).toFixed(2)}
                   </span>
                 )}
 
                 <span className="text-3xl font-extrabold text-white">
-                  ${finalPrice.toFixed(2)}
+                  ${(finalPrice * cantidad).toFixed(2)}
                 </span>
 
                 {hasDiscount && (
@@ -814,9 +816,9 @@ return (
                     {discount}% OFF
                   </span>
                 )}
+
               </div>
             )}
-
             {/* Descripción debajo de Añadir al carrito */}
             <div className="mt-6">
               <h2 className="text-lg font-semibold mb-2 text-white">Descripción del producto</h2>
