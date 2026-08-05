@@ -39,17 +39,30 @@ const Footer: React.FC = () => {
   const { trackLinkClick } = useTracking();
   const [analytics, setAnalytics] = useState<PublicTodayAnalytics | null>(null);
   const [instagramFollowers, setInstagramFollowers] = useState<number | null>(null);
+  const [instagramEnabled, setInstagramEnabled] = useState(false);
 
   const showWhatsAppFloating = pathname && !pathname.startsWith("/admin");
 
   useEffect(() => {
     getPublicTodayAnalytics().then(setAnalytics).catch(() => setAnalytics(null));
     
-    // Cargar seguidores de Instagram
+    // Cargar seguidores de Instagram solo si está configurado
     fetch("/api/instagram/followers")
       .then(res => res.json())
-      .then(data => setInstagramFollowers(data.followersCount))
-      .catch(() => setInstagramFollowers(null));
+      .then(data => {
+        // Solo mostrar si hay seguidores reales y no es placeholder
+        if (data.followersCount > 0 && data.lastUpdated) {
+          setInstagramFollowers(data.followersCount);
+          setInstagramEnabled(true);
+        } else {
+          setInstagramFollowers(null);
+          setInstagramEnabled(false);
+        }
+      })
+      .catch(() => {
+        setInstagramFollowers(null);
+        setInstagramEnabled(false);
+      });
   }, []);
 
   return (
@@ -70,7 +83,7 @@ const Footer: React.FC = () => {
                 Art Design MAKR
               </span>
 
-              {instagramFollowers !== null && (
+              {instagramEnabled && instagramFollowers !== null && instagramFollowers > 0 && (
                 <div className="flex items-center gap-1.5 mt-1">
                   <IconInstagram />
                   <span className="text-xs text-white/60">
