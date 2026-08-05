@@ -16,6 +16,7 @@ import {
   Timestamp,
   doc,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -114,4 +115,11 @@ export async function actualizarEstadoOrdenTransferencia(
   estado: EstadoOrdenTransferencia
 ): Promise<void> {
   await updateDoc(doc(db, COLLECTION_NAME, id), { estado });
+}
+
+/**
+ * Elimina una orden de transferencia de Firestore.
+ */
+export async function eliminarOrdenTransferencia(id: string): Promise<void> {
+  await deleteDoc(doc(db, COLLECTION_NAME, id));
 }

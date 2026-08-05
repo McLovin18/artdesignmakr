@@ -45,7 +45,7 @@ export default function BodegasAdminPanel() {
       } else {
         await crearBodega(formData.nombre, formData.tiempoEntrega);
       }
-      setFormData({ nombre: "", tiempoEntrega: 72 });
+      setFormData({ nombre: "", tiempoEntrega: 10 });
       setEditingId(null);
       setShowForm(false);
     } catch (err) {
@@ -74,7 +74,7 @@ export default function BodegasAdminPanel() {
   const handleCancel = () => {
     setShowForm(false);
     setEditingId(null);
-    setFormData({ nombre: "", tiempoEntrega: 72 });
+    setFormData({ nombre: "", tiempoEntrega: 10 });
     setError("");
   };
 
@@ -179,14 +179,11 @@ export default function BodegasAdminPanel() {
                 onChange={(e) => setFormData({ ...formData, tiempoEntrega: parseInt(e.target.value) })}
                 className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
               >
-                <option value={1}>1 día (Rápida)</option>
-                <option value={10}>10 días (Estándar)</option>
+                <option value={7}>7 días</option>
+                <option value={10}>10 días</option>
+                <option value={15}>15 días</option>
+                <option value={20}>20 días</option>
               </select>
-              {editingId === "MarcaEstilo" && (
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  La bodega ArtDesignMakr siempre tiene entrega de 1 día
-                </p>
-              )}
             </div>
 
             <div className="flex gap-3 pt-4">

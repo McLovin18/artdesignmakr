@@ -78,6 +78,15 @@ service cloud.firestore {
       allow read: if resource.data.approved == true || isAdmin();
     }
 
+    match /business_reviews/{reviewId} {
+      // Cualquiera puede crear una reseña del negocio
+      allow create: if true;
+      // Solo el admin puede aprobar, rechazar o eliminar
+      allow update, delete: if isAdmin();
+      // Leer solo reseñas aprobadas, o si es admin
+      allow read: if resource.data.approved == true || isAdmin();
+    }
+
     // Contador secuencial: invitados también necesitan acceso para generar orderId
     match /ordenes_meta/{docId} {
       allow read, write: if true;
@@ -88,6 +97,11 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow create: if true;
       allow update: if true;
+    }
+
+    // Config: Solo admin puede leer y escribir
+    match /config/{document=**} {
+      allow read, write: if isAdmin();
     }
   }
 }

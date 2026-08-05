@@ -5,6 +5,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { uploadImageAndGetUrl } from "../../lib/upload-image";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
+import { getInstagramConfig } from "../../lib/instagram-db";
 
 export default function ConfigPage() {
   const colors = {
@@ -46,6 +47,12 @@ export default function ConfigPage() {
       <div className="mt-12">
         <h2 className="text-lg font-semibold mb-2">Marca de agua</h2>
         <WatermarkSettings />
+      </div>
+
+      {/* Instagram */}
+      <div className="mt-12">
+        <h2 className="text-lg font-semibold mb-2">Instagram</h2>
+        <InstagramSettings />
       </div>
 
       {/* Cambiar contraseña */}
@@ -189,6 +196,148 @@ function WatermarkSettings() {
             {message}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// Componente para Instagram
+function InstagramSettings() {
+  const [config, setConfig] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    loadConfig();
+  }, []);
+
+  const loadConfig = async () => {
+    try {
+      const data = await getInstagramConfig();
+      setConfig(data);
+      setIsAuthorized(!!data.accessToken);
+    } catch (error) {
+      console.error("Error loading Instagram config:", error);
+    }
+  };
+
+  const handleAuthorize = () => {
+    window.location.href = "/api/instagram/auth";
+  };
+
+  const handleUpdateFollowers = async () => {
+    setLoading(true);
+    setMessage("");
+    try {
+      const response = await fetch("/api/instagram/update-followers", {
+        method: "POST",
+      });
+      const data = await response.json();
+      
+      if (response.ok) {
+        setMessage(`Seguidores actualizados: ${data.followersCount}`);
+        await loadConfig();
+      } else {
+        setMessage("Error: " + (data.error || "No se pudo actualizar seguidores"));
+      }
+    } catch (error) {
+      setMessage("Error de conexión al actualizar seguidores");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    if (!confirm("¿Estás seguro de desconectar Instagram?")) return;
+    
+    setLoading(true);
+    try {
+      const { saveInstagramConfig } = await import("../../lib/instagram-db");
+      await saveInstagramConfig({ accessToken: null, userId: null });
+      setMessage("Instagram desconectado");
+      await loadConfig();
+    } catch (error) {
+      setMessage("Error al desconectar Instagram");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-slate-600">
+        Conecta tu cuenta de Instagram para mostrar el número de seguidores en el footer.
+      </p>
+
+      {!isAuthorized ? (
+        <button
+          onClick={handleAuthorize}
+          disabled={loading}
+          className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-xl font-semibold disabled:opacity-60"
+        >
+          Autorizar Instagram
+        </button>
+      ) : (
+        <div className="space-y-4">
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+            <p className="text-sm text-green-800 font-medium">✓ Instagram autorizado</p>
+            {config.expiresAt && (
+              <p className="text-xs text-green-600 mt-1">
+                Token expira: {new Date(config.expiresAt).toLocaleDateString()}
+              </p>
+            )}
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-800">Seguidores actuales</p>
+                <p className="text-2xl font-bold text-blue-900">
+                  {config.followersCount || 0}
+                </p>
+                {config.lastUpdated && (
+                  <p className="text-xs text-blue-600">
+                    Actualizado: {new Date(config.lastUpdated).toLocaleString()}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={handleUpdateFollowers}
+                disabled={loading}
+                className="bg-blue-600 text-white px-4 py-2 rounded-xl font-semibold disabled:opacity-60"
+              >
+                {loading ? "Actualizando..." : "Actualizar seguidores"}
+              </button>
+            </div>
+          </div>
+
+          <button
+            onClick={handleDisconnect}
+            disabled={loading}
+            className="bg-white text-red-600 px-4 py-2 rounded-xl font-semibold border border-red-200 disabled:opacity-60"
+          >
+            Desconectar Instagram
+          </button>
+        </div>
+      )}
+
+      {message && (
+        <div className={`text-sm p-3 rounded-xl ${
+          message.startsWith("Error") 
+            ? "bg-red-50 text-red-700 border border-red-200" 
+            : "bg-green-50 text-green-700 border border-green-200"
+        }`}>
+          {message}
+        </div>
+      )}
+
+      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+        <p className="text-xs text-yellow-800">
+          <strong>Nota importante:</strong> Para obtener el número real de seguidores necesitas:
+          1) Una cuenta de Instagram Business, 2) Permisos de Instagram Graph API, 
+          3) Aprobación de la aplicación por Meta. Con la API básica actual, se mostrará el conteo de publicaciones como placeholder.
+        </p>
       </div>
     </div>
   );

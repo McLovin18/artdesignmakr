@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   obtenerOrdenesTransferencia,
   actualizarEstadoOrdenTransferencia,
+  eliminarOrdenTransferencia,
   OrdenTransferencia,
   EstadoOrdenTransferencia,
 } from "../../lib/ordenes-transferencia-db";
@@ -71,6 +72,22 @@ export default function OrdenesTransferenciaAdminPage() {
     await actualizarEstadoOrdenTransferencia(id, estado);
     setOrdenes((prev) => prev.map((o) => (o.id === id ? { ...o, estado } : o)));
     setSeleccionada((prev) => (prev && prev.id === id ? { ...prev, estado } : prev));
+  };
+
+  const handleEliminarOrden = async (id: string) => {
+    if (!confirm("¿Estás seguro de que quieres eliminar esta orden? Esta acción no se puede deshacer.")) {
+      return;
+    }
+    try {
+      await eliminarOrdenTransferencia(id);
+      setOrdenes((prev) => prev.filter((o) => o.id !== id));
+      if (seleccionada && seleccionada.id === id) {
+        setSeleccionada(null);
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error al eliminar la orden. Intenta de nuevo.");
+    }
   };
 
   const ordenesFiltradas =
@@ -209,6 +226,12 @@ export default function OrdenesTransferenciaAdminPage() {
                     >
                       WhatsApp
                     </a>
+                    <button
+                      onClick={() => orden.id && handleEliminarOrden(orden.id)}
+                      className="flex-1 sm:flex-none px-4 py-2 rounded-lg border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-semibold transition-colors"
+                    >
+                      Eliminar
+                    </button>
                   </div>
                 </div>
               );
@@ -320,6 +343,12 @@ export default function OrdenesTransferenciaAdminPage() {
                     </button>
                   </>
                 )}
+                <button
+                  onClick={() => seleccionada.id && handleEliminarOrden(seleccionada.id)}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold text-sm transition-colors"
+                >
+                  Eliminar orden
+                </button>
               </div>
             </div>
           </div>

@@ -38,11 +38,18 @@ const Footer: React.FC = () => {
   const pathname = usePathname();
   const { trackLinkClick } = useTracking();
   const [analytics, setAnalytics] = useState<PublicTodayAnalytics | null>(null);
+  const [instagramFollowers, setInstagramFollowers] = useState<number | null>(null);
 
   const showWhatsAppFloating = pathname && !pathname.startsWith("/admin");
 
   useEffect(() => {
     getPublicTodayAnalytics().then(setAnalytics).catch(() => setAnalytics(null));
+    
+    // Cargar seguidores de Instagram
+    fetch("/api/instagram/followers")
+      .then(res => res.json())
+      .then(data => setInstagramFollowers(data.followersCount))
+      .catch(() => setInstagramFollowers(null));
   }, []);
 
   return (
@@ -62,6 +69,15 @@ const Footer: React.FC = () => {
               <span className="text-base font-bold tracking-wide text-white">
                 Art Design MAKR
               </span>
+
+              {instagramFollowers !== null && (
+                <div className="flex items-center gap-1.5 mt-1">
+                  <IconInstagram />
+                  <span className="text-xs text-white/60">
+                    {instagramFollowers.toLocaleString()} seguidores
+                  </span>
+                </div>
+              )}
 
               <div className="text-xs text-white/60 mt-1 max-w-[220px]">
                 <p>Cuadros 100% pintados a mano, medida y diseño personalizados</p>
@@ -115,6 +131,14 @@ const Footer: React.FC = () => {
               >
                 <span>{WHATSAPP_DISPLAY}</span>
                 <IconWhatsApp />
+              </a>
+
+              <a
+                href="/reviews"
+                className="text-sm text-white/60 hover:text-red-500 transition-colors"
+                onClick={() => trackLinkClick().catch(console.error)}
+              >
+                Reseñas
               </a>
 
             </div>

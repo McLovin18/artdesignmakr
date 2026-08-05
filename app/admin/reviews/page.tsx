@@ -1,29 +1,41 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { ProductReview } from "@/app/lib/reviews-types";
+import { BusinessReview } from "@/app/lib/business-reviews-types";
+
+type ReviewType = "product" | "business";
 
 export default function AdminReviewsPage() {
-  const [pending, setPending] = useState<ProductReview[]>([]);
+  const [activeTab, setActiveTab] = useState<ReviewType>("business");
+  const [productPending, setProductPending] = useState<ProductReview[]>([]);
+  const [businessPending, setBusinessPending] = useState<BusinessReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPending();
-  }, []);
+  }, [activeTab]);
 
   async function fetchPending() {
-    console.log("[AdminReviewsPage] fetchPending called");
+    console.log("[AdminReviewsPage] fetchPending called for", activeTab);
     setLoading(true);
     setError("");
     try {
-      console.log("[AdminReviewsPage] Fetching /api/reviews/pending...");
-      const res = await fetch("/api/reviews/pending", { cache: 'no-store', headers: { 'Cache-Control': 'no-store' } });
+      const endpoint = activeTab === "product" 
+        ? "/api/reviews/pending" 
+        : "/api/business-reviews/pending";
+      console.log("[AdminReviewsPage] Fetching", endpoint, "...");
+      const res = await fetch(endpoint, { cache: 'no-store', headers: { 'Cache-Control': 'no-store' } });
       console.log("[AdminReviewsPage] Response status:", res.status);
       if (res.ok) {
         const data = await res.json();
         console.log("[AdminReviewsPage] Got data, reviews:", data.length);
-        setPending(data);
+        if (activeTab === "product") {
+          setProductPending(data);
+        } else {
+          setBusinessPending(data);
+        }
       } else {
         console.error("[AdminReviewsPage] Error response:", res.status);
         setError("Error al cargar reseñas");
@@ -39,23 +51,31 @@ export default function AdminReviewsPage() {
     setActionLoading(id + "_approve");
     try {
       console.log("[AdminReviewsPage] Approve called for id:", id);
-      const res = await fetch(`/api/reviews/approve?id=${id}`, { method: "POST", cache: 'no-store' });
+      const endpoint = activeTab === "product"
+        ? `/api/reviews/approve?id=${id}`
+        : `/api/business-reviews/approve?id=${id}`;
+      const res = await fetch(endpoint, { method: "POST", cache: 'no-store' });
       console.log("[AdminReviewsPage] Approve response status:", res.status);
       const body = await res.json().catch(() => null);
       console.log("[AdminReviewsPage] Approve response body:", body);
       if (res.ok) {
-        // Mark as approved locally so buttons disappear immediately
-        setPending((prev) => prev.map((r) => (r.id === id ? ({ ...r, approved: true } as any) : r)));
+        if (activeTab === "product") {
+          setProductPending((prev) => prev.map((r) => (r.id === id ? ({ ...r, approved: true } as any) : r)));
+        } else {
+          setBusinessPending((prev) => prev.map((r) => (r.id === id ? ({ ...r, approved: true } as any) : r)));
+        }
       } else if (res.status === 404) {
-        // Already deleted server-side — remove from UI
         console.warn("[AdminReviewsPage] Approve returned 404, removing from UI", id);
-        setPending((prev) => prev.filter((r) => r.id !== id));
+        if (activeTab === "product") {
+          setProductPending((prev) => prev.filter((r) => r.id !== id));
+        } else {
+          setBusinessPending((prev) => prev.filter((r) => r.id !== id));
+        }
       }
     } catch (err) {
       console.error("[AdminReviewsPage] Approve error:", err);
     }
     setActionLoading(null);
-    // Refresh to ensure consistency
     fetchPending();
   }
 
@@ -63,24 +83,35 @@ export default function AdminReviewsPage() {
     setActionLoading(id + "_reject");
     try {
       console.log("[AdminReviewsPage] Reject called for id:", id);
-      const res = await fetch(`/api/reviews/reject?id=${id}`, { method: "POST", cache: 'no-store' });
+      const endpoint = activeTab === "product"
+        ? `/api/reviews/reject?id=${id}`
+        : `/api/business-reviews/reject?id=${id}`;
+      const res = await fetch(endpoint, { method: "POST", cache: 'no-store' });
       console.log("[AdminReviewsPage] Reject response status:", res.status);
       const body = await res.json().catch(() => null);
       console.log("[AdminReviewsPage] Reject response body:", body);
       if (res.ok) {
-        // Optimistically remove rejected review from list
-        setPending((prev) => prev.filter((r) => r.id !== id));
+        if (activeTab === "product") {
+          setProductPending((prev) => prev.filter((r) => r.id !== id));
+        } else {
+          setBusinessPending((prev) => prev.filter((r) => r.id !== id));
+        }
       } else if (res.status === 404) {
         console.warn("[AdminReviewsPage] Reject returned 404, removing from UI", id);
-        setPending((prev) => prev.filter((r) => r.id !== id));
+        if (activeTab === "product") {
+          setProductPending((prev) => prev.filter((r) => r.id !== id));
+        } else {
+          setBusinessPending((prev) => prev.filter((r) => r.id !== id));
+        }
       }
     } catch (err) {
       console.error("[AdminReviewsPage] Reject error:", err);
     }
     setActionLoading(null);
-    // Refresh to ensure consistency
     fetchPending();
   }
+
+  const pending = activeTab === "product" ? productPending : businessPending;
 
   const StarDisplay = ({ rating }: { rating: number }) => (
     <div className="flex gap-0.5">
@@ -119,6 +150,30 @@ export default function AdminReviewsPage() {
               {pending.length} pendiente{pending.length !== 1 ? "s" : ""}
             </span>
           )}
+        </div>
+
+        {/* Tabs */}
+        <div className="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-1 mb-6 w-fit">
+          <button
+            onClick={() => setActiveTab("product")}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              activeTab === "product"
+                ? "bg-purple-600 text-white"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+            }`}
+          >
+            Productos
+          </button>
+          <button
+            onClick={() => setActiveTab("business")}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              activeTab === "business"
+                ? "bg-purple-600 text-white"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+            }`}
+          >
+            Negocio
+          </button>
         </div>
 
         {/* Estado de carga */}
@@ -192,14 +247,15 @@ export default function AdminReviewsPage() {
                             year: "numeric",
                           })}
                         </span>
-                        <span className="text-xs text-slate-400 flex items-center gap-1">
-                          <span className="material-icons-round text-xs">inventory_2</span>
-                          Producto: {" "}
-                          <span className="font-medium text-slate-700 dark:text-slate-300">
-                            {/** show resolved product name if available */}
-                            {(r as any).productName ? (r as any).productName : r.productId}
+                        {activeTab === "product" && (
+                          <span className="text-xs text-slate-400 flex items-center gap-1">
+                            <span className="material-icons-round text-xs">inventory_2</span>
+                            Producto: {" "}
+                            <span className="font-medium text-slate-700 dark:text-slate-300">
+                              {(r as any).productName ? (r as any).productName : (r as any).productId}
+                            </span>
                           </span>
-                        </span>
+                        )}
                       </div>
                     </div>
 

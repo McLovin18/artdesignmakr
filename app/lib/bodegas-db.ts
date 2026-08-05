@@ -15,7 +15,7 @@ const COLLECTION = "bodegas";
 export interface Bodega {
   id: string;
   nombre: string;
-  tiempoEntrega: number; // en días laborales (1 o 10)
+  tiempoEntrega: number; // en días laborales (7, 10, 15, 20)
   esNuevaColeccion?: boolean;
   createdAt?: Date;
 }
@@ -57,7 +57,7 @@ export async function crearBodegaDefault(): Promise<void> {
     const existeDefault = bodegas.some(b => b.id === "technothings");
     
     if (!existeDefault) {
-      await crearBodega("Technothings", 1);
+      await crearBodega("Technothings", 10);
     }
   } catch (error) {
     console.error("Error al crear bodega default:", error);
